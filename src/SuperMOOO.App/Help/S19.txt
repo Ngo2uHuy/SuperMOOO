@@ -1,0 +1,25 @@
+Avatar khớp môi
+
+Dùng để:
+Biến video người nói và lời thoại (giọng đọc TTS hoặc file audio) thành video khớp môi bằng MuseTalk. Chạy hoàn toàn trên máy bằng CPU nên rất chậm (khoảng 94 lần thời gian thực: câu 10 giây mất ~15 phút).
+
+Các bước:
+1. Lần đầu: vào Cài đặt -> Avatar khớp môi, bấm "Cài MuseTalk" (cần Python 3.10, khoảng 5,8 GB) hoặc "Nhập từ AILive" nếu đã cài ở AILive.
+2. Bấm "Thêm video" để chọn video avatar (MP4/MOV/WebM/MKV, tối đa 250 MB và 3 phút, người nhìn thẳng, rõ mặt).
+3. Chọn avatar, bấm "Dò mặt trước" (chọn độ dài lời thoại dự kiến). Việc này chạy một lần và được lưu, các lần dựng sau nhanh hơn.
+4. Nhập lời thoại (hoặc bấm "Gợi ý lời thoại" sau khi nhập tên sản phẩm và thông tin đã xác thực), chọn giọng và tốc độ. Hoặc chọn "Dùng file audio" rồi bấm "Chọn...".
+   File audio nhận wav, mp3, m4a, aac, flac, ogg (tối đa 3 phút); app tự chuyển về WAV 16 kHz mono bằng ffmpeg trước khi khớp môi.
+5. Xem thời gian ước tính, bấm "Tạo video". Theo dõi ở khung Tác vụ bên phải; chọn job đã xong để xem video.
+
+Mẹo:
+- Lời thoại càng ngắn càng nhanh; tối đa 3 phút. Chia nội dung dài thành nhiều video.
+- Thời gian ước tính tự hiệu chỉnh theo tốc độ đo được trên máy bạn sau mỗi lần dựng.
+- Kết quả nằm ở thư mục kết quả (Avatar) và hiện ở màn Thư viện kết quả với loại "Avatar khớp môi".
+- Avatar đang chọn cũng được màn Livestream bán hàng (S20) dùng để dựng clip sản phẩm và FAQ.
+- Chỉ dùng avatar có quyền sử dụng hình ảnh.
+
+Lưu ý / lỗi thường gặp:
+- "Chưa đủ ...": thiếu Python 3.10, mã hoặc weights MuseTalk; cài lại ở Cài đặt -> Avatar khớp môi (bước đã có sẽ được bỏ qua).
+- Quá thời gian: máy bận hoặc lời thoại quá dài; đóng bớt ứng dụng, rút ngắn lời thoại.
+- Video lệch thời lượng hoặc ngắn hơn audio sẽ bị từ chối để không mất lời thoại.
+- Xoá avatar sẽ xoá bản chép trong thư viện và toạ độ mặt đã dò; file gốc của bạn không bị đụng.

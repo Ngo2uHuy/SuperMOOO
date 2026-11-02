@@ -1,0 +1,107 @@
+<UserControl x:Class="SuperMOOO.App.Features.S12.LibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Thư viện tham khảo &amp; bình luận"
+                    Description="Tìm lại video đã lưu và gắn nhãn, quét bình luận theo chiến dịch, xem lịch sử tải." />
+
+    <TabControl x:Name="Tabs">
+      <TabItem Header="Thư viện">
+        <DockPanel Margin="0,12,0,0">
+          <ui:Card DockPanel.Dock="Top" Style="{StaticResource Section}">
+            <WrapPanel>
+              <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding Platforms}" SelectedItem="{Binding SelectedPlatform}" Width="140" Margin="0,0,8,0" ToolTip="Nền tảng" />
+              <ui:TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" Width="300" Margin="0,0,8,0"
+                          PlaceholderText="Tìm theo tiêu đề, tác giả, liên kết" Icon="{ui:SymbolIcon Search24}" />
+              <CheckBox Content="Chỉ mục yêu thích" IsChecked="{Binding FavoriteOnly}" VerticalAlignment="Center" Margin="0,0,12,0" />
+              <ui:Button Appearance="Primary" Content="Tìm" Icon="{ui:SymbolIcon Search24}" Command="{Binding SearchCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Tìm file bị thiếu" Icon="{ui:SymbolIcon DocumentDismiss24}" Command="{Binding FindMissingCommand}" />
+            </WrapPanel>
+          </ui:Card>
+
+          <ui:Card DockPanel.Dock="Bottom" Style="{StaticResource Section}" Margin="0,12,0,0">
+            <StackPanel>
+              <TextBlock Style="{StaticResource CardTitle}" Text="Gắn nhãn mục đang chọn" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="1.5*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <c:Field Header="Dự án" Margin="0,0,8,0">
+                  <ui:TextBox Text="{Binding EditProject, UpdateSourceTrigger=PropertyChanged}" />
+                </c:Field>
+                <c:Field Grid.Column="1" Header="Chiến dịch" Margin="0,0,8,0">
+                  <ui:TextBox Text="{Binding EditCampaign, UpdateSourceTrigger=PropertyChanged}" />
+                </c:Field>
+                <c:Field Grid.Column="2" Header="Nhãn (cách nhau bởi dấu phẩy)" Margin="0,0,8,0">
+                  <ui:TextBox Text="{Binding EditTags, UpdateSourceTrigger=PropertyChanged}" />
+                </c:Field>
+                <CheckBox Grid.Column="3" Content="Yêu thích" IsChecked="{Binding EditFavorite}" VerticalAlignment="Bottom" Margin="0,0,12,6" />
+                <ui:Button Grid.Column="4" Content="Lưu nhãn" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" VerticalAlignment="Bottom" />
+              </Grid>
+            </StackPanel>
+          </ui:Card>
+
+          <ui:Card Style="{StaticResource FillSection}" Margin="0">
+            <DockPanel>
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Open24}" ToolTip="Mở file của mục đang chọn" Command="{Binding OpenFileCommand}" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Xoá khỏi thư viện (giữ file)" Command="{Binding DeleteCommand}" />
+                </StackPanel>
+              </DockPanel>
+              <Grid>
+                <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" AutoGenerateColumns="False" IsReadOnly="True"
+                          SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="★" Binding="{Binding Favorite, Mode=OneWay}" Width="40" />
+                    <DataGridTextColumn Header="Nền tảng" Binding="{Binding Platform, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title, Mode=OneWay}" Width="3*" />
+                    <DataGridTextColumn Header="Tác giả" Binding="{Binding Author, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Dự án" Binding="{Binding Project, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Chiến dịch" Binding="{Binding Campaign, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Nhãn" Binding="{Binding Tags, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="File" Binding="{Binding File, Mode=OneWay}" Width="90" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <c:EmptyState Icon="Library24" Text="Thư viện trống. Video tải ở S09 hoặc lưu từ kết quả crawl sẽ xuất hiện ở đây."
+                              Visibility="{Binding Items.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+        </DockPanel>
+      </TabItem>
+
+      <TabItem Header="Lịch sử tải">
+        <ui:Card Style="{StaticResource FillSection}" Margin="0,12,0,0">
+          <DockPanel>
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+              <TextBlock Style="{StaticResource CardTitle}" Text="File đã tải" Margin="0" VerticalAlignment="Center" />
+              <ui:Button Style="{StaticResource IconButton}" HorizontalAlignment="Right" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Làm mới"
+                         Command="{Binding RefreshHistoryCommand}" />
+            </DockPanel>
+            <Grid>
+              <DataGrid ItemsSource="{Binding History}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Tên file" Binding="{Binding Name, Mode=OneWay}" Width="2*" />
+                  <DataGridTextColumn Header="Loại" Binding="{Binding Kind, Mode=OneWay}" Width="90" />
+                  <DataGridTextColumn Header="Định dạng" Binding="{Binding Operation, Mode=OneWay}" Width="120" />
+                  <DataGridTextColumn Header="Dung lượng" Binding="{Binding Size, Mode=OneWay}" Width="110" />
+                  <DataGridTextColumn Header="Nguồn" Binding="{Binding Source, Mode=OneWay}" Width="2*" />
+                </DataGrid.Columns>
+              </DataGrid>
+              <c:EmptyState Icon="History24" Text="Chưa có lịch sử tải."
+                            Visibility="{Binding History.Count, Converter={StaticResource EmptyToVis}}" />
+            </Grid>
+          </DockPanel>
+        </ui:Card>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</UserControl>

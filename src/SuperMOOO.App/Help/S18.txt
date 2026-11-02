@@ -1,0 +1,30 @@
+Video vẽ tay AI
+
+Dùng để:
+Tạo video whiteboard, stickman, hoạt hình hoặc infographic từ chủ đề: AI viết kịch bản và SEO, vẽ ảnh từng cảnh, đọc lời bình, dựng nét vẽ tay kèm phụ đề rồi xuất video, thumbnail, SEO.txt, subtitles.srt.
+
+Các bước:
+1. Ở tab "Sản xuất", nhập chủ đề (mỗi dòng một video), hoặc bấm "Nhập từ file Excel/TXT/CSV" (lấy cột đầu tiên), hoặc nhập ngách rồi bấm "Gợi ý chủ đề viral" để AI đề xuất thêm chủ đề.
+2. Chọn phong cách hình, giọng kể (hoặc gõ "Giọng kể tự do"), số cảnh, tỉ lệ khung, ngôn ngữ video, giọng đọc (bấm biểu tượng loa để nghe thử), tốc độ đọc và nguồn ảnh. "Xoá trắng" xoá cả danh sách chủ đề; thanh "Số chủ đề gợi ý" đặt số chủ đề AI đề xuất (1–20).
+3. (Tuỳ chọn) Mở "Dựng video" để chỉnh FPS, chất lượng (nhanh/cân bằng/cao), encoder (tự động, CPU, NVENC, QSV, AMF), tốc độ vẽ, thời gian fade sang ảnh màu, thời gian giữ cuối cảnh, kiểu tay vẽ (bút mạ vàng, không tay, ảnh PNG tuỳ chọn) và thư mục xuất. Mở "Intro / Outro" để ghép video vào đầu/cuối, và "Đăng bài sau khi xong" để xếp video vào lịch đăng (S14): chọn kênh đích (từ màn Tài khoản & kênh S23), chế độ, quyền riêng tư. Tiêu đề/mô tả để trống thì dùng tiêu đề, mô tả và hashtag SEO do AI viết.
+4. Ở tab "Thương hiệu": chọn chế độ phụ đề (đốt vào hình / chỉ file .srt / cả hai / tắt), mẫu màu, font, cỡ, viền, nền; kéo dải phụ đề trên khung xem trước bên phải để đổi vị trí và cỡ chữ (kéo giữa = di chuyển, kéo cạnh trên/dưới = cỡ chữ, cạnh trái/phải = bề rộng dải). Thêm watermark chữ và logo ảnh (cỡ, độ mờ): hai thứ này hiện ngay trên khung xem trước đúng vị trí/cỡ/độ mờ như video, kéo thả để đặt vị trí tự do (chọn lại "Vị trí" theo góc hoặc bấm "Đặt lại vị trí" để bỏ vị trí đã kéo). Đặt tên rồi bấm "Lưu mẫu" để dùng lại; có thể lưu nhiều mẫu.
+5. Bấm "Bắt đầu": mỗi chủ đề là một tác vụ, theo dõi ở khung Tác vụ bên phải. Ảnh cảnh mới nhất hiện ở khung "Cảnh mới nhất"; chọn tác vụ đã xong để xem video. Cột "Giai đoạn" cho biết bước đang chạy (kịch bản, ảnh, giọng, vẽ tay, xuất bản); nút "Huỷ tất cả" dừng mọi tác vụ đang chạy/chờ của màn này.
+6. Tab "Thư viện" liệt kê video đã xuất: xem video, mở thumbnail, mở SEO.txt, mở thư mục, xoá (chuyển cả thư mục vào Thùng rác).
+
+Mẹo:
+- Chọn Nhà cung cấp AI và Model AI cho gợi ý chủ đề / viết kịch bản. "Tải danh sách" lấy model từ nhà cung cấp; có thể nhập tên model. Job lưu lựa chọn này khi đưa vào hàng đợi, không đổi cấu hình AI chung.
+- Kết quả nằm ở Videos\SuperMOOO\Whiteboard\<tên video>\ (video, thumbnail.png, SEO.txt, subtitles.srt, meta.json) và hiện ở màn Kho file.
+- Ngôn ngữ kịch bản theo ngôn ngữ của giọng đọc đã chọn.
+- Nguồn ảnh mặc định, model và địa chỉ Stable Diffusion WebUI đặt ở Cài đặt (S16) → "Ảnh AI"; mô hình viết kịch bản đặt ở Cài đặt → Mô hình AI.
+- Pollinations miễn phí chỉ cho khoảng 1 ảnh mỗi 45 giây nên video nhiều cảnh sẽ chạy chậm; OpenAI, Gemini hoặc Muse Image tính phí theo ảnh. Pollinations và Stable Diffusion WebUI lỗi thì tự thử lại, không phải chờ bạn bấm thử lại.
+- Mỗi cảnh dựng xong được giữ lại: tác vụ lỗi hoặc bị huỷ rồi thử lại sẽ chạy tiếp từ cảnh dang dở, không viết kịch bản hay vẽ ảnh lại.
+- Mẫu thương hiệu được chụp lúc bấm "Bắt đầu" (kể cả chưa lưu); sửa mẫu sau đó không ảnh hưởng tác vụ đã xếp. Phụ đề, watermark và logo được vẽ trong cùng lượt dựng từng cảnh, thumbnail cũng có watermark và logo.
+- Phụ đề có thanh "Số ký tự mỗi dòng" (16-60, mặc định 42) và ô "Viết hoa" (áp lên cả phụ đề đốt và file .srt); viền mặc định 6. "Bật watermark (chữ + logo)" tắt thì video và thumbnail không đóng dấu. Ảnh cảnh sinh 1536x864 (hoặc 864x1536 cho 9:16); thumbnail 9:16 là 1080x1920.
+- Chế độ "Chỉ file .srt rời" hoặc "Cả hai" mới xuất subtitles.srt; "Đốt vào hình" và "Tắt phụ đề" thì không có file .srt.
+- Thư mục xuất của mỗi video có thêm scenes/scene_NN (ảnh từng cảnh) và script.json (kịch bản); meta.json có id và createdAt (mili giây).
+- Màu nhập dạng #RRGGBB. Cỡ chữ và cỡ watermark tính theo khung 1080 px cạnh ngắn.
+- Khung xem trước dùng ảnh cảnh mới nhất (hoặc nền trắng nếu chưa có); phụ đề, watermark và logo chỉ hiện ở tab "Thương hiệu".
+- Giọng Google Cloud TTS cần key "google" (Cài đặt → API key; bật Cloud Text-to-Speech API cho key); mẫu thương hiệu cũ dùng vị trí theo góc vẫn hoạt động như trước.
+
+Lưu ý / lỗi thường gặp:
+- Tác vụ dùng AI tính phí (kịch bản, ảnh OpenAI/Gemini/Muse) lỗi sẽ chuyển sang "Chờ thử lại thủ công": kiểm tra khoá API rồi bấm thử lại.

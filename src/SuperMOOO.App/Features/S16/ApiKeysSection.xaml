@@ -1,0 +1,62 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.ApiKeysSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="0,0,16,0">
+      <ui:InfoBar IsOpen="True" IsClosable="False" Severity="Warning" Title="Chưa có API key"
+                  Message="Thêm ít nhất một key (Gemini, OpenAI…) để dịch, viết kịch bản và đọc bằng giọng cloud."
+                  Visibility="{Binding Keys.Count, Converter={StaticResource EmptyToVis}}" Margin="{StaticResource CardGap}" />
+      <ui:Card Style="{StaticResource Section}">
+        <StackPanel>
+          <TextBlock Style="{StaticResource CardTitle}" Text="Thêm API key" />
+          <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,12" Text="Key được lưu mã hoá (DPAPI) và không hiển thị lại. Mỗi nhà cung cấp có thể có nhiều key, tự xoay khi hết hạn mức." />
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="200" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <c:Field Header="Nhà cung cấp" Margin="0,0,8,0">
+              <ComboBox ItemsSource="{Binding Providers}" SelectedItem="{Binding SelectedProvider}" />
+            </c:Field>
+            <c:Field Grid.Column="1" Header="Key" Margin="0,0,8,0">
+              <PasswordBox x:Name="KeyBox" />
+            </c:Field>
+            <ui:Button Grid.Column="2" Appearance="Primary" Content="Lưu key" Icon="{ui:SymbolIcon Save24}" Click="OnSave" VerticalAlignment="Bottom" />
+          </Grid>
+          <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" Margin="0,8,0,0" Visibility="{Binding Status, Converter={StaticResource NotEmptyToVis}}" />
+        </StackPanel>
+      </ui:Card>
+
+      <ui:Card Style="{StaticResource Section}">
+        <StackPanel>
+          <TextBlock Style="{StaticResource CardTitle}" Text="Key đã lưu" />
+          <ItemsControl ItemsSource="{Binding Keys}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" Padding="0,6">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="200" />
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="160" />
+                      <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="{Binding Hint}" VerticalAlignment="Center" FontFamily="Consolas" />
+                    <TextBlock Grid.Column="2" Text="{Binding Status}" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    <ui:Button Grid.Column="3" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Xoá key này" CommandParameter="{Binding}"
+                               Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Style="{StaticResource Hint}" Text="Chưa lưu key nào." Visibility="{Binding Keys.Count, Converter={StaticResource EmptyToVis}}" />
+        </StackPanel>
+      </ui:Card>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -1,0 +1,60 @@
+{
+  "id": "review",
+  "title": "Review phim",
+  "steps": [
+    {
+      "id": "download",
+      "kind": "download",
+      "when": "download"
+    },
+    {
+      "id": "probe",
+      "kind": "probe"
+    },
+    {
+      "id": "segment",
+      "kind": "segment_source",
+      "when": "segment"
+    },
+    {
+      "id": "audio",
+      "kind": "extract_audio",
+      "when": "transcribe",
+      "options": {
+        "sampleRate": 16000,
+        "mono": true
+      }
+    },
+    {
+      "id": "asr",
+      "kind": "asr",
+      "when": "transcribe",
+      "options": {
+        "wordTimestamps": false
+      }
+    },
+    {
+      "id": "translate",
+      "kind": "translate",
+      "when": "translate"
+    },
+    {
+      "id": "storyboard",
+      "kind": "storyboard"
+    },
+    {
+      "id": "narration",
+      "kind": "narration",
+      "when": "narrate"
+    },
+    {
+      "id": "render",
+      "kind": "render_project"
+    },
+    {
+      "id": "deliver",
+      "kind": "deliver",
+      "when": "deliver"
+    }
+  ]
+}

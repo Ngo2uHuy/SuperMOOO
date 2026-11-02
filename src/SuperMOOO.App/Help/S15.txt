@@ -1,0 +1,17 @@
+Tác vụ (Jobs)
+
+Dùng để:
+Theo dõi, huỷ và chạy lại mọi việc chạy nền (tải video, lồng tiếng, reup, đăng bài…).
+
+Các bước:
+1. Lọc theo "Trạng thái" ở phía trên; danh sách tự cập nhật.
+2. Chọn một tác vụ để xem tiến độ, các bước, thông báo/lỗi.
+3. Bấm "Huỷ" để dừng tác vụ đang chạy hoặc đang chờ.
+4. Bấm "Thử lại từ bước lỗi" để chạy tiếp (bước đã xong được giữ), hoặc "Thử lại từ đầu" để chạy lại toàn bộ.
+
+Mẹo:
+- Tiến trình con được tắt hẳn khi huỷ.
+- "Làm mới" tải lại danh sách khi cần.
+
+Lưu ý / lỗi thường gặp:
+- "Chờ thử lại": tác vụ dừng ở bước cloud có tính phí. Kiểm tra key/hạn mức rồi thử lại; app không tự gửi lại để tránh tính phí hai lần.

@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\SuperMOOO.Core\SuperMOOO.Core.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Data\SuperMOOO.Data.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Infrastructure\SuperMOOO.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Quartz" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="System.Text.Json.Nodes" />
+    <Using Include="SuperMOOO.Core" />
+    <Using Include="SuperMOOO.Core.Abstractions" />
+    <Using Include="SuperMOOO.Core.Conventions" />
+    <Using Include="SuperMOOO.Core.Jobs" />
+    <Using Include="SuperMOOO.Core.Models" />
+    <Using Include="SuperMOOO.Core.Operations" />
+    <Using Include="SuperMOOO.Core.Persistence" />
+  </ItemGroup>
+</Project>

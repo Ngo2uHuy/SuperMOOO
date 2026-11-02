@@ -1,0 +1,11 @@
+{
+  "id": "download",
+  "title": "Tải nguồn",
+  "steps": [
+    {
+      "id": "download",
+      "kind": "download",
+      "when": "download"
+    }
+  ]
+}

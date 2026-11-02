@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chùa Online</title>
+  <style>
+    * { box-sizing: border-box; user-select: none; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #080605;
+      color: #fff;
+      font-family: "Segoe UI", "Segoe UI Emoji", Tahoma, Arial, sans-serif;
+    }
+
+    body.transparent-mode,
+    body.transparent-mode #stage {
+      background: transparent !important;
+    }
+    body.transparent-mode #backdrop-img, body.transparent-mode #backdrop-video {
+      display: none !important;
+    }
+
+    #stage {
+      width: 1080px;
+      height: 1920px;
+      position: absolute;
+      transform-origin: top left;
+      overflow: hidden;
+      background: #140d0a;
+      box-shadow: 0 0 50px rgba(0,0,0,0.8);
+      will-change: transform;
+      transform: translateZ(0);
+    }
+
+    #backdrop-img, #backdrop-video {
+      position: absolute;
+      inset: 0;
+      width: 1080px;
+      height: 1920px;
+      object-fit: cover;
+      pointer-events: none;
+      transition: filter 0.5s ease;
+    }
+
+    #canvas-container {
+      position: absolute;
+      inset: 0;
+      width: 1080px;
+      height: 1920px;
+      pointer-events: none;
+      z-index: 50;
+    }
+    #canvas-container canvas {
+      position: absolute;
+      inset: 0;
+      width: 1080px;
+      height: 1920px;
+    }
+
+    /* Chỉ số cho người vận hành; ẩn khi phát (obs=1). */
+    #stream-hud {
+      position: absolute;
+      top: 12px;
+      right: 30px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(15, 10, 18, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #79f298;
+      z-index: 105;
+      pointer-events: none;
+      letter-spacing: 0.5px;
+    }
+    #hud-fps { color: #58f08a; font-weight: 700; }
+    #hud-ping { color: #ffd700; }
+    #hud-viewers { color: #00f0ff; }
+
+    .avatar-initial {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: 700;
+      color: #fff8e6;
+      background: #8a5a2b;
+      flex: none;
+    }
+
+    .tiktok-top {
+      position: absolute;
+      top: 40px;
+      left: 30px;
+      right: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 110;
+      pointer-events: none;
+    }
+    .host-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(18, 12, 10, 0.75);
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      padding: 6px 20px 6px 8px;
+      border-radius: 40px;
+    }
+    .host-avatar {
+      width: 56px;
+      height: 56px;
+      border: 2px solid #ffd700;
+      font-size: 26px;
+      background: #9c6b1f;
+    }
+    .host-meta {
+      display: flex;
+      flex-direction: column;
+    }
+    .host-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .host-likes {
+      font-size: 16px;
+      color: #ffd27d;
+    }
+    .viewer-count-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(18, 12, 10, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 10px 22px;
+      border-radius: 40px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Dải chữ chạy: ngày âm lịch, sự kiện hôm nay, cách tham gia. */
+    #marquee {
+      position: absolute;
+      top: 125px;
+      left: 30px;
+      right: 30px;
+      height: 46px;
+      overflow: hidden;
+      background: linear-gradient(90deg, rgba(140, 30, 20, 0.88), rgba(170, 60, 20, 0.88));
+      border: 1px solid rgba(255, 215, 0, 0.45);
+      border-radius: 24px;
+      z-index: 110;
+      pointer-events: none;
+    }
+    #marquee-text {
+      position: absolute;
+      top: 0;
+      left: 0;
+      line-height: 44px;
+      white-space: nowrap;
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff4d0;
+      padding-left: 100%;
+      animation: marquee 28s linear infinite;
+      will-change: transform;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .temple-calendar-bar {
+      position: absolute;
+      top: 185px;
+      left: 30px;
+      right: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+      color: #ffdf9e;
+      text-shadow: 0 2px 8px #000;
+      z-index: 90;
+      pointer-events: none;
+    }
+
+    #gift-alerts-container {
+      position: absolute;
+      left: 30px;
+      top: 500px;
+      width: 460px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 120;
+      pointer-events: none;
+    }
+    .gift-toast {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(90deg, rgba(110, 50, 20, 0.94), rgba(160, 80, 30, 0.88));
+      border: 1.5px solid #ffcc00;
+      border-radius: 40px;
+      padding: 8px 24px 8px 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      animation: toastIn 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+    }
+    @keyframes toastIn {
+      0% { opacity: 0; transform: translateX(-80px) scale(0.85); }
+      100% { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    .gift-toast img, .gift-toast .avatar-initial {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid #ffd700;
+      object-fit: cover;
+      font-size: 24px;
+    }
+    .gift-toast-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .gift-toast-name {
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gift-toast-desc {
+      font-size: 16px;
+      color: #ffdf94;
+    }
+    .gift-toast-icon {
+      font-size: 38px;
+      margin-left: auto;
+      animation: giftBounce 0.6s infinite alternate;
+    }
+    @keyframes giftBounce {
+      0% { transform: scale(0.9) rotate(-6deg); }
+      100% { transform: scale(1.15) rotate(6deg); }
+    }
+
+    #combo-badge {
+      position: absolute;
+      top: 450px;
+      left: 40px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #b8332a, #e08a1e);
+      border: 2px solid #ffd700;
+      border-radius: 40px;
+      padding: 8px 24px;
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 0 30px rgba(255, 136, 0, 0.6);
+      opacity: 0;
+      transform: scale(0.6) rotate(-8deg);
+      transition: all 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      z-index: 125;
+      pointer-events: none;
+    }
+    #combo-badge.active {
+      opacity: 1;
+      transform: scale(1.1) rotate(-3deg);
+    }
+
+    #festival-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(255, 215, 0, 0.45) 0%, rgba(255, 120, 0, 0.2) 50%, transparent 80%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 150;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    #festival-overlay.active {
+      opacity: 1;
+    }
+    .festival-title {
+      font-size: 58px;
+      font-weight: 800;
+      color: #fffdf0;
+      text-shadow: 0 0 40px #ffd700, 0 0 80px #ff8800;
+      text-align: center;
+      margin-bottom: 14px;
+      letter-spacing: 4px;
+    }
+    .festival-name {
+      font-size: 44px;
+      font-weight: 700;
+      color: #ffe9a8;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.9);
+      margin-bottom: 14px;
+      max-width: 960px;
+      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .festival-sub {
+      font-size: 28px;
+      color: #fff4d0;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.9);
+      background: rgba(30, 20, 15, 0.88);
+      border: 1.5px solid #ffd700;
+      padding: 12px 36px;
+      border-radius: 40px;
+    }
+
+    #subtitle-bar {
+      position: absolute;
+      left: 60px;
+      right: 60px;
+      bottom: 270px;
+      text-align: center;
+      font-size: 26px;
+      line-height: 1.5;
+      color: #fffbf0;
+      background: rgba(18, 12, 10, 0.9);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      border-radius: 24px;
+      padding: 16px 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      z-index: 130;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+      pointer-events: none;
+    }
+    #subtitle-bar.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .bottom-dock {
+      position: absolute;
+      bottom: 25px;
+      left: 30px;
+      right: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 140;
+    }
+    .ritual-menu-card {
+      background: rgba(18, 12, 10, 0.88);
+      border: 1.5px solid rgba(255, 215, 0, 0.35);
+      border-radius: 28px;
+      padding: 16px 22px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.65);
+    }
+    .ritual-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffd700;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    }
+    #card-header-sub {
+      font-size: 15px;
+      color: #ffdf94;
+      font-weight: normal;
+      text-align: right;
+    }
+    .ritual-items {
+      display: flex;
+      justify-content: space-around;
+      gap: 12px;
+    }
+    .ritual-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+    body:not(.obs-mode) .ritual-item { cursor: pointer; }
+    .ritual-icon {
+      font-size: 34px;
+    }
+    .ritual-cost {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffdf94;
+    }
+    .ritual-label {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .donor-ticker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      color: #fce7ba;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed rgba(255, 215, 0, 0.2);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .donor-tag {
+      background: rgba(255, 215, 0, 0.2);
+      border-radius: 12px;
+      padding: 2px 8px;
+      font-weight: 700;
+      color: #ffd700;
+      flex: none;
+    }
+    #donor-leaderboard-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Ô bình luận/nút chỉ để giả lập; không có trên cửa sổ phát. */
+    .sim-input-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .input-box {
+      flex: 1;
+      height: 58px;
+      background: rgba(35, 25, 20, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 30px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+    }
+    .input-box input {
+      background: none;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 20px;
+      width: 100%;
+      font-family: inherit;
+      user-select: text;
+    }
+    .input-box input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .action-circle-btn {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(35, 25, 20, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .action-circle-btn:hover {
+      transform: scale(1.1);
+    }
+
+    #simulator-dock {
+      position: absolute;
+      top: 290px;
+      right: 30px;
+      width: 320px;
+      background: rgba(16, 11, 9, 0.94);
+      border: 1.5px solid rgba(255, 215, 0, 0.45);
+      border-radius: 20px;
+      padding: 16px;
+      z-index: 200;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.8);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    #simulator-dock.hidden {
+      transform: translateX(360px);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .sim-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffd700;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    }
+    .sim-close {
+      background: none;
+      border: none;
+      color: #ffd700;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .sim-volume-box {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+    }
+    .sim-volume-head {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      font-size: 14px;
+      color: #ffdf94;
+    }
+    #volume-slider {
+      width: 100%;
+      accent-color: #ffd700;
+      cursor: pointer;
+    }
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .btn-sim {
+      background: rgba(45, 32, 24, 0.85);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      padding: 10px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-sim:hover {
+      background: rgba(255, 215, 0, 0.2);
+      border-color: #ffd700;
+    }
+    .btn-sim-full {
+      grid-column: span 2;
+      background: linear-gradient(135deg, #d48800, #ffaa00);
+      color: #1a0f00;
+      font-weight: 700;
+    }
+    .sound-toggle-btn {
+      width: 100%;
+      background: rgba(255, 215, 0, 0.25);
+      border: 1px solid #ffd700;
+      color: #ffdf94;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .sim-help {
+      font-size: 12px;
+      color: #b5ac9d;
+      margin-top: 8px;
+      line-height: 1.5;
+      background: rgba(0,0,0,0.3);
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px dashed rgba(255,255,255,0.15);
+    }
+    .sim-status {
+      font-size: 13px;
+      color: #a89f91;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+    #notice-text {
+      color: #ffb35c;
+    }
+
+    #toggle-sim-btn {
+      position: absolute;
+      top: 290px;
+      right: 30px;
+      background: rgba(18, 12, 10, 0.85);
+      border: 1.5px solid #ffd700;
+      color: #ffd700;
+      font-size: 18px;
+      font-weight: 700;
+      font-family: inherit;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      z-index: 199;
+      display: none;
+    }
+    #toggle-sim-btn.visible {
+      display: block;
+    }
+
+    /* obs=1: cửa sổ phát chỉ còn cảnh, không lộ điều khiển. */
+    body.obs-mode #simulator-dock,
+    body.obs-mode #toggle-sim-btn,
+    body.obs-mode #stream-hud,
+    body.obs-mode .sim-input-bar {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <img id="backdrop-img" src="/theme/backdrop.jpg?key=__KEY__" alt="">
+    <video id="backdrop-video" muted loop playsinline style="display:none"></video>
+
+    <div id="canvas-container"></div>
+
+    <div id="stream-hud">
+      <span>FPS: <b id="hud-fps">0</b></span>
+      <span>•</span>
+      <span>PING: <b id="hud-ping">–</b></span>
+      <span>•</span>
+      <span>NHÂN VẬT: <b id="hud-viewers">0</b></span>
+    </div>
+
+    <div class="tiktok-top">
+      <div class="host-pill">
+        <div class="avatar-initial host-avatar">C</div>
+        <div class="host-meta">
+          <span class="host-name" id="host-name-txt">Chùa Online</span>
+          <span class="host-likes">❤️ <span id="likes-count">0</span></span>
+        </div>
+      </div>
+      <div class="viewer-count-pill">
+        <span>👥</span>
+        <span id="viewer-count">0</span>
+      </div>
+    </div>
+
+    <div id="marquee"><span id="marquee-text"></span></div>
+
+    <div class="temple-calendar-bar">
+      <span id="calendar-text"></span>
+      <span id="incense-stats">🪔 0 nén hương · 🙏 0 lời niệm</span>
+    </div>
+
+    <div id="gift-alerts-container"></div>
+
+    <div id="combo-badge">
+      <span>🪷</span>
+      <span id="combo-text"></span>
+    </div>
+
+    <div id="festival-overlay">
+      <div class="festival-title" id="festival-title"></div>
+      <div class="festival-name" id="festival-name"></div>
+      <div class="festival-sub" id="festival-sub"></div>
+    </div>
+
+    <div id="subtitle-bar"></div>
+
+    <div class="bottom-dock">
+      <div class="ritual-menu-card">
+        <div class="ritual-header">
+          <span id="card-header-title"></span>
+          <span id="card-header-sub"></span>
+        </div>
+        <div class="ritual-items" id="ritual-items-box"></div>
+        <div class="donor-ticker">
+          <span class="donor-tag">TẤM LÒNG THÀNH</span>
+          <span id="donor-leaderboard-text">Chưa có</span>
+        </div>
+      </div>
+
+      <div class="sim-input-bar">
+        <div class="input-box">
+          <input type="text" id="chat-input" maxlength="160" placeholder="Nhập “Nam mô A Di Đà Phật” để thử bình luận...">
+        </div>
+        <div class="action-circle-btn" data-action="sendChat" title="Gửi bình luận">🕊️</div>
+        <div class="action-circle-btn" data-sim="like" title="Thả tim">❤️</div>
+        <div class="action-circle-btn" data-sim="gift_lotus" title="Tặng quà">🎁</div>
+      </div>
+    </div>
+
+    <button id="toggle-sim-btn" data-action="toggleSimDock">🛠️ Mở giả lập</button>
+
+    <div id="simulator-dock">
+      <div class="sim-header">
+        <span>GIẢ LẬP SỰ KIỆN LIVE</span>
+        <button class="sim-close" data-action="toggleSimDock" title="Ẩn bảng">✕</button>
+      </div>
+
+      <div class="sim-volume-box">
+        <div class="sim-volume-head">
+          <span>🔊 Âm lượng cửa sổ này:</span>
+          <span id="volume-val-txt">80%</span>
+        </div>
+        <input type="range" id="volume-slider" min="0" max="100" value="80">
+      </div>
+
+      <div class="sim-grid" id="sim-grid-container"></div>
+
+      <button class="sound-toggle-btn" id="sound-btn" data-action="toggleAudio">🔇 Bật âm thanh (nhạc và giọng đọc)</button>
+      <button class="sound-toggle-btn" id="btn-copy-obs" data-action="copyObsUrl">📋 Sao chép URL phát (OBS / LIVE Studio)</button>
+
+      <div class="sim-help">
+        <b>⌨️ Phím tắt:</b><br>
+        [Space] Thả tim • [1–4] Bốn mức quà<br>
+        [M] Bật/tắt tiếng • [H] Ẩn bảng
+      </div>
+
+      <div class="sim-status">
+        <span id="connection-status">Đang kết nối...</span><br>
+        <span id="notice-text"></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/pixi.min.js?key=__KEY__"></script>
+  <script src="/static/game.js?key=__KEY__"></script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<UserControl x:Class="SuperMOOO.App.Features.S14.PublishingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls"
+             xmlns:s14="clr-namespace:SuperMOOO.App.Features.S14"
+             xmlns:s11="clr-namespace:SuperMOOO.App.Features.S11">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Đăng bài &amp; lịch đăng"
+                    Description="Soạn bài cho nhiều kênh, hẹn giờ, theo dõi và xử lý bài lỗi. Kết nối tài khoản ở màn Tài khoản &amp; kênh.">
+      <c:ScreenHeader.Style><Style TargetType="c:ScreenHeader"><Style.Triggers><DataTrigger Binding="{Binding SelectedTab}" Value="1"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></c:ScreenHeader.Style>
+    </c:ScreenHeader>
+
+    <Grid>
+        <TabControl Margin="0" SelectedIndex="{Binding SelectedTab}">
+          <TabItem Header="Hôm nay &amp; cần xử lý" DataContext="{Binding Today}">
+            <DockPanel Margin="0,12,0,0">
+              <TextBlock DockPanel.Dock="Top" Text="{Binding Summary}" Margin="0,0,0,8" TextWrapping="Wrap" />
+              <UniformGrid Rows="2">
+                <ui:Card Style="{StaticResource FillSection}" Margin="0,0,0,8">
+                  <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                      <TextBlock Style="{StaticResource CardTitle}" Text="Hộp cần xử lý" Margin="0" VerticalAlignment="Center" />
+                      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ui:Button Content="Chấp nhận quốc gia mới" Icon="{ui:SymbolIcon Globe24}" Command="{Binding AcceptCountryCommand}" Margin="0,0,8,0"
+                                   ToolTip="Mục &quot;IP đổi quốc gia&quot;: cho tài khoản đăng tiếp bằng quốc gia mới" />
+                        <ui:Button Content="Đánh dấu đã xử lý" Icon="{ui:SymbolIcon Checkmark24}" Command="{Binding ResolveActionCommand}" />
+                        <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Làm mới" Command="{Binding RefreshCommand}" />
+                      </StackPanel>
+                    </DockPanel>
+                    <Grid>
+                      <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False" IsReadOnly="True"
+                                SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                          <DataGridTextColumn Header="Loại" Binding="{Binding Kind}" Width="*" />
+                          <DataGridTextColumn Header="Nội dung" Binding="{Binding Title}" Width="2*" />
+                          <DataGridTextColumn Header="Chi tiết" Binding="{Binding Detail}" Width="3*" />
+                          <DataGridTextColumn Header="Lúc" Binding="{Binding Created}" Width="*" />
+                        </DataGrid.Columns>
+                      </DataGrid>
+                      <c:EmptyState Icon="CheckmarkCircle24" Text="Không có mục nào cần xử lý."
+                                    Visibility="{Binding Items.Count, Converter={StaticResource EmptyToVis}}" />
+                    </Grid>
+                  </DockPanel>
+                </ui:Card>
+                <ui:Card Style="{StaticResource FillSection}">
+                  <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Style="{StaticResource CardTitle}" Text="Bài lỗi / cần xử lý / không xác định" />
+                    <WrapPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                      <ui:Button Content="Thử lại" Icon="{ui:SymbolIcon ArrowRepeatAll24}" Command="{Binding RetryCommand}" Margin="0,0,8,0" />
+                      <ui:Button Content="Huỷ bài" Icon="{ui:SymbolIcon Dismiss24}" Command="{Binding CancelCommand}" Margin="0,0,16,0" />
+                      <ui:TextBox PlaceholderText="URL video đã đăng (đối soát)" Text="{Binding RemoteUrl, UpdateSourceTrigger=PropertyChanged}" Width="240" Margin="0,0,8,0" />
+                      <ui:Button Content="Đã đăng" Command="{Binding MarkPublishedCommand}" Margin="0,0,8,0" />
+                      <ui:Button Content="Đăng lại" Command="{Binding RepostCommand}" Margin="0,0,8,0" />
+                      <ui:Button Content="Bỏ bài" Command="{Binding DropUnknownCommand}" />
+                    </WrapPanel>
+                    <Grid>
+                      <DataGrid ItemsSource="{Binding Problems}" SelectedItem="{Binding SelectedProblem}" AutoGenerateColumns="False" IsReadOnly="True"
+                                SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                          <DataGridTextColumn Header="Nền tảng" Binding="{Binding Platform}" Width="*" />
+                          <DataGridTextColumn Header="Kênh" Binding="{Binding Destination}" Width="*" />
+                          <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title}" Width="2*" />
+                          <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="*" />
+                          <DataGridTextColumn Header="Lỗi" Binding="{Binding Error}" Width="3*" />
+                        </DataGrid.Columns>
+                      </DataGrid>
+                      <c:EmptyState Icon="CheckmarkCircle24" Text="Không có bài lỗi."
+                                    Visibility="{Binding Problems.Count, Converter={StaticResource EmptyToVis}}" />
+                    </Grid>
+                  </DockPanel>
+                </ui:Card>
+              </UniformGrid>
+            </DockPanel>
+          </TabItem>
+
+          <TabItem Header="Soạn bài" DataContext="{Binding Compose}"><s14:ComposeView /></TabItem>
+
+          <TabItem Header="Lịch" DataContext="{Binding Calendar}">
+            <DockPanel Margin="0,12,0,0">
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding Modes}" SelectedItem="{Binding Mode}" Width="100" />
+                <ui:Button DockPanel.Dock="Left" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PreviousCommand}" />
+                <ui:Button DockPanel.Dock="Left" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ChevronRight24}" Command="{Binding NextCommand}" />
+                <ui:Button DockPanel.Dock="Left" Content="Hôm nay" Command="{Binding GoTodayCommand}" Margin="8,0" />
+                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" VerticalAlignment="Center" />
+              </DockPanel>
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding Cells}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <UniformGrid Columns="{Binding DataContext.Columns, RelativeSource={RelativeSource AncestorType=TabItem}}" />
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Border BorderThickness="1" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" Padding="6" MinHeight="90" Margin="1">
+                        <StackPanel>
+                          <TextBlock Text="{Binding Header}" FontWeight="SemiBold" />
+                          <ItemsControl ItemsSource="{Binding Lines}">
+                            <ItemsControl.ItemTemplate>
+                              <DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="11" Margin="0,2,0,0" /></DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                          </ItemsControl>
+                        </StackPanel>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </ScrollViewer>
+            </DockPanel>
+          </TabItem>
+
+          <TabItem Header="Bài đăng" DataContext="{Binding Posts}">
+            <DockPanel Margin="0,12,0,0">
+              <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <ComboBox ItemsSource="{Binding StatusFilters}" SelectedValue="{Binding StatusFilter}" SelectedValuePath="Key" DisplayMemberPath="Label" Width="180" Margin="0,0,8,0" />
+                <ui:Button Content="Đăng bản nháp" Icon="{ui:SymbolIcon Send24}" Command="{Binding PublishDraftCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Thử lại" Icon="{ui:SymbolIcon ArrowRepeatAll24}" Command="{Binding RetryCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Huỷ bài" Icon="{ui:SymbolIcon Dismiss24}" Command="{Binding CancelCommand}" Margin="0,0,16,0" />
+                <ui:TextBox PlaceholderText="URL video đã đăng (đối soát)" Text="{Binding RemoteUrl, UpdateSourceTrigger=PropertyChanged}" Width="220" Margin="0,0,8,0" />
+                <ui:Button Content="Đã đăng" Command="{Binding MarkPublishedCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Đăng lại" Command="{Binding RepostCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Bỏ bài" Command="{Binding DropUnknownCommand}" />
+              </WrapPanel>
+              <DockPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ChevronRight24}" Command="{Binding NextPageCommand}" />
+                <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PrevPageCommand}" />
+                <TextBlock Text="{Binding PageText}" VerticalAlignment="Center" />
+              </DockPanel>
+              <Grid DockPanel.Dock="Bottom" Margin="0,8,0,0" MaxHeight="150">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                  <StackPanel>
+                    <TextBlock Text="{Binding Detail}" TextWrapping="Wrap" />
+                    <ItemsControl ItemsSource="{Binding Attempts}">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate><TextBlock Text="{Binding}" Style="{StaticResource Hint}" TextWrapping="Wrap" /></DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </StackPanel>
+                </ScrollViewer>
+              </Grid>
+              <Grid>
+                <DataGrid ItemsSource="{Binding Rows}" SelectedItem="{Binding Selected}" AutoGenerateColumns="False" IsReadOnly="True"
+                          SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column"
+                          VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" EnableRowVirtualization="True">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nền tảng" Binding="{Binding Platform}" Width="*" />
+                    <DataGridTextColumn Header="Kênh" Binding="{Binding Destination}" Width="*" />
+                    <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title}" Width="2*" />
+                    <DataGridTextColumn Header="Giờ đăng (VN)" Binding="{Binding Scheduled}" Width="*" />
+                    <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="*" />
+                    <DataGridTextColumn Header="Lượt thử" Binding="{Binding Attempts}" Width="70" />
+                    <DataGridTextColumn Header="Lỗi" Binding="{Binding Error}" Width="3*" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <c:EmptyState Icon="CalendarLtr24" Text="Chưa có bài đăng nào."
+                              Visibility="{Binding Rows.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </TabItem>
+
+          <TabItem Header="Hiệu quả" DataContext="{Binding Analytics}">
+            <DockPanel Margin="0,12,0,0">
+              <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <ComboBox ItemsSource="{Binding Periods}" SelectedItem="{Binding Period}" DisplayMemberPath="Label" Width="120" Margin="0,0,8,0" />
+                <ComboBox ItemsSource="{Binding Platforms}" SelectedItem="{Binding Platform}" DisplayMemberPath="Label" Width="170" Margin="0,0,8,0" />
+                <ComboBox ItemsSource="{Binding CampaignChoices}" SelectedItem="{Binding CampaignFilter}" DisplayMemberPath="Label" Width="190" Margin="0,0,8,0" ToolTip="Lọc theo chiến dịch" />
+                <ComboBox ItemsSource="{Binding SourceChoices}" SelectedItem="{Binding SourceFilter}" DisplayMemberPath="Label" Width="170" Margin="0,0,8,0" ToolTip="Lọc theo nguồn nội dung" />
+                <ui:Button Content="Đồng bộ ngay" Icon="{ui:SymbolIcon ArrowSync24}" Command="{Binding SyncNowCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Làm mới" Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding RefreshCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Xuất CSV" Icon="{ui:SymbolIcon ArrowDownload24}" Command="{Binding ExportCsvCommand}" />
+              </WrapPanel>
+              <TextBlock DockPanel.Dock="Top" Text="{Binding Budget}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,8" />
+              <TabControl>
+                <TabItem Header="Tổng quan">
+                  <DockPanel Margin="0,8,0,0">
+                    <DockPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                      <ComboBox DockPanel.Dock="Right" ItemsSource="{Binding ChartOptions}" SelectedItem="{Binding ChartMetric}" DisplayMemberPath="Label" Width="260" />
+                      <TextBlock Text="{Binding ChartTitle}" VerticalAlignment="Center" />
+                    </DockPanel>
+                    <s11:MetricChart x:Name="AnalyticsChart" DockPanel.Dock="Bottom" Height="200" Margin="0,4,0,0" />
+                    <Grid>
+                      <DataGrid ItemsSource="{Binding Overview}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
+                                HeadersVisibility="Column" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" EnableRowVirtualization="True">
+                        <DataGrid.Columns>
+                          <DataGridTextColumn Header="Nền tảng" Binding="{Binding Group}" Width="*" />
+                          <DataGridTextColumn Header="Chỉ số" Binding="{Binding Metric}" Width="1.5*" />
+                          <DataGridTextColumn Header="Giá trị" Binding="{Binding Value}" Width="*" />
+                          <DataGridTextColumn Header="Kỳ trước" Binding="{Binding Previous}" Width="*" />
+                          <DataGridTextColumn Header="Chênh lệch" Binding="{Binding Delta}" Width="*" />
+                          <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="2*" />
+                        </DataGrid.Columns>
+                      </DataGrid>
+                      <c:EmptyState Icon="DataBarVertical24" Text="Chưa có số liệu. Số liệu được đồng bộ nền cho bài đã đăng; bấm Đồng bộ ngay để xếp lượt đọc."
+                                    Visibility="{Binding Overview.Count, Converter={StaticResource EmptyToVis}}" />
+                    </Grid>
+                  </DockPanel>
+                </TabItem>
+
+                <TabItem Header="Theo kênh">
+                  <DataGrid ItemsSource="{Binding Channels}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
+                            HeadersVisibility="Column" Margin="0,8,0,0" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" EnableRowVirtualization="True">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Kênh" Binding="{Binding Group}" Width="*" />
+                      <DataGridTextColumn Header="Chỉ số" Binding="{Binding Metric}" Width="1.5*" />
+                      <DataGridTextColumn Header="Giá trị" Binding="{Binding Value}" Width="*" />
+                      <DataGridTextColumn Header="Kỳ trước" Binding="{Binding Previous}" Width="*" />
+                      <DataGridTextColumn Header="Chênh lệch" Binding="{Binding Delta}" Width="*" />
+                      <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="2*" />
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </TabItem>
+
+                <TabItem Header="Top bài">
+                  <DockPanel Margin="0,8,0,0">
+                    <DockPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                      <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ChevronRight24}" Command="{Binding NextPageCommand}" />
+                      <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ChevronLeft24}" Command="{Binding PrevPageCommand}" />
+                      <TextBlock Text="{Binding PageText}" VerticalAlignment="Center" />
+                    </DockPanel>
+                    <DataGrid ItemsSource="{Binding TopPosts}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
+                              HeadersVisibility="Column" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" EnableRowVirtualization="True">
+                      <DataGrid.Columns>
+                        <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title}" Width="2*" />
+                        <DataGridTextColumn Header="Kênh" Binding="{Binding Destination}" Width="*" />
+                        <DataGridTextColumn Header="Nền tảng" Binding="{Binding Platform}" Width="*" />
+                        <DataGridTextColumn Header="Đăng lúc (VN)" Binding="{Binding Published}" Width="*" />
+                        <DataGridTextColumn Header="Lượt xem" Binding="{Binding Views}" Width="*" />
+                        <DataGridTextColumn Header="Thích" Binding="{Binding Likes}" Width="*" />
+                        <DataGridTextColumn Header="Bình luận" Binding="{Binding Comments}" Width="*" />
+                        <DataGridTextColumn Header="Chia sẻ" Binding="{Binding Shares}" Width="*" />
+                      </DataGrid.Columns>
+                    </DataGrid>
+                  </DockPanel>
+                </TabItem>
+
+                <TabItem Header="Giờ đăng tốt">
+                  <Grid Margin="0,8,0,0">
+                    <ListBox ItemsSource="{Binding BestTimes}" HorizontalContentAlignment="Stretch">
+                      <ListBox.ItemTemplate>
+                        <DataTemplate>
+                          <StackPanel Margin="0,4">
+                            <TextBlock FontWeight="SemiBold"><Run Text="{Binding Channel, Mode=OneWay}" /> · <Run Text="{Binding Platform, Mode=OneWay}" /></TextBlock>
+                            <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" Style="{StaticResource Hint}" />
+                          </StackPanel>
+                        </DataTemplate>
+                      </ListBox.ItemTemplate>
+                    </ListBox>
+                    <c:EmptyState Icon="Clock24" Text="Chưa có kênh nào."
+                                  Visibility="{Binding BestTimes.Count, Converter={StaticResource EmptyToVis}}" />
+                  </Grid>
+                </TabItem>
+
+                <TabItem Header="Cảnh báo">
+                  <Grid Margin="0,8,0,0">
+                    <DataGrid ItemsSource="{Binding Alerts}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
+                              HeadersVisibility="Column" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" EnableRowVirtualization="True">
+                      <DataGrid.Columns>
+                        <DataGridTextColumn Header="Lúc (VN)" Binding="{Binding Created}" Width="*" />
+                        <DataGridTextColumn Header="Kênh" Binding="{Binding Channel}" Width="*" />
+                        <DataGridTextColumn Header="Nội dung" Binding="{Binding Detail}" Width="4*" />
+                      </DataGrid.Columns>
+                    </DataGrid>
+                    <c:EmptyState Icon="Checkmark24" Text="Chưa phát hiện bất thường nào (tỉ lệ lỗi đăng, sụt lượt xem)."
+                                  Visibility="{Binding Alerts.Count, Converter={StaticResource EmptyToVis}}" />
+                  </Grid>
+                </TabItem>
+              </TabControl>
+            </DockPanel>
+          </TabItem>
+          <TabItem Header="Hàng đợi upload"><c:ScreenJobsPanel x:Name="ScreenJobs" /></TabItem>
+        </TabControl>
+    </Grid>
+  </DockPanel>
+</UserControl>

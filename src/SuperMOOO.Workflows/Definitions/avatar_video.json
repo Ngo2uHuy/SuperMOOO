@@ -1,0 +1,18 @@
+{
+  "id": "avatar_video",
+  "title": "Avatar khớp môi",
+  "steps": [
+    {
+      "id": "audio",
+      "kind": "avatar_audio"
+    },
+    {
+      "id": "lipsync",
+      "kind": "lipsync"
+    },
+    {
+      "id": "finalize",
+      "kind": "lipsync_finalize"
+    }
+  ]
+}

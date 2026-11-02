@@ -1,0 +1,28 @@
+Theo dõi & Social Listening
+
+Dùng để:
+Theo dõi kênh/hashtag/từ khoá theo lịch, xem xu hướng (video, hashtag, kênh hot), xem chỉ số và nghe ngóng mạng xã hội.
+
+Các bước:
+1. Tab "Theo dõi": bấm "Thêm" kênh/hashtag/từ khoá và đặt tần suất kiểm tra (giờ).
+2. Bấm "Kiểm tra ngay" để chạy một lượt; theo dõi ở khung "Tác vụ của màn này".
+3. Tab "Xu hướng": chọn chế độ (Video trending, Top hashtag, Video theo hashtag, Kênh hot), nền tảng, khu vực, chủ đề, số lượng rồi bấm "Lấy dữ liệu".
+4. Ở "Top hashtag", bấm đúp một hashtag (hoặc "Xem video của hashtag") để xem video của hashtag đó.
+5. Trên kết quả: tích video rồi "Chép link để tải" và dán ở màn Tải video; "Theo dõi" thêm kênh/hashtag đang chọn vào tab Theo dõi; "Xuất CSV / Excel"; nút mở để xem trên trình duyệt.
+6. Tab "Chỉ số": chọn thực thể và chỉ số (views, likes, comments, followers, shares) rồi "Xem biểu đồ".
+7. Tab "Nhật ký API": xem lượng API đã dùng hôm nay (YouTube, Meta, TikTok) và nhật ký thao tác.
+
+Mẹo:
+- App tự kiểm tra mỗi 30 phút cho mục đến hạn.
+- Kết quả xu hướng được giữ 30 phút để tiết kiệm hạn mức; bấm nút làm mới cạnh "Lấy dữ liệu" để lấy lại ngay.
+- Chế độ hoặc bộ lọc không áp dụng cho nền tảng đang chọn sẽ bị khoá; rê chuột để xem lý do và nguồn dữ liệu.
+- Xem/giờ = lượt xem chia số giờ từ lúc đăng; Tương tác = (thích + bình luận) / lượt xem (TikTok lấy tỉ lệ do Creative Center tính).
+- Social listening gồm YouTube Data API, Meta Ads Library, Trang Facebook, hồ sơ TikTok, thực thể đã lưu.
+- Cần key/token ở Cài đặt > Nền tảng.
+
+Lưu ý / lỗi thường gặp:
+- YouTube "Video trending", "Top hashtag", "Kênh hot" cần YouTube Data API key; "Video theo hashtag" chạy được không cần key nhưng thiếu thích/bình luận/ngày đăng.
+- TikTok Creative Center chỉ cho khách xem 3 hashtag và 4 video; phần còn lại lấy từ feed đề xuất tikwm theo khu vực (không phải bảng xếp hạng chính thức). Lưu cookie TikTok để thử lấy thêm.
+- Douyin chỉ có bảng nổi bật; Bilibili chỉ có dữ liệu Trung Quốc nên không chọn khu vực.
+- Instagram chỉ có "Video theo hashtag" qua Graph API: cần token Meta của Trang đã liên kết tài khoản Instagram doanh nghiệp, tối đa 30 hashtag mỗi 7 ngày.
+- Facebook không có dữ liệu xu hướng công khai; dùng tab "Theo dõi" cho Trang cụ thể.

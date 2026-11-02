@@ -1,0 +1,6 @@
+[
+  { "id": "CapCutYellow", "name": "CapCut vàng", "style": { "FontName": "Arial", "FontSize": 56, "PrimaryColor": "#FFE600", "OutlineColor": "#000000", "Outline": 4, "Bold": true, "PositionY": 82 } },
+  { "id": "NeonCyan", "name": "Neon cyan", "style": { "FontName": "Arial", "FontSize": 54, "PrimaryColor": "#00FFFF", "OutlineColor": "#003B46", "Outline": 4, "Bold": true, "PositionY": 82 } },
+  { "id": "ClassicWhite", "name": "Trắng cổ điển", "style": { "FontName": "Arial", "FontSize": 50, "PrimaryColor": "#FFFFFF", "OutlineColor": "#000000", "Outline": 3, "Bold": false, "PositionY": 85 } },
+  { "id": "BlackBox", "name": "Nền đen", "style": { "FontName": "Arial", "FontSize": 50, "PrimaryColor": "#FFFFFF", "OutlineColor": "#000000", "Outline": 0, "BoxBackground": true, "BackColor": "#000000", "BackOpacity": 0.7, "PositionY": 85 } }
+]

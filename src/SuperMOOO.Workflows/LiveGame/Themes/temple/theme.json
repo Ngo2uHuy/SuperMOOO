@@ -1,0 +1,102 @@
+{
+  "name": "Chùa Online · Thắp Hương Cầu An",
+  "title": "THẮP HƯƠNG CẦU AN",
+  "hint": "Bình luận \"Nam mô A Di Đà Phật\" để vào chùa, thả tim để thắp sáng đèn lưu ly",
+  "notice": "Mọi nghi thức đều miễn phí bằng bình luận và thả tim; quà chỉ thêm hiệu ứng",
+  "festivalTitle": "ĐẠI LỄ PHÓNG QUANG",
+  "festivalSub": "Tùy hỷ công đức · Chúc bạn thân tâm an lạc",
+  "backdrop": "backdrop.jpg",
+  "music": "temple_zen.mp3",
+  "musicVolume": 0.18,
+  "sfxVolume": 0.6,
+  "sprites": { "atlas": "monk.json", "blue": "monk_blue.png", "gold": "monk_gold.png" },
+  "sounds": { "bell": "bell.wav", "mo": "mo.wav", "gong": "gong.wav" },
+  "layout": {
+    "columns": 14,
+    "startY": 850,
+    "rowHeight": 42,
+    "depth": 900,
+    "spreadTop": 760,
+    "spreadBottom": 1020,
+    "scaleTop": 0.52,
+    "scaleGrow": 0.55,
+    "maxFull": 300,
+    "spawn": { "x": 540, "y": 1850 },
+    "dots": { "x": 40, "y": 830, "columns": 50, "gapX": 20, "gapY": 8 }
+  },
+  "positions": {
+    "censer": { "x": 540, "y": 785 },
+    "buddha": { "x": 540, "y": 340, "radius": 300 },
+    "lamps": [ { "x": 150, "y": 300 }, { "x": 930, "y": 300 } ]
+  },
+  "podium": {
+    "scale": 0.62,
+    "slots": [ { "x": 540, "y": 660 }, { "x": 330, "y": 748 }, { "x": 750, "y": 748 } ]
+  },
+  "lamp": { "thresholds": [50, 150, 300, 600, 1000, 2000, 4000, 8000, 15000, 30000] },
+  "rituals": [
+    { "action": "incense", "icon": "🪔" },
+    { "action": "bow", "icon": "🙏" },
+    { "action": "lotus", "icon": "🪷" },
+    { "action": "festival", "icon": "✨" }
+  ],
+  "actions": [
+    { "id": "bell", "label": "Thỉnh chuông", "icon": "🔔", "effect": "chant", "sound": "bell", "speech": "{name} thỉnh chuông cầu an." },
+    { "id": "lantern", "label": "Thả đèn hoa đăng", "icon": "🏮", "effect": "lotus", "sound": "bell", "speech": "{name} tùy hỷ thả đèn hoa đăng. {prayer}" }
+  ],
+  "giftAliases": [
+    { "aliases": ["rose", "hoa hồng", "hoa hong"], "action": "incense", "label": "Dâng hương" },
+    { "aliases": ["finger heart", "trái tim ngón tay", "tim ngón tay"], "action": "bow", "label": "Lễ Phật" },
+    { "aliases": ["rosa"], "action": "lotus", "label": "Hoa sen" }
+  ],
+  "titles": [
+    { "min": 10, "label": "Nén Hương" },
+    { "min": 50, "label": "Đèn Sen" },
+    { "min": 200, "label": "Chuông Ngân" },
+    { "min": 1000, "label": "Liên Hoa" }
+  ],
+  "slang": {
+    "ko": "không", "k": "không", "khum": "không", "hok": "không", "kh": "không",
+    "đc": "được", "dc": "được", "dk": "được", "mn": "mọi người", "mng": "mọi người", "j": "gì",
+    "vs": "với", "ntn": "như thế nào", "cx": "cũng", "cg": "cũng", "bn": "bao nhiêu", "ae": "anh em",
+    "sk": "sức khỏe", "bme": "bố mẹ", "bm": "bố mẹ", "ny": "người yêu", "nc": "nói chuyện", "nma": "nhưng mà",
+    "r": "rồi", "z": "vậy", "đt": "điện thoại", "tks": "cảm ơn", "thanks": "cảm ơn"
+  },
+  "chantKeywords": ["nam mô", "a di đà", "nam mo", "a di da", "adida"],
+  "prayerKeywords": ["nam mô", "a di đà", "nam mo", "a di da", "adida", "cầu"],
+  "prayers": {
+    "suc_khoe": {
+      "keywords": ["sức khỏe", "sức khoẻ", "suc khoe", "mạnh khỏe", "bệnh", "ốm"],
+      "lines": ["Chúc bạn và người thân luôn mạnh khỏe, giữ tâm an lành.", "Mong bạn ăn ngon ngủ yên, thân tâm nhẹ nhàng, sức khỏe vững vàng."]
+    },
+    "binh_an": {
+      "keywords": ["bình an", "binh an", "bình yên", "an lành"],
+      "lines": ["Chúc bạn đi đâu cũng bình an, gặp nhiều duyên lành.", "Mong bạn luôn bình yên, tâm thanh tịnh, lòng nhẹ nhàng."]
+    },
+    "gia_dao": {
+      "keywords": ["gia đình", "gia dinh", "gia đạo", "cha mẹ", "bố mẹ", "con cái", "vợ chồng"],
+      "lines": ["Chúc gia đình bạn luôn hòa thuận, yêu thương và bình an.", "Mong gia đạo êm ấm, cha mẹ con cháu sum vầy."]
+    },
+    "cong_viec": {
+      "keywords": ["công việc", "cong viec", "làm ăn", "buôn bán", "sự nghiệp", "việc làm"],
+      "lines": ["Chúc bạn vững tâm, bền chí và gặp nhiều thuận lợi trong công việc.", "Mong bạn làm việc an ổn, gặp người tốt, việc lành."]
+    },
+    "thi_cu": {
+      "keywords": ["thi cử", "kỳ thi", "đi thi", "thi đậu", "thi đỗ", "học hành", "học tập"],
+      "lines": ["Chúc bạn bình tĩnh, tự tin và học tập thật tốt.", "Mong bạn tỉnh táo, tự tin, làm bài thật bình tĩnh."]
+    },
+    "default": {
+      "keywords": [],
+      "lines": ["Chúc bạn và gia đình luôn bình an, mạnh khỏe.", "Tùy hỷ tấm lòng của bạn, chúc bạn thân tâm an lạc."]
+    }
+  },
+  "speech": {
+    "welcome": "Chào mừng {names} vào chùa.",
+    "title": "{name} nhận danh hiệu {title}.",
+    "thanks": "Cảm ơn {names} đã theo dõi và chia sẻ.",
+    "incense": "{name} tùy hỷ dâng hương.",
+    "bow": "{name} tùy hỷ lễ Phật. Nam mô A Di Đà Phật.",
+    "lotus": "{name} tùy hỷ dâng {count} {gift}. {prayer}",
+    "festival": "Tùy hỷ công đức {name}. {prayer}"
+  }
+}

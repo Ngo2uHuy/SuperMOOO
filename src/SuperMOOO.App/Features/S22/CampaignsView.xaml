@@ -1,0 +1,319 @@
+<UserControl x:Class="SuperMOOO.App.Features.S22.CampaignsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls"
+             x:Name="Root">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Chiến dịch đăng tự động"
+                    Description="Chọn video từ Kho thành phẩm, chia lượt giữa các kênh và đăng theo slot giờ. Có thể chỉ gợi ý, cần duyệt hoặc tự động; tự dừng khi gặp lỗi, mất tuyến mạng hoặc kênh bất thường." />
+
+    <c:SplitView PrimaryRatio="0.75">
+      <c:SplitView.Primary>
+        <Grid Margin="0,0,16,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+
+          <!-- Danh sách chiến dịch -->
+          <ui:Card Style="{StaticResource FillSection}" Margin="0,0,12,0">
+            <DockPanel>
+              <TextBlock DockPanel.Dock="Top" Style="{StaticResource Hint}" Text="{Binding Summary}" TextWrapping="Wrap" Margin="0,0,0,8" />
+              <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <ui:Button Content="Thêm" Icon="{ui:SymbolIcon Add24}" Command="{Binding NewCommand}" Margin="0,0,8,4" />
+                <ui:Button Content="Lập lịch ngay" Icon="{ui:SymbolIcon CalendarClock24}" Command="{Binding RunPlannerCommand}" Margin="0,0,8,4"
+                           ToolTip="Chạy một lượt lập lịch ngay (app vẫn tự chạy mỗi phút)" />
+                <ui:Button Appearance="Danger" Content="Dừng tất cả" Icon="{ui:SymbolIcon Stop24}" Command="{Binding PauseAllCommand}" Margin="0,0,0,4"
+                           ToolTip="Tạm dừng mọi chiến dịch đang chạy" />
+              </WrapPanel>
+              <WrapPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                <ui:Button Content="Bật" Icon="{ui:SymbolIcon Play24}" Command="{Binding ActivateCommand}" Margin="0,0,8,4" />
+                <ui:Button Content="Tạm dừng" Icon="{ui:SymbolIcon Pause24}" Command="{Binding PauseCommand}" Margin="0,0,8,4" />
+                <ui:Button Content="Dừng hẳn" Icon="{ui:SymbolIcon Stop24}" Command="{Binding StopCommand}" Margin="0,0,8,4" />
+                <ui:Button Content="Xoá" Icon="{ui:SymbolIcon Delete24}" Command="{Binding RemoveCommand}" Margin="0,0,0,4" />
+              </WrapPanel>
+              <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource ErrorText}" Text="{Binding Banner}" TextWrapping="Wrap" Margin="0,8,0,0"
+                         Visibility="{Binding Banner, Converter={StaticResource NotEmptyToVis}}" />
+              <Grid>
+                <DataGrid ItemsSource="{Binding Campaigns}" SelectedItem="{Binding Selected}" AutoGenerateColumns="False" IsReadOnly="True"
+                          SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Tên" Binding="{Binding Name, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Trạng thái" Binding="{Binding State, Mode=OneWay}" Width="Auto" />
+                    <DataGridTextColumn Header="Mức" Binding="{Binding Level, Mode=OneWay}" Width="Auto" />
+                    <DataGridTextColumn Header="Chờ duyệt" Binding="{Binding Awaiting, Mode=OneWay}" Width="Auto" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <c:EmptyState Icon="Megaphone24" Text="Chưa có chiến dịch. Bấm Thêm để tạo."
+                              Visibility="{Binding Campaigns.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+
+          <!-- Soạn chiến dịch -->
+          <Grid Grid.Column="1">
+            <c:EmptyState Icon="Megaphone24" Text="Chọn một chiến dịch ở bên trái hoặc bấm Thêm."
+                          Visibility="{Binding NoEditor, Converter={StaticResource BoolToVis}}" />
+            <TabControl Visibility="{Binding HasEditor, Converter={StaticResource BoolToVis}}">
+              <TabItem Header="Cơ bản">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                  <StackPanel Margin="0,12,12,0">
+                    <c:Field Header="Tên chiến dịch"><ui:TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" /></c:Field>
+                    <c:Field Header="Mức tự động"
+                             Hint="Tự dừng, bài có cảnh báo rủi ro và nội dung TikTok Direct Post chưa đủ form luôn chờ bạn duyệt.">
+                      <ComboBox ItemsSource="{Binding LevelOptions}" SelectedValue="{Binding Level}" SelectedValuePath="Value" DisplayMemberPath="Label" />
+                    </c:Field>
+                    <WrapPanel>
+                      <c:Field Header="Múi giờ của slot" Hint="Giờ slot hiểu theo múi này (có đổi giờ mùa hè)." Margin="0,0,16,0">
+                        <ComboBox ItemsSource="{Binding TimeZoneOptions}" Text="{Binding TimeZoneId, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Width="220" />
+                      </c:Field>
+                      <c:Field Header="Trọng số chia lượt" Hint="Chiến dịch chung kênh chia slot theo tỉ lệ này." Margin="0,0,16,0">
+                        <ui:NumberBox Value="{Binding Weight}" Minimum="0.1" Maximum="100" Width="150" />
+                      </c:Field>
+                      <c:Field Header="Quyền riêng tư bài đăng">
+                        <ComboBox ItemsSource="{Binding PrivacyOptions}" SelectedValue="{Binding Privacy}" SelectedValuePath="Value" DisplayMemberPath="Label" Width="190" />
+                      </c:Field>
+                    </WrapPanel>
+                    <WrapPanel>
+                      <c:Field Header="Ngân sách (tổng số bài, trống = không giới hạn)" Margin="0,0,16,0">
+                        <ui:NumberBox Value="{Binding PostBudget}" Minimum="1" PlaceholderText="Không giới hạn" Width="200" />
+                      </c:Field>
+                      <c:Field Header="Hạn dùng nội dung (ngày, trống = không hạn)" Margin="0,0,16,0">
+                        <ui:NumberBox Value="{Binding ContentMaxAgeDays}" Minimum="1" PlaceholderText="Không hạn" Width="200" />
+                      </c:Field>
+                      <c:Field Header="Tự dừng sau N bài lỗi liên tiếp">
+                        <ui:NumberBox Value="{Binding MaxConsecutiveFailures}" Minimum="1" Maximum="100" Width="200" />
+                      </c:Field>
+                    </WrapPanel>
+                    <c:Field Header="Mẫu tiêu đề" Hint="Biến: {title} {caption} {tags} {hashtags} {source} {language}">
+                      <ui:TextBox Text="{Binding TitleTemplate, UpdateSourceTrigger=PropertyChanged}" MaxLength="500" />
+                    </c:Field>
+                    <c:Field Header="Mẫu mô tả">
+                      <ui:TextBox Text="{Binding DescriptionTemplate, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinLines="2" MaxLines="5" />
+                    </c:Field>
+                    <WrapPanel>
+                      <CheckBox Content="Evergreen: đăng lại nội dung cũ" IsChecked="{Binding Evergreen}" VerticalAlignment="Center" Margin="0,0,16,8" />
+                      <c:Field Header="Cách nhau tối thiểu (ngày)" Margin="0,0,16,0">
+                        <ui:NumberBox Value="{Binding EvergreenMinDays}" Minimum="1" Maximum="3650" Width="180" />
+                      </c:Field>
+                    </WrapPanel>
+                    <ui:Button Appearance="Primary" Content="Lưu chiến dịch" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" HorizontalAlignment="Left" Margin="0,4,0,12" />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Quy tắc &amp; kênh">
+                <DockPanel Margin="0,12,0,0">
+                  <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                    <ui:Button Content="Thêm quy tắc" Icon="{ui:SymbolIcon Add24}" Command="{Binding AddRuleCommand}" Margin="0,0,8,0" />
+                    <ui:Button Appearance="Primary" Content="Lưu chiến dịch" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" />
+                  </WrapPanel>
+                  <TextBlock DockPanel.Dock="Top" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,8"
+                             Text="Video khớp một quy tắc nào đó thì được đăng lên các kênh của quy tắc đó. Điều kiện để trống = không lọc." />
+                  <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Rules}">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <ui:Card Style="{StaticResource Section}">
+                            <StackPanel>
+                              <DockPanel>
+                                <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Xoá quy tắc"
+                                           Command="{Binding DataContext.RemoveRuleCommand, ElementName=Root}" CommandParameter="{Binding}" />
+                                <WrapPanel>
+                                  <c:Field Header="Nguồn" Margin="0,0,12,0">
+                                    <ComboBox ItemsSource="{Binding DataContext.SourceOptions, ElementName=Root}" SelectedValue="{Binding SourceId}" SelectedValuePath="Value"
+                                              DisplayMemberPath="Label" Width="200" />
+                                  </c:Field>
+                                  <c:Field Header="Nhãn (cách nhau dấu phẩy)" Margin="0,0,12,0"><ui:TextBox Text="{Binding Tags, UpdateSourceTrigger=PropertyChanged}" Width="200" /></c:Field>
+                                  <c:Field Header="Ngôn ngữ" Margin="0,0,12,0"><c:ValuePicker Options="{x:Static c:InputChoices.Languages}" Value="{Binding Language}" Width="220" /></c:Field>
+                                  <c:Field Header="Từ (giây)" Margin="0,0,12,0"><ui:NumberBox Value="{Binding MinSeconds}" Minimum="0" Width="110" /></c:Field>
+                                  <c:Field Header="Đến (giây)" Margin="0,0,12,0"><ui:NumberBox Value="{Binding MaxSeconds}" Minimum="0" Width="110" /></c:Field>
+                                  <c:Field Header="Tỉ lệ khung">
+                                    <ComboBox ItemsSource="{Binding DataContext.AspectOptions, ElementName=Root}" SelectedValue="{Binding Aspect}" SelectedValuePath="Value"
+                                              DisplayMemberPath="Label" Width="150" />
+                                  </c:Field>
+                                </WrapPanel>
+                              </DockPanel>
+                              <TextBlock Style="{StaticResource CardTitle}" Text="Kênh đích" Margin="0,4,0,4" />
+                              <ItemsControl ItemsSource="{Binding Destinations}">
+                                <ItemsControl.ItemTemplate>
+                                  <DataTemplate>
+                                    <CheckBox Content="{Binding Label}" IsChecked="{Binding IsSelected}" ToolTip="{Binding Hint}" Margin="0,0,0,4" />
+                                  </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                              </ItemsControl>
+                            </StackPanel>
+                          </ui:Card>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </ScrollViewer>
+                </DockPanel>
+              </TabItem>
+
+              <TabItem Header="Lịch đăng">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                  <StackPanel Margin="0,12,12,0">
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Slot giờ đăng (theo múi giờ của chiến dịch)" />
+                    <WrapPanel Margin="0,4,0,8">
+                      <ComboBox ItemsSource="{Binding DayOptions}" SelectedValue="{Binding NewSlotDay}" SelectedValuePath="Value" DisplayMemberPath="Label" Width="110" Margin="0,0,8,0" />
+                      <ui:TextBox Text="{Binding NewSlotTime, UpdateSourceTrigger=PropertyChanged}" Width="80" PlaceholderText="HH:mm" Margin="0,0,8,0" />
+                      <ComboBox ItemsSource="{Binding SlotDestinations}" SelectedValue="{Binding NewSlotDestinationId}" SelectedValuePath="Value" DisplayMemberPath="Label"
+                                Width="260" Margin="0,0,8,0" />
+                      <ui:Button Content="Thêm slot" Icon="{ui:SymbolIcon Add24}" Command="{Binding AddSlotCommand}" Margin="0,0,8,0" />
+                      <ui:Button Content="Gợi ý giờ tốt" Icon="{ui:SymbolIcon DataTrending24}" Command="{Binding SuggestSlotsCommand}"
+                                 ToolTip="Dựa trên số liệu tab Hiệu quả của S14 (cần đủ bài đã đo)" />
+                    </WrapPanel>
+                    <ItemsControl ItemsSource="{Binding Slots}" Margin="0,0,0,8">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <DockPanel Margin="0,0,0,2">
+                            <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Xoá slot"
+                                       Command="{Binding DataContext.RemoveSlotCommand, ElementName=Root}" CommandParameter="{Binding}" />
+                            <TextBlock VerticalAlignment="Center"><Run Text="{Binding Text, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="  ·  " /><Run Text="{Binding DestinationText, Mode=OneWay}" /></TextBlock>
+                          </DockPanel>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ItemsControl ItemsSource="{Binding Suggestions}" Margin="0,0,0,12">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <DockPanel Margin="0,0,0,2">
+                            <ui:Button DockPanel.Dock="Right" Content="Thêm" Command="{Binding DataContext.AddSuggestionCommand, ElementName=Root}" CommandParameter="{Binding}" />
+                            <TextBlock Text="{Binding Text}" TextWrapping="Wrap" VerticalAlignment="Center" Style="{StaticResource Hint}" />
+                          </DockPanel>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Giới hạn" />
+                    <WrapPanel Margin="0,4,0,0">
+                      <c:Field Header="Tối đa bài/ngày/kênh" Margin="0,0,16,0"><ui:NumberBox Value="{Binding MaxPerDay}" Minimum="1" Maximum="50" Width="160" /></c:Field>
+                      <c:Field Header="Cách nhau tối thiểu (phút)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding MinGapMinutes}" Minimum="0" Maximum="1440" Width="160" /></c:Field>
+                      <c:Field Header="Lệch ngẫu nhiên ± (phút)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding JitterMinutes}" Minimum="0" Maximum="120" Width="160" /></c:Field>
+                      <c:Field Header="Xếp trước (ngày)"><ui:NumberBox Value="{Binding HorizonDays}" Minimum="1" Maximum="28" Width="160" /></c:Field>
+                    </WrapPanel>
+                    <c:Field Header="Khung giờ cấm (mỗi dòng HH:mm-HH:mm, vắt nửa đêm được)">
+                      <ui:TextBox Text="{Binding ForbiddenText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MinLines="2" MaxLines="4" />
+                    </c:Field>
+
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Khi trễ lịch (máy tắt, ngủ…)" Margin="0,8,0,0" />
+                    <WrapPanel Margin="0,4,0,0">
+                      <c:Field Header="Cách xử lý" Margin="0,0,16,0">
+                        <ComboBox ItemsSource="{Binding LateOptions}" SelectedValue="{Binding LateMode}" SelectedValuePath="Value" DisplayMemberPath="Label" Width="220" />
+                      </c:Field>
+                      <c:Field Header="Ân hạn (phút)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding LateGraceMinutes}" Minimum="0" Maximum="1440" Width="140" /></c:Field>
+                      <c:Field Header="Đăng bù tối đa (bài)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding LateMaxCatchUp}" Minimum="0" Maximum="50" Width="140" /></c:Field>
+                      <c:Field Header="Còn đăng bù nếu trễ ≤ (phút)"><ui:NumberBox Value="{Binding LateMaxLatenessMinutes}" Minimum="0" Maximum="10080" Width="170" /></c:Field>
+                    </WrapPanel>
+                    <ui:Button Appearance="Primary" Content="Lưu chiến dịch" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" HorizontalAlignment="Left" Margin="0,8,0,12" />
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Xem trước 7 ngày">
+                <DockPanel Margin="0,12,0,0">
+                  <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                    <ui:Button Appearance="Primary" Content="Xem trước" Icon="{ui:SymbolIcon Eye24}" Command="{Binding PreviewCommand}" />
+                    <TextBlock Style="{StaticResource Hint}" VerticalAlignment="Center" Margin="12,0,0,0"
+                               Text="Dùng quy tắc, slot và nội dung kho hiện tại (kể cả chưa lưu); không tạo bài." />
+                  </WrapPanel>
+                  <ItemsControl DockPanel.Dock="Bottom" ItemsSource="{Binding PreviewNotes}" Margin="0,8,0,0">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate><TextBlock Text="{Binding}" Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,2" /></DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                  <DataGrid ItemsSource="{Binding PreviewRows}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Giờ đăng" Binding="{Binding When, Mode=OneWay}" Width="Auto" />
+                      <DataGridTextColumn Header="Kênh" Binding="{Binding Channel, Mode=OneWay}" Width="*" />
+                      <DataGridTextColumn Header="Video" Binding="{Binding Content, Mode=OneWay}" Width="2*" />
+                      <DataGridTextColumn Header="Kết quả" Binding="{Binding Outcome, Mode=OneWay}" Width="Auto" />
+                      <DataGridTextColumn Header="Cảnh báo" Binding="{Binding Warnings, Mode=OneWay}" Width="2*" />
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </DockPanel>
+              </TabItem>
+
+              <TabItem Header="Đặt sản xuất">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                  <StackPanel Margin="0,12,12,0">
+                    <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Text="{Binding ProdMeasure}" Margin="0,0,0,8" />
+                    <CheckBox Content="Tự đặt sản xuất khi tồn kho thấp" IsChecked="{Binding ProdEnabled}" Margin="0,0,0,8" />
+                    <c:Field Header="Chủ đề (mỗi dòng một chủ đề, luân phiên)">
+                      <ui:TextBox Text="{Binding ProdTopics, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinLines="3" MaxLines="8" />
+                    </c:Field>
+                    <WrapPanel>
+                      <c:Field Header="Ngôn ngữ (trống = theo quy tắc)" Margin="0,0,16,0"><c:ValuePicker Options="{x:Static c:InputChoices.Languages}" Value="{Binding ProdLanguage}" Width="220" /></c:Field>
+                      <c:Field Header="Tỉ lệ khung" Hint="Talkshow chỉ 16:9; video vẽ tay 16:9 hoặc 9:16." Margin="0,0,16,0">
+                        <ComboBox ItemsSource="{Binding ProdAspectOptions}" SelectedValue="{Binding ProdAspect}" SelectedValuePath="Value" DisplayMemberPath="Label" Width="220" />
+                      </c:Field>
+                      <c:Field Header="Pipeline ưu tiên">
+                        <ComboBox ItemsSource="{Binding ProducerOptions}" SelectedValue="{Binding ProdProducer}" SelectedValuePath="Value" DisplayMemberPath="Label" Width="220" />
+                      </c:Field>
+                    </WrapPanel>
+                    <WrapPanel>
+                      <c:Field Header="Đặt khi tồn dưới (ngày đăng)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding ProdBufferDays}" Minimum="0.5" Maximum="365" Width="170" /></c:Field>
+                      <c:Field Header="Bổ sung tới (ngày đăng)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding ProdTargetDays}" Minimum="0.5" Maximum="365" Width="170" /></c:Field>
+                      <c:Field Header="Tối đa video mỗi lần"><ui:NumberBox Value="{Binding ProdMaxOrder}" Minimum="1" Maximum="100" Width="170" /></c:Field>
+                    </WrapPanel>
+                    <ui:Button Content="Lưu cài đặt sản xuất" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveProductionCommand}" HorizontalAlignment="Left" Margin="0,0,0,16" />
+
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Đặt ngay một video" />
+                    <DockPanel Margin="0,4,0,8">
+                      <ui:Button DockPanel.Dock="Right" Appearance="Primary" Content="Đặt sản xuất" Icon="{ui:SymbolIcon VideoClip24}" Command="{Binding OrderNowCommand}" Margin="8,0,0,0" />
+                      <ui:TextBox Text="{Binding OrderTopic, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Chủ đề (trống = chủ đề đầu tiên ở trên)" />
+                    </DockPanel>
+                    <WrapPanel Margin="0,0,0,4">
+                      <ui:Button Content="Làm mới" Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding ReloadRequestsCommand}" Margin="0,0,8,0" />
+                      <ui:Button Content="Huỷ yêu cầu đang chọn" Icon="{ui:SymbolIcon Dismiss24}" Command="{Binding CancelRequestCommand}" />
+                    </WrapPanel>
+                    <DataGrid ItemsSource="{Binding Requests}" SelectedItem="{Binding SelectedRequest}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+                              CanUserAddRows="False" HeadersVisibility="Column" MaxHeight="260">
+                      <DataGrid.Columns>
+                        <DataGridTextColumn Header="Chủ đề" Binding="{Binding Topic, Mode=OneWay}" Width="2*" />
+                        <DataGridTextColumn Header="Pipeline" Binding="{Binding Producer, Mode=OneWay}" Width="*" />
+                        <DataGridTextColumn Header="Trạng thái" Binding="{Binding State, Mode=OneWay}" Width="Auto" />
+                        <DataGridTextColumn Header="Tiến độ" Binding="{Binding Progress, Mode=OneWay}" Width="Auto" />
+                        <DataGridTextColumn Header="Lúc" Binding="{Binding Created, Mode=OneWay}" Width="Auto" />
+                        <DataGridTextColumn Header="Ghi chú" Binding="{Binding Message, Mode=OneWay}" Width="2*" />
+                      </DataGrid.Columns>
+                    </DataGrid>
+                  </StackPanel>
+                </ScrollViewer>
+              </TabItem>
+
+              <TabItem Header="Chờ duyệt">
+                <DockPanel Margin="0,12,0,0">
+                  <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                    <ui:Button Content="Chọn/bỏ chọn tất cả" Icon="{ui:SymbolIcon CheckboxChecked24}" Command="{Binding SelectAllApprovalsCommand}" Margin="0,0,8,0" />
+                    <ui:Button Appearance="Primary" Content="Duyệt" Icon="{ui:SymbolIcon Checkmark24}" Command="{Binding ApproveCommand}" Margin="0,0,8,0" />
+                    <ui:Button Content="Từ chối" Icon="{ui:SymbolIcon Dismiss24}" Command="{Binding RejectCommand}" Margin="0,0,8,0" />
+                    <ui:Button Content="Làm mới" Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding ReloadApprovalsCommand}" />
+                  </WrapPanel>
+                  <Grid>
+                    <DataGrid ItemsSource="{Binding Approvals}" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column">
+                      <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Header="" Binding="{Binding IsChecked}" Width="Auto" />
+                        <DataGridTextColumn Header="Giờ đăng (VN)" Binding="{Binding When, Mode=OneWay}" IsReadOnly="True" Width="Auto" />
+                        <DataGridTextColumn Header="Bài" Binding="{Binding Title, Mode=OneWay}" IsReadOnly="True" Width="2*" />
+                        <DataGridTextColumn Header="Kênh" Binding="{Binding Channel, Mode=OneWay}" IsReadOnly="True" Width="*" />
+                        <DataGridTextColumn Header="Chiến dịch" Binding="{Binding Campaign, Mode=OneWay}" IsReadOnly="True" Width="*" />
+                      </DataGrid.Columns>
+                    </DataGrid>
+                    <c:EmptyState Icon="CheckmarkCircle24" Text="Không có bài nào chờ duyệt."
+                                  Visibility="{Binding Approvals.Count, Converter={StaticResource EmptyToVis}}" />
+                  </Grid>
+                </DockPanel>
+              </TabItem>
+            </TabControl>
+          </Grid>
+        </Grid>
+      </c:SplitView.Primary>
+      <c:SplitView.Secondary>
+        <c:ScreenJobsPanel x:Name="ScreenJobs" />
+      </c:SplitView.Secondary>
+    </c:SplitView>
+  </DockPanel>
+</UserControl>

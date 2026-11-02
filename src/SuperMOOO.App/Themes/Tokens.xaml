@@ -1,0 +1,200 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                    xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <!-- Token riêng tối thiểu; màu/brush lấy từ theme WPF-UI (TextFillColor*, CardBackground*, SystemFillColor*). -->
+  <CornerRadius x:Key="Radius">8</CornerRadius>
+  <sys:Double x:Key="FontSizeTitle">26</sys:Double>
+  <sys:Double x:Key="FontSizeBody">14</sys:Double>
+  <sys:Double x:Key="FontSizeCaption">12</sys:Double>
+
+  <Thickness x:Key="PagePadding">28,22,28,16</Thickness>
+  <Thickness x:Key="CardGap">0,0,0,14</Thickness>
+  <Thickness x:Key="ButtonGap">8,0,0,0</Thickness>
+
+  <BooleanToVisibilityConverter x:Key="BoolToVis" />
+  <c:EmptyToVisibilityConverter x:Key="EmptyToVis" />
+  <c:EmptyToVisibilityConverter x:Key="NotEmptyToVis" Invert="True" />
+  <c:LabelConverter x:Key="Label" />
+  <c:FileNameConverter x:Key="FileName" />
+  <!-- ItemTemplate cho ComboBox có giá trị là khoá/enum kỹ thuật: hiện nhãn tiếng Việt, giá trị bind không đổi. -->
+  <DataTemplate x:Key="LabelItem">
+    <TextBlock Text="{Binding Converter={StaticResource Label}, Mode=OneWay}" />
+  </DataTemplate>
+
+  <!-- Mọi ComboBox (kể cả dựng bằng code) có ô tìm trong danh sách xổ dài, xem Controls/ComboSearch.cs. -->
+  <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+    <Setter Property="c:ComboSearch.IsEnabled" Value="True" />
+  </Style>
+
+  <Style x:Key="CardTitle" TargetType="TextBlock">
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+    <Setter Property="Margin" Value="0,0,0,14" />
+  </Style>
+
+  <Style x:Key="Hint" TargetType="TextBlock">
+    <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+    <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <Style x:Key="ErrorText" TargetType="TextBlock" BasedOn="{StaticResource Hint}">
+    <Setter Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+  </Style>
+
+  <Style x:Key="ValueText" TargetType="TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="MinWidth" Value="48" />
+    <Setter Property="TextAlignment" Value="Right" />
+    <Setter Property="Margin" Value="8,0,0,0" />
+  </Style>
+
+  <!-- Nhóm thiết lập: thẻ có tiêu đề, cách nhau 14. -->
+  <Style x:Key="Section" TargetType="ui:Card" BasedOn="{StaticResource {x:Type ui:Card}}">
+    <Setter Property="Margin" Value="{StaticResource CardGap}" />
+    <Setter Property="Padding" Value="20,18" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="VerticalAlignment" Value="Top" />
+    <Setter Property="VerticalContentAlignment" Value="Top" />
+  </Style>
+
+  <!-- Thẻ lấp đầy chiều cao còn lại (bảng, danh sách, xem trước). -->
+  <Style x:Key="FillSection" TargetType="ui:Card" BasedOn="{StaticResource Section}">
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+  </Style>
+
+  <!-- Bảng kiểu danh sách quản lý: chỉ kẻ ngang, hàng thoáng. -->
+  <Style TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
+    <Setter Property="GridLinesVisibility" Value="Horizontal" />
+    <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
+    <Setter Property="MinRowHeight" Value="36" />
+  </Style>
+
+  <Style x:Key="Advanced" TargetType="ui:CardExpander" BasedOn="{StaticResource {x:Type ui:CardExpander}}">
+    <Setter Property="Margin" Value="{StaticResource CardGap}" />
+    <Setter Property="IsExpanded" Value="False" />
+    <Setter Property="ContentPadding" Value="16" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+  </Style>
+
+  <Style x:Key="ToolButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+    <Setter Property="Margin" Value="0,0,8,4" />
+  </Style>
+
+  <!-- Nút chỉ có icon: luôn kèm ToolTip ở chỗ dùng. -->
+  <Style x:Key="IconButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+    <Setter Property="Padding" Value="8" />
+    <Setter Property="MinWidth" Value="34" />
+    <Setter Property="Margin" Value="4,0,0,0" />
+    <Setter Property="VerticalAlignment" Value="Stretch" />
+  </Style>
+
+  <Style x:Key="SplitterGrip" TargetType="GridSplitter">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="GridSplitter">
+          <Border Background="{TemplateBinding Background}">
+            <Border x:Name="Grip" Width="4" Height="40" CornerRadius="2" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Background="{DynamicResource ControlStrongFillColorDisabledBrush}" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="ResizeDirection" Value="Rows">
+              <Setter TargetName="Grip" Property="Width" Value="40" />
+              <Setter TargetName="Grip" Property="Height" Value="4" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Grip" Property="Background" Value="{DynamicResource ControlStrongFillColorDefaultBrush}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="c:Field">
+    <Setter Property="Margin" Value="0,0,0,12" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="c:Field">
+          <StackPanel>
+            <TextBlock x:Name="Label" Text="{TemplateBinding Header}" Margin="0,0,0,6" TextWrapping="Wrap"
+                       Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+            <ContentPresenter />
+            <TextBlock x:Name="HintText" Text="{TemplateBinding Hint}" Style="{StaticResource Hint}" Margin="0,4,0,0" />
+          </StackPanel>
+          <ControlTemplate.Triggers>
+            <Trigger Property="Header" Value="{x:Null}">
+              <Setter TargetName="Label" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="Hint" Value="{x:Null}">
+              <Setter TargetName="HintText" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="c:ScreenHeader">
+    <Setter Property="Margin" Value="0,0,0,20" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="c:ScreenHeader">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel VerticalAlignment="Center">
+              <TextBlock Text="{TemplateBinding Title}" FontSize="{StaticResource FontSizeTitle}" FontWeight="SemiBold"
+                         Foreground="{DynamicResource TextFillColorPrimaryBrush}" TextTrimming="CharacterEllipsis" />
+              <TextBlock Text="{TemplateBinding Description}" Margin="0,2,0,0" TextWrapping="Wrap" FontSize="13"
+                         Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="24,0,0,0">
+              <ContentPresenter VerticalAlignment="Center" />
+              <ui:Button Margin="8,0,0,0" Content="Hướng dẫn" Icon="{ui:SymbolIcon QuestionCircle24}" ToolTip="Hướng dẫn màn này (F1)"
+                         Command="ApplicationCommands.Help" />
+            </StackPanel>
+          </Grid>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <Style TargetType="c:EmptyState">
+    <!-- Chừa hàng tiêu đề cột khi đặt chồng lên DataGrid. -->
+    <Setter Property="Margin" Value="0,32,0,0" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+    <Setter Property="Focusable" Value="False" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="c:EmptyState">
+          <!-- Viewbox chỉ thu nhỏ khi vùng chứa quá thấp (cửa sổ hẹp) để chữ không bị cắt. -->
+          <Viewbox StretchDirection="DownOnly" Stretch="Uniform">
+            <StackPanel Margin="12" MaxWidth="440">
+              <ui:SymbolIcon Symbol="{TemplateBinding Icon}" FontSize="40" HorizontalAlignment="Center"
+                             Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+              <TextBlock Text="{TemplateBinding Text}" Margin="0,8,0,0" TextAlignment="Center" TextWrapping="Wrap"
+                         Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+              <ContentPresenter Margin="0,12,0,0" HorizontalAlignment="Center" />
+            </StackPanel>
+          </Viewbox>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+</ResourceDictionary>

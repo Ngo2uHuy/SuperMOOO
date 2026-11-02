@@ -1,0 +1,143 @@
+<UserControl x:Class="SuperMOOO.App.Features.S24.LiveGameView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml" xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+ <DockPanel Margin="{StaticResource PagePadding}">
+  <c:ScreenHeader DockPanel.Dock="Top" Title="Live tương tác" Description="Chùa Online · Thắp Hương Cầu An. Bình luận và thả tim để tham gia miễn phí; quà chỉ thêm hiệu ứng." />
+  <c:ScreenJobsPanel x:Name="ScreenJobs" DockPanel.Dock="Bottom" Margin="0,12,0,0" />
+  <StackPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+   <WrapPanel>
+    <ui:Button Content="Bắt đầu" Appearance="Primary" Command="{Binding StartCommand}" IsEnabled="{Binding CanStart}" Margin="0,0,8,8" />
+    <ui:Button Content="Dừng" Command="{Binding StopCommand}" IsEnabled="{Binding CanStop}" Margin="0,0,8,8" />
+    <ui:Button Content="Mở cửa sổ phát" Command="{Binding OpenWindowCommand}" IsEnabled="{Binding Running}" Margin="0,0,8,8" />
+    <ui:Button Content="Sao chép URL cho OBS" Command="{Binding CopyUrlCommand}" IsEnabled="{Binding Running}" Margin="0,0,8,8" />
+    <ui:Button Content="Xem thử (có bảng giả lập)" Command="{Binding OpenPreviewCommand}" IsEnabled="{Binding Running}" Margin="0,0,8,8" ToolTip="Cửa sổ thử có bảng giả lập và HUD; không dùng để phát" />
+   </WrapPanel>
+   <TextBlock Text="{Binding Status}" FontWeight="SemiBold" />
+   <TextBlock Text="{Binding Stats}" Style="{StaticResource Hint}" />
+   <TextBlock Text="{Binding Notice}" Foreground="{DynamicResource SystemFillColorCautionBrush}" TextWrapping="Wrap">
+    <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><Trigger Property="Text" Value=""><Setter Property="Visibility" Value="Collapsed" /></Trigger></Style.Triggers></Style></TextBlock.Style>
+   </TextBlock>
+  </StackPanel>
+  <TabControl>
+   <TabItem Header="Điều khiển">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+     <StackPanel Margin="0,12,16,0">
+      <ui:Card Style="{StaticResource Section}">
+       <StackPanel IsEnabled="{Binding CanConfigure}">
+        <TextBlock Text="Kết nối &amp; giọng đọc" Style="{StaticResource CardTitle}" />
+        <CheckBox Content="Chế độ giả lập (không kết nối TikTok)" IsChecked="{Binding Simulated}" Margin="0,0,0,12" />
+        <c:Field Header="Địa chỉ TikFinity"><TextBox Text="{Binding TikFinityUrl, UpdateSourceTrigger=PropertyChanged}" /></c:Field>
+        <c:Field Header="Nối lại TikFinity nếu không nhận gói nào quá (phút, 1–120)"><TextBox Text="{Binding IdleReconnectMinutes}" /></c:Field>
+        <c:Field Header="Cổng overlay"><TextBox Text="{Binding Port}" /></c:Field>
+        <c:Field Header="Chủ đề"><TextBlock Text="Chùa Online · Thắp Hương Cầu An" /></c:Field>
+        <c:Field Header="Dịch vụ tạo nền AI"><ComboBox ItemsSource="{Binding ImageProviders}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding ImageProvider}" /></c:Field>
+        <ui:Button Content="Tạo ba nền AI" Command="{Binding CreateBackgroundsCommand}" HorizontalAlignment="Left" Margin="0,0,0,8" />
+        <TextBlock Text="Nút này gửi mô tả chùa sáng/chiều/tối tới dịch vụ đã chọn, dùng API key cấu hình ở S16 và có thể tính phí. Mặc định dùng cảnh vẽ sẵn khi chưa tạo nền." Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,12" />
+        <CheckBox Content="Bật giọng đọc local" IsChecked="{Binding EnableSpeech}" Margin="0,0,0,8" />
+        <c:Field Header="Giọng đọc"><ComboBox ItemsSource="{Binding Voices}" DisplayMemberPath="DisplayName" SelectedValuePath="Id" SelectedValue="{Binding VoiceId}" /></c:Field>
+        <c:Field Header="Âm lượng"><Slider Minimum="0" Maximum="1" Value="{Binding Volume}" /></c:Field>
+        <c:Field Header="Giới hạn câu/phút (1–30)"><TextBox Text="{Binding SentencesPerMinute}" /></c:Field>
+        <CheckBox Content="Cầu an AI bằng model local (cấu hình ở S16)" IsChecked="{Binding EnableAi}" Margin="0,0,0,8" />
+        <c:Field Header="Tốc độ khung hình"><ComboBox ItemsSource="{Binding FrameRates}" SelectedItem="{Binding Fps}" /></c:Field>
+        <CheckBox Content="Ghi JSON TikFinity thô để chẩn đoán (có bình luận và tên người xem)" IsChecked="{Binding DiagnosticLogging}" />
+       </StackPanel>
+      </ui:Card>
+      <ui:Card Style="{StaticResource Section}">
+       <StackPanel>
+        <TextBlock Text="Giả lập sự kiện" Style="{StaticResource CardTitle}" />
+        <WrapPanel IsEnabled="{Binding CanSimulate}">
+         <ui:Button Content="Vào phòng" Command="{Binding SimulateCommand}" CommandParameter="Member" Margin="0,0,8,8" />
+         <ui:Button Content="Cầu an" Command="{Binding SimulateCommand}" CommandParameter="Chat" Margin="0,0,8,8" />
+         <ui:Button Content="Thả tim" Command="{Binding SimulateCommand}" CommandParameter="Like" Margin="0,0,8,8" />
+         <ui:Button Content="Theo dõi" Command="{Binding SimulateCommand}" CommandParameter="Follow" Margin="0,0,8,8" />
+         <ui:Button Content="Tặng quà" Command="{Binding SimulateCommand}" CommandParameter="Gift" Margin="0,0,8,8" />
+         <ui:Button Content="Bão quà (15 giây)" Command="{Binding SimulateCommand}" CommandParameter="storm" Margin="0,0,8,8" />
+        </WrapPanel>
+        <TextBlock Text="LIVE Studio: thêm Window capture → chọn cửa sổ Edge Chùa Online → khung dọc → bật âm thanh hệ thống. Cửa sổ phát tự bật tiếng và ẩn bảng giả lập; dùng Xem thử để bấm giả lập trên trang. Nhấn F1 để xem hướng dẫn." TextWrapping="Wrap" Style="{StaticResource Hint}" />
+       </StackPanel>
+      </ui:Card>
+     </StackPanel>
+    </ScrollViewer>
+   </TabItem>
+   <TabItem Header="Luật &amp; nội dung">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="0,12,16,0">
+     <ui:Card Style="{StaticResource Section}">
+      <StackPanel IsEnabled="{Binding CanEditRules}">
+       <TextBlock Text="Luật quà &amp; bình luận" Style="{StaticResource CardTitle}" />
+       <TextBlock Text="Quà: khớp mã quà trước, rồi tên quà (không dấu, không phân biệt hoa thường), rồi bảng tên quà của chủ đề, cuối cùng mức xu bên dưới. Bình luận: khớp từ khoá thì chạy lệnh, mỗi người chờ hết thời gian hồi. Nhiều tên/từ khoá cách nhau bằng dấu phẩy. Lưu &amp; áp dụng được cả khi phiên đang chạy." Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,8" />
+       <WrapPanel>
+        <ui:Button Content="Thêm luật quà" Command="{Binding AddRuleCommand}" CommandParameter="gift" Margin="0,0,8,8" />
+        <ui:Button Content="Thêm luật bình luận" Command="{Binding AddRuleCommand}" CommandParameter="chat" Margin="0,0,8,8" />
+        <ui:Button Content="Tải lại quà đã thấy" Command="{Binding RefreshGiftsCommand}" Margin="0,0,8,8" ToolTip="Danh sách quà thật đã nhận ở các phiên trước (tối đa 500)" />
+        <ui:Button Content="Lưu &amp; áp dụng luật" Appearance="Primary" Command="{Binding SaveRulesCommand}" Margin="0,0,8,8" />
+       </WrapPanel>
+       <c:Field Header="Lệnh bình luận tối đa mỗi phút (cả phòng, 1–120)"><TextBox Text="{Binding CommandsPerMinute}" /></c:Field>
+       <DataGrid ItemsSource="{Binding Rules}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserSortColumns="False"
+                 HeadersVisibility="Column" SelectionMode="Single" MaxHeight="440" Margin="0,8,0,0">
+        <DataGrid.Columns>
+         <DataGridTemplateColumn Header="Bật" Width="50">
+          <DataGridTemplateColumn.CellTemplate><DataTemplate><CheckBox IsChecked="{Binding Enabled, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+         </DataGridTemplateColumn>
+         <DataGridTemplateColumn Header="Loại" Width="120">
+          <DataGridTemplateColumn.CellTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.RuleSources, RelativeSource={RelativeSource AncestorType=DataGrid}}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Source, UpdateSourceTrigger=PropertyChanged}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+         </DataGridTemplateColumn>
+         <DataGridTemplateColumn Header="Quà đã thấy" Width="200">
+          <DataGridTemplateColumn.CellTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.ObservedGifts, RelativeSource={RelativeSource AncestorType=DataGrid}}" DisplayMemberPath="Display" SelectedItem="{Binding Gift, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsGift}" ToolTip="Chọn quà để điền mã và tên quà" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+         </DataGridTemplateColumn>
+         <DataGridTemplateColumn Header="Mã quà" Width="90">
+          <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBox Text="{Binding GiftId, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsGift}" MaxLength="64" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+         </DataGridTemplateColumn>
+         <DataGridTemplateColumn Header="Tên quà / từ khoá" Width="*" MinWidth="160">
+          <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBox Text="{Binding Trigger, UpdateSourceTrigger=PropertyChanged}" MaxLength="300" ToolTip="Nhiều mục cách nhau bằng dấu phẩy, ví dụ: hoa hồng, rose" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+         </DataGridTemplateColumn>
+         <DataGridTemplateColumn Header="Khớp" Width="150">
+          <DataGridTemplateColumn.CellTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.MatchModes, RelativeSource={RelativeSource AncestorType=DataGrid}}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Match, UpdateSourceTrigger=PropertyChanged}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+         </DataGridTemplateColumn>
+         <DataGridTemplateColumn Header="Hành động" Width="190">
+          <DataGridTemplateColumn.CellTemplate><DataTemplate><ComboBox ItemsSource="{Binding DataContext.Actions, RelativeSource={RelativeSource AncestorType=DataGrid}}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ActionId, UpdateSourceTrigger=PropertyChanged}" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+         </DataGridTemplateColumn>
+         <DataGridTemplateColumn Header="Nhãn hiển thị" Width="130">
+          <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBox Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}" MaxLength="40" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+         </DataGridTemplateColumn>
+         <DataGridTemplateColumn Header="Hồi (giây)" Width="80">
+          <DataGridTemplateColumn.CellTemplate><DataTemplate><TextBox Text="{Binding CooldownSeconds}" IsEnabled="{Binding IsChat}" ToolTip="Mỗi người chờ bao lâu mới dùng lại lệnh này (0–3600)" /></DataTemplate></DataGridTemplateColumn.CellTemplate>
+         </DataGridTemplateColumn>
+         <DataGridTemplateColumn Header="" Width="170">
+          <DataGridTemplateColumn.CellTemplate>
+           <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+             <ui:Button Content="Bắn thử" Command="{Binding DataContext.TestRuleCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" Margin="0,0,6,0" ToolTip="Lưu luật rồi phát một sự kiện giả qua engine; không tính vào sổ công đức" />
+             <ui:Button Content="Xoá" Command="{Binding DataContext.RemoveRuleCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" ToolTip="Xoá luật khỏi bảng; bấm Lưu &amp; áp dụng để lưu" />
+            </StackPanel>
+           </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+         </DataGridTemplateColumn>
+        </DataGrid.Columns>
+       </DataGrid>
+       <TextBlock Text="Đổi áo: chỉ người đã theo dõi, chia sẻ hoặc đăng ký trong phiên mới đổi qua lại áo lam ↔ áo vàng (quà không mua được áo vàng). Bắn thử cần phiên đang chạy, dùng nhân vật &quot;Thử luật&quot; và bỏ qua thời gian hồi." Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,8,0,0" />
+      </StackPanel>
+     </ui:Card>
+    <StackPanel IsEnabled="{Binding CanConfigure}">
+     <TextBlock Text="Mức xu tối thiểu của từng hiệu ứng khi quà chưa có luật (tính trên một quà, combo nhân số lượng)." Style="{StaticResource Hint}" />
+     <DataGrid ItemsSource="{Binding GiftRules}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,8,0,16">
+      <DataGrid.Columns><DataGridTextColumn Header="Hiệu ứng" Binding="{Binding Label}" IsReadOnly="True" Width="*" /><DataGridTextColumn Header="Từ số xu" Binding="{Binding MinCoins}" Width="160" /></DataGrid.Columns>
+     </DataGrid>
+     <c:Field Header="Từ cấm (mỗi dòng một mục)"><TextBox Text="{Binding BannedWords, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MinHeight="180" MaxLength="20000" VerticalScrollBarVisibility="Auto" /></c:Field>
+     <TextBlock Text="Liên kết, số điện thoại và nội dung quá dài được lọc trước khi hiển thị hoặc đọc. Cài đặt được lưu khi bắt đầu phiên." Style="{StaticResource Hint}" TextWrapping="Wrap" />
+    </StackPanel>
+    </StackPanel>
+    </ScrollViewer>
+   </TabItem>
+   <TabItem Header="Giám sát">
+    <Grid Margin="0,12,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="2*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+     <ListBox ItemsSource="{Binding Events}" Margin="0,0,12,0" />
+     <StackPanel Grid.Column="1"><TextBlock Text="Tấm lòng thành · phiên này" Style="{StaticResource CardTitle}" /><ItemsControl ItemsSource="{Binding Top}"><ItemsControl.ItemTemplate><DataTemplate><TextBlock Margin="0,4"><Run Text="{Binding Nickname}" /><Run Text=" — " /><Run Text="{Binding Coins}" /><Run Text=" xu" /></TextBlock></DataTemplate></ItemsControl.ItemTemplate></ItemsControl></StackPanel>
+    </Grid>
+   </TabItem>
+   <TabItem Header="Sổ công đức · 7 ngày">
+    <DockPanel Margin="0,12,0,0"><ui:Button DockPanel.Dock="Top" Content="Làm mới" Command="{Binding RefreshWeeklyCommand}" HorizontalAlignment="Left" Margin="0,0,0,12" /><DataGrid ItemsSource="{Binding Weekly}" AutoGenerateColumns="False" IsReadOnly="True"><DataGrid.Columns><DataGridTextColumn Header="Tên" Binding="{Binding Nickname}" Width="*" /><DataGridTextColumn Header="Tổng xu" Binding="{Binding Coins}" Width="160" /></DataGrid.Columns></DataGrid></DockPanel>
+   </TabItem>
+  </TabControl>
+ </DockPanel>
+</UserControl>

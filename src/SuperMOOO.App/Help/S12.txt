@@ -1,0 +1,19 @@
+Thư viện tham khảo & bình luận
+
+Dùng để:
+Tìm lại video đã lưu, quét bình luận theo chiến dịch và xem lịch sử tải.
+
+Các bước (tab "Thư viện"):
+1. Lọc theo nền tảng, từ khoá ("Tìm"), "Chỉ mục yêu thích".
+2. Chọn một mục: gán dự án, chiến dịch, nhập nhãn rồi "Lưu nhãn"; "Mở file của mục đang chọn" để xem.
+3. Bấm "Tìm file bị thiếu" để liệt kê mục có file cục bộ đã bị xoá.
+
+Các bước (tab "Chiến dịch"):
+1. Dán liên kết video/bài viết, chọn "Tối đa bình luận".
+2. Bấm "Quét bình luận", chọn chiến dịch để xem bình luận; bật "Chỉ lead" để lọc khách tiềm năng.
+3. "Xuất Excel / CSV" để lưu báo cáo.
+
+Mẹo:
+- "Xoá khỏi thư viện (giữ file)" chỉ bỏ mục, không xoá file trên ổ đĩa.
+- Tab "Lịch sử tải": các file đã tải hoặc xuất, mới nhất trước.
+- Video tải ở S09 hoặc lưu từ crawl S10 tự xuất hiện ở Thư viện.

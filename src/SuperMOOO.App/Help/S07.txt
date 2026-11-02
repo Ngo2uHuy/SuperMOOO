@@ -1,0 +1,22 @@
+Auto A→Z
+
+Dùng để:
+Chạy trọn quy trình từ nguồn đến video hoàn chỉnh, mỗi nguồn là một tác vụ.
+
+Các bước:
+1. Chọn một trong 8 chế độ: Lồng tiếng, Phụ đề, Kịch bản → video, Review, Tóm tắt, Video → bản xuất mới, Văn bản → giọng đọc, Xử lý audio.
+2. Thêm nguồn bằng "Thêm file", "Thêm thư mục" hoặc dán liên kết video.
+3. Bật "Đăng bài sau khi xong" nếu muốn xếp video vào lịch đăng, rồi tick các kênh đích (kênh lấy từ màn Tài khoản & kênh S23, bấm nút tải lại nếu vừa thêm).
+4. Bấm "Chạy tự động", theo dõi kết quả ngay bên phải hoặc ở S15.
+
+Mẹo:
+- Với Review phim hoặc Tóm tắt phim, chọn Nhà cung cấp AI và Model AI trong mục Review / tóm tắt; bấm Tải danh sách hoặc nhập tên model.
+- Thư mục tự lấy đúng loại file; liên kết được tải về trước khi xử lý.
+- Video làm bằng ArtCraft dùng được làm nguồn cho mọi chế độ.
+- Chế độ "Kịch bản → video" có thể dùng video có sẵn làm nền thay ảnh slide.
+- Đăng bài: chế độ review tạo bài nháp chờ bạn bấm "Duyệt" từng bài (có cảnh báo rủi ro thì hỏi lại), automatic tự đăng đúng giờ. Bài cũng hiện ở S14.
+- TikTok mặc định gửi vào hộp thư: bạn hoàn tất bài trong app TikTok.
+- Kênh ghi "chưa đăng được" (tài khoản cần kết nối lại, Instagram thiếu media host…) phải xử lý ở S23/S16 trước; di chuột lên kênh để xem lý do.
+
+Lưu ý / lỗi thường gặp:
+- Bước dùng AI tính phí bị lỗi sẽ dừng ở "Chờ bạn thử lại" để không bị tính phí lặp: kiểm tra key/hạn mức rồi thử lại.

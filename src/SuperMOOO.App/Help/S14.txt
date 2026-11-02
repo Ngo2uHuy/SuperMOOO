@@ -1,0 +1,36 @@
+Đăng bài & lịch đăng
+
+Dùng để:
+Soạn bài cho nhiều kênh/trang (YouTube, Facebook, Instagram, TikTok), đăng ngay hoặc hẹn giờ, theo dõi và xử lý bài lỗi. Kết nối tài khoản và đồng bộ kênh ở màn Tài khoản & kênh; OAuth client và media host ở Cài đặt → Đăng bài.
+
+Các bước:
+1. Tab "Soạn bài": kéo thả media, bấm "Video" để chọn nhiều video hoặc "Ảnh / carousel" để nhập 1–35 ảnh thành một bài. "Chọn từ thư viện" dùng lại nội dung trong kho, "Thêm tệp" đưa vào danh sách. Mỗi video/album là một bài trên mỗi kênh đã chọn. Bấm ← để đổi thứ tự bài, "Bỏ chọn" chỉ gỡ khỏi bản soạn.
+2. Chọn tài khoản ở cột phải. Nhập nội dung Chung hoặc Theo nền tảng; để trống nội dung riêng để dùng nội dung chung. Mở "Tuỳ chọn riêng từng kênh / quyền riêng tư" để sửa riêng và chọn chế độ hiển thị (Facebook/Instagram cần Công khai). Dùng {câu 1|câu 2} để tạo biến thể; bật xáo trộn hashtag nếu cần.
+3. TikTok: chọn "Gửi vào hộp thư" hoặc "Đăng trực tiếp"; với Direct Post bấm "Lấy thông tin tài khoản TikTok", chọn ai được xem, công bố nội dung thương mại (nếu có) và đồng ý Music Usage Confirmation.
+4. Chọn Đăng ngay, Hẹn giờ cố định hoặc Rải trong khung giờ (giờ Việt Nam). Rải giờ dùng khoảng giãn cách tối thiểu/tối đa; không đủ chỗ thì báo lỗi. Có thể lặp hằng ngày/hằng tuần với số đợt hữu hạn, tối đa 200 lượt mỗi lần. Bấm "Xem trước lịch", rồi "Thêm vào hàng đợi" hoặc "Lưu nháp". Lưu nháp chỉ lưu đợt đầu, chưa đăng. Cảnh báo trùng/rủi ro vẫn cần xác nhận.
+5. Tab "Hôm nay & cần xử lý": số liệu trong ngày, hộp việc cần xử lý, bài lỗi/không xác định.
+6. Tab "Lịch": xem bài hẹn theo ngày, tuần, tháng.
+7. Tab "Bài đăng": lọc theo trạng thái, xem lượt thử, "Thử lại", "Huỷ bài", "Đăng bản nháp".
+8. Tab "Hiệu quả": chọn kỳ (7/30/90/365 ngày), nền tảng, chiến dịch và nguồn nội dung (S22/S21) để lọc; xem Tổng quan (kèm biểu đồ theo ngày, đổi chỉ số ở ô bên dưới), Theo kênh, Top bài (phân trang), Giờ đăng tốt, Cảnh báo; "Xuất CSV" lưu số liệu từng bài; "Đồng bộ ngay" xếp lượt đọc số liệu.
+
+Mẹo:
+- Danh sách tài khoản hiển thị tài khoản tạm dừng và không cho chọn kênh chưa khả dụng. Bấm "Cập nhật" sau khi tiếp tục hoặc kết nối lại ở S23. Trước khi tạo hàng đợi, app kiểm tra lại trạng thái tạm dừng.
+- Nút "Thêm vào hàng đợi" hiển thị tổng lượt = số video/album × số kênh × số đợt. Bộ đếm nội dung tính cả tiêu đề và hashtag trong caption; YouTube đếm byte UTF-8 của mô tả. Khi có biến thể, "Xem trước lịch" kiểm tra nội dung đã bung biến thể trước khi tạo bài.
+- Trong Soạn bài, chọn Nhà cung cấp AI / Model AI trước khi gợi ý caption chung hoặc riêng từng đích. Bấm "Tải danh sách" để lấy model; có thể nhập tên. API key và máy chủ dùng từ Cài đặt, lựa chọn không đổi AI chung.
+- Tác vụ upload hiện ở tab "Hàng đợi upload" ngay trong S14. Bấm "Soạn bài" ở Kho thành phẩm (S21) thì S14 mở thẳng tab "Soạn bài" với video đó.
+- Bài do chiến dịch (S22) tạo cũng hiện ở tab "Bài đăng"/"Lịch"; bài chờ duyệt duyệt ở S22 (tab "Chờ duyệt").
+- Bài "Không xác định" (không chắc video đã lên): kiểm tra trên nền tảng rồi chọn "Đã đăng" (dán URL video), "Đăng lại" (có thể trùng) hoặc "Bỏ bài". App không tự upload lại để tránh đăng trùng.
+- "Để YouTube tự công khai đúng giờ": upload sớm ở chế độ riêng tư, cần hẹn sau ít nhất 15 phút.
+- Instagram cần media host S3/R2 (Cài đặt → Đăng bài).
+- Số liệu của bài đã đăng được đồng bộ nền (ưu tiên thấp): bài dưới 48 giờ 2 giờ/lần, dưới 7 ngày 12 giờ/lần, dưới 30 ngày 2 ngày/lần, sau đó mỗi tuần. Mỗi nền tảng có ngân sách lượt đọc mỗi ngày; YouTube trừ chung quota API với upload và màn Theo dõi, luôn chừa phần cho upload. Hết ngân sách hoặc quota thì tự dời sang ngày sau.
+- Ô trống nghĩa là chưa có số (bài còn mới, thiếu quyền, cần kết nối lại), không phải 0. Mỗi nền tảng đo "lượt xem" khác nhau nên không cộng chéo.
+- Giờ đăng tốt (theo giờ Việt Nam) cần ít nhất 5 bài cùng thứ + giờ, đã đăng trên 3 ngày và có số người theo dõi của kênh; chưa đủ thì không gợi ý.
+- Cảnh báo (tỉ lệ lỗi đăng cao, lượt xem sụt mạnh so với mức nền của kênh) cũng hiện ở tab "Hôm nay & cần xử lý". Mặc định app chỉ cảnh báo; bật "Tự dừng chiến dịch khi kênh bất thường" ở Cài đặt → Đăng bài thì các chiến dịch (S22) đăng lên kênh đó tự dừng.
+
+Lưu ý / lỗi thường gặp:
+- Huỷ bài chỉ huỷ trong app, không xoá video đã có trên nền tảng.
+- App cần đang chạy để bài đến giờ được đăng.
+- Bản soạn tự lưu mỗi 10 giây và khi rời màn; khác với Lưu nháp tạo bài nháp trong tab Bài đăng. Lựa chọn đồng ý TikTok cần thực hiện lại khi mở bản soạn.
+- Xoá metadata, chèn logo và tự cắt tỉ lệ tạo bản xử lý trong cache/publish-media, không ghi đè nguồn. Tỉ lệ: TikTok/video Instagram 9:16, ảnh Instagram 4:5, YouTube 16:9, Facebook 1:1. Không bật thì giữ tệp gốc.
+- Ảnh Facebook Page: tối đa 10 JPG/PNG; Instagram: tối đa 10 JPEG và cần media host; TikTok: tối đa 35 JPEG/WebP và cần media host HTTPS có domain/prefix đã xác minh trong TikTok Developer Portal. YouTube không hỗ trợ bài ảnh qua luồng này. Khi bật xử lý media, ảnh được chuyển thành JPEG.
+- Nhiều ảnh chọn cùng lượt tạo carousel theo thứ tự file nhận từ hộp chọn. Video không được trộn vào album ảnh; video được tạo thành bài riêng.

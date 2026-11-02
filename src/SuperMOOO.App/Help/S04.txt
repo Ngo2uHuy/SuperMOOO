@@ -1,0 +1,25 @@
+Review & tóm tắt phim
+
+Dùng để:
+Tạo video review hoặc tóm tắt phim với lời bình và giọng đọc, sửa tay hoặc chạy tự động.
+
+Các bước (tự sửa lời bình, tab "1. Kịch bản"):
+1. Chọn phim và phong cách review.
+2. Bấm "Tạo kịch bản AI" (app nhận diện thoại hoặc dùng SRT bạn chọn). Bấm "Thêm cảnh" nếu cần thêm.
+3. Sửa mốc và lời bình từng cảnh; chỉnh giọng ở tab "2. Giọng & hiển thị" và nghe thử.
+4. Bấm "Xuất review".
+
+Các bước (tự động, tab "3. Chạy tự động"):
+1. Chọn phim rồi bấm "Chạy tự động phim này", hoặc "Chạy hàng loạt cả thư mục".
+2. Theo dõi ở khung "Tác vụ của màn này"; xong bấm "Mở video".
+
+Mẹo:
+- Chọn Nhà cung cấp AI và Model AI ở tab Kịch bản hoặc Chạy tự động trước khi tạo lời bình; có thể bấm Tải danh sách hoặc nhập tên model.
+- Muốn tinh chỉnh bằng dòng thời gian, bấm "Chỉnh trong Timeline" (S17).
+- Mốc cảnh dạng HH:MM:SS - HH:MM:SS và phải nằm trong thời lượng phim.
+- Cảnh có ô "Thoại" thì thoại được đọc bằng giọng thứ hai sau lời bình.
+- Chọn "Xuất mỗi cảnh một file" để ra nhiều MP4 thay vì một video ghép.
+
+Lưu ý / lỗi thường gặp:
+- Lời bình dài hơn cảnh quá 1,8 lần sẽ bị từ chối: rút ngắn lời bình hoặc kéo dài cảnh.
+- Chưa có thoại: bật "chia đều theo thời gian" để dựng từ các phần bằng nhau (không có lời bình).

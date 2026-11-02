@@ -1,0 +1,52 @@
+[
+  {
+    "Id": "tiktok", "Name": "TikTok / Reels 9:16",
+    "Profile": {
+      "PresetId": "tiktok",
+      "Canvas": { "Aspect": "9:16", "Fit": "Contain", "BlurBackground": true },
+      "Video": { "FlipH": false, "ZoomPercent": 103, "Speed": 1.05, "Brightness": 0.02, "Contrast": 1.06, "Saturation": 1.10 },
+      "Audio": {},
+      "Output": { "Height": 1080, "Fps": 30, "Encoder": "x264", "Preset": "medium", "BitrateKbps": 4500, "StripMetadata": true }
+    }
+  },
+  {
+    "Id": "shorts", "Name": "Shorts chống trùng",
+    "Profile": {
+      "PresetId": "shorts",
+      "Canvas": { "Aspect": "9:16", "Fit": "Contain", "BlurBackground": true },
+      "Video": { "FlipH": true, "ZoomPercent": 104, "Speed": 1.03, "Brightness": 0, "Contrast": 1, "Saturation": 1 },
+      "Audio": { "PitchSemitones": 1 },
+      "Output": { "Height": 1080, "Fps": 30, "Encoder": "x264", "Preset": "medium", "BitrateKbps": 4500, "StripMetadata": true }
+    }
+  },
+  {
+    "Id": "youtube", "Name": "YouTube 16:9",
+    "Profile": {
+      "PresetId": "youtube",
+      "Canvas": { "Aspect": "16:9", "Fit": "Contain", "BlurBackground": false },
+      "Video": { "FlipH": false, "ZoomPercent": 102, "Speed": 1.02, "Brightness": 0.02, "Contrast": 1.05, "Saturation": 1.08 },
+      "Audio": {},
+      "Output": { "Height": 1080, "Fps": 30, "Encoder": "x264", "Preset": "medium", "BitrateKbps": 6000, "StripMetadata": true }
+    }
+  },
+  {
+    "Id": "square", "Name": "Vuông 1:1",
+    "Profile": {
+      "PresetId": "square",
+      "Canvas": { "Aspect": "1:1", "Fit": "Contain", "BlurBackground": true },
+      "Video": { "FlipH": false, "ZoomPercent": 102, "Speed": 1.02, "Brightness": 0.02, "Contrast": 1.05, "Saturation": 1.08 },
+      "Audio": {},
+      "Output": { "Height": 1080, "Fps": 30, "Encoder": "x264", "Preset": "medium", "BitrateKbps": 4500, "StripMetadata": true }
+    }
+  },
+  {
+    "Id": "original", "Name": "Giữ nguyên tỉ lệ gốc",
+    "Profile": {
+      "PresetId": "original",
+      "Canvas": { "Aspect": "Original", "Fit": "Contain", "BlurBackground": false },
+      "Video": { "FlipH": false, "ZoomPercent": 100, "Speed": 1, "Brightness": 0, "Contrast": 1, "Saturation": 1 },
+      "Audio": {},
+      "Output": { "Height": 1080, "Fps": 30, "Encoder": "x264", "Preset": "medium", "StripMetadata": true }
+    }
+  }
+]

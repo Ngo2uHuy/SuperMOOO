@@ -1,0 +1,96 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.BackupSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel>
+    <c:ScreenJobsPanel x:Name="ScreenJobs" DockPanel.Dock="Bottom" Margin="0,12,0,0" />
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="0,0,16,0">
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Sao lưu" />
+            <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,-6,0,12"
+                       Text="Bản sao lưu (.zip) gồm cơ sở dữ liệu (cài đặt, dự án, kho, lịch đăng, API key/token mã hoá), giọng clone/giọng neo và avatar khớp môi. KHÔNG gồm model AI, cache, worker/venv Python và MuseTalk (quá lớn; tải/cài lại được). Media (video đã xuất) chỉ kèm khi bạn chọn." />
+            <ui:ToggleSwitch Content="Kèm media (toàn bộ thư mục xuất — có thể rất lớn)" IsChecked="{Binding IncludeMedia}" Margin="0,0,0,12" />
+            <WrapPanel>
+              <ui:Button Appearance="Primary" Content="Sao lưu ngay" Icon="{ui:SymbolIcon ArrowDownload24}" Command="{Binding QuickBackupCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Sao lưu vào…" Icon="{ui:SymbolIcon Save24}" Command="{Binding BackupToCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Làm mới danh sách" Icon="{ui:SymbolIcon ArrowSync24}" Command="{Binding RefreshBackupsCommand}" />
+            </WrapPanel>
+            <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" Margin="0,8,0,0" TextWrapping="Wrap" />
+          </StackPanel>
+        </ui:Card>
+
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Khôi phục" />
+            <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,-6,0,12"
+                       Text="Chọn file sao lưu, xác nhận, app dựng bản chờ và sao lưu dữ liệu hiện tại; bản khôi phục áp khi bạn thoát hẳn app (menu khay > Thoát) rồi mở lại. Khôi phục sang máy hoặc tài khoản Windows khác: API key và token đăng nhập không giải mã được, cần nhập/kết nối lại." />
+            <DataGrid ItemsSource="{Binding Backups}" SelectedItem="{Binding SelectedBackup}" AutoGenerateColumns="False" IsReadOnly="True"
+                      CanUserAddRows="False" HeadersVisibility="Column" SelectionMode="Single" MaxHeight="220">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="File" Binding="{Binding Name}" Width="2*" />
+                <DataGridTextColumn Header="Thông tin" Binding="{Binding Info}" Width="3*" />
+              </DataGrid.Columns>
+            </DataGrid>
+            <WrapPanel Margin="0,12,0,0">
+              <ui:Button Content="Khôi phục bản đã chọn" Icon="{ui:SymbolIcon ArrowUndo24}" Command="{Binding RestoreSelectedCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Chọn file .zip…" Icon="{ui:SymbolIcon FolderOpen24}" Command="{Binding RestoreFromFileCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Huỷ khôi phục đang chờ" Icon="{ui:SymbolIcon Dismiss24}" Command="{Binding CancelPendingCommand}" />
+            </WrapPanel>
+            <TextBlock Text="{Binding PendingText}" Margin="0,8,0,0" TextWrapping="Wrap" />
+          </StackPanel>
+        </ui:Card>
+
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Cài đặt lưu trữ" />
+            <ui:ToggleSwitch Content="Sao lưu tự động theo lịch" IsChecked="{Binding AutoBackup}" Margin="0,0,0,8" />
+            <WrapPanel>
+              <c:Field Header="Mỗi (giờ)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding AutoBackupEveryHours}" Minimum="1" Width="130" /></c:Field>
+              <c:Field Header="Giữ N bản tự động" Margin="0,0,16,0"><ui:NumberBox Value="{Binding AutoBackupKeep}" Minimum="1" Width="130" /></c:Field>
+              <c:Field Header="Kèm media" Margin="0,0,16,0"><ui:ToggleSwitch IsChecked="{Binding AutoBackupIncludeMedia}" /></c:Field>
+            </WrapPanel>
+            <c:Field Header="Thư mục sao lưu (trống = backups trong thư mục dữ liệu)" Margin="0,8,0,0">
+              <DockPanel>
+                <ui:Button DockPanel.Dock="Right" Content="Chọn…" Command="{Binding BrowseBackupDirCommand}" Margin="8,0,0,0" />
+                <ui:TextBox Text="{Binding BackupDir}" />
+              </DockPanel>
+            </c:Field>
+            <WrapPanel Margin="0,8,0,0">
+              <c:Field Header="Cảnh báo khi ổ còn dưới (GB)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding WarnFreeGb}" Minimum="0" Width="170" /></c:Field>
+              <c:Field Header="Tạm dừng job khi còn dưới (MB)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding MinFreeMb}" Minimum="0" Width="170" /></c:Field>
+              <c:Field Header="Giữ log (ngày, 0 = không dọn)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding LogKeepDays}" Minimum="0" Width="170" /></c:Field>
+            </WrapPanel>
+            <ui:Button Appearance="Primary" Content="Lưu cài đặt" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" Margin="0,12,0,0" />
+          </StackPanel>
+        </ui:Card>
+
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Dung lượng" />
+            <DataGrid ItemsSource="{Binding Disks}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column" Margin="0,0,0,12">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="Ổ đĩa" Binding="{Binding Name}" Width="2*" />
+                <DataGridTextColumn Header="Dung lượng trống" Binding="{Binding Detail}" Width="3*" />
+              </DataGrid.Columns>
+            </DataGrid>
+            <DataGrid ItemsSource="{Binding Folders}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column" MaxHeight="260">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="Thư mục dữ liệu" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Kích thước" Binding="{Binding Size}" Width="*" />
+                <DataGridTextColumn Header="Ghi chú" Binding="{Binding Note}" Width="3*" />
+              </DataGrid.Columns>
+            </DataGrid>
+            <WrapPanel Margin="0,12,0,0">
+              <ui:Button Content="Đo lại" Icon="{ui:SymbolIcon ArrowSync24}" Command="{Binding RefreshUsageCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Dọn log cũ" Icon="{ui:SymbolIcon Delete24}" Command="{Binding CleanLogsCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Dọn cache" Icon="{ui:SymbolIcon Delete24}" Command="{Binding CleanCacheCommand}" />
+            </WrapPanel>
+          </StackPanel>
+        </ui:Card>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

@@ -1,0 +1,33 @@
+{
+  "id": "shorts",
+  "title": "Cắt Shorts / Hook",
+  "steps": [
+    {
+      "id": "probe",
+      "kind": "probe"
+    },
+    {
+      "id": "audio",
+      "kind": "extract_audio",
+      "options": {
+        "sampleRate": 16000,
+        "mono": true
+      }
+    },
+    {
+      "id": "asr",
+      "kind": "asr",
+      "options": {
+        "wordTimestamps": true
+      }
+    },
+    {
+      "id": "select",
+      "kind": "shorts_select"
+    },
+    {
+      "id": "render",
+      "kind": "shorts_render"
+    }
+  ]
+}

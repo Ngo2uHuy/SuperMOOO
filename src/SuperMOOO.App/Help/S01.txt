@@ -1,0 +1,30 @@
+Lồng tiếng video
+
+Dùng để:
+Nhận diện lời thoại, dịch rồi lồng tiếng lại video, kèm phụ đề và nhạc nền.
+
+Các bước:
+1. Nguồn: kéo thả video hoặc thư mục vào màn, hoặc bấm "Chọn file video…" / "Chọn thư mục video…". Bật "Quét 2 lớp" để tìm cả trong thư mục con.
+2. Chọn chế độ "Lồng tiếng video" hoặc "Chỉ phụ đề (ASR, dịch, hardsub)".
+3. Tab "1. Nhận diện": chọn ngôn ngữ nguồn và "Model ASR". Bật "Dùng phụ đề đã chỉnh ở S02" để bỏ qua ASR.
+4. Tab "2. Dịch": chọn ngôn ngữ đích, điền "Ngữ cảnh"; bấm "Dịch câu mẫu" để thử.
+5. Tab "3. Giọng": chọn giọng, nghe thử với câu mẫu. Bật "Tự ép tốc độ" cho câu dịch dài.
+6. Tab "4. Hình & tiếng": kiểu phụ đề, tiếng gốc/nhạc nền, làm mờ phụ đề cũ, logo, canvas, PiP, outro.
+7. Bấm "Chạy video đang chọn", hoặc "Chạy hàng loạt" để đưa cả danh sách vào hàng đợi.
+
+Mẹo:
+- "Bóc phụ đề gốc" chỉ chạy ASR rồi mở S02 để bạn sửa trước.
+- Kéo thanh "Khung xem trước" để xem một khung hình; "Chụp khung / làm ảnh bìa" lưu ảnh.
+- Vùng nhập dạng x,y,w,h theo %, ví dụ 0,80,100,20.
+- "Làm mờ phụ đề cũ" → "Tự tìm vùng phụ đề gốc": AI worker xem ~48 khung, tìm dải chữ lặp lại (bỏ logo cố định) rồi điền ô Vùng. Độ tin cậy thấp thì kiểm tra lại trên khung xem trước.
+- "Che theo lúc có chữ": dò chữ trong vùng để chỉ làm mờ lúc phụ đề gốc hiện (thay cho mốc phụ đề mới), tốn thêm ~10–15% thời lượng video.
+- "Xoá phụ đề gốc (inpaint, chậm)": vẽ lại nền chỗ có chữ thay cho làm mờ; trên CPU mất ~5–25 phút cho 1 phút video 1080p, nền chuyển động có thể còn vệt. Chọn "Chất lượng" (mặc định) hoặc "Nhanh" (~2× nhanh hơn, nền chuyển động có thể hơi vệt).
+- Vùng làm mờ/vùng tự tìm tính theo khung video gốc (như khung xem trước), đúng vị trí cả khi đổi khổ hình hay lật gương.
+- "Ducking tự động": khi có giọng lồng tiếng, tiếng gốc/nhạc nền hạ đều ~11 dB (giọng to hay nhỏ như nhau), giữ mức hạ qua khoảng nghỉ ngắn giữa câu rồi lên lại mượt sau ~1 s.
+- "Tách giọng gốc": AI tách bỏ lời gốc, giữ nhạc và hiệu ứng để làm tiếng gốc khi trộn (ducking chỉ hạ nhẹ ~5 dB). Chọn "Chất lượng cao (RoFormer)" (mặc định, sạch lời và giữ nhạc tốt hơn, ~4–5× thời lượng video trên CPU, RAM ~2,1 GB) hoặc "Nhanh (MDX Voc_FT)" (~0,6×, RAM ~1,3 GB). Kết quả lưu cache theo video + model nên chạy lại không tách lại.
+- Dịch vụ dịch/ASR chọn ở Cài đặt → Model AI.
+- Theo dõi tiến độ ở khung "Tác vụ của màn này"; kết quả mở bằng "Mở kết quả" / "Mở thư mục kết quả".
+
+Lưu ý / lỗi thường gặp:
+- Tự tìm vùng/che theo chữ/xoá phụ đề cần AI worker và model "textdet"/"inpaint": vào Cài đặt → AI worker → "Tải model".
+- "Tách giọng gốc" cần AI worker và model "separation"/"roformer" (Cài đặt → AI worker → "Tải model"; RoFormer cần thêm PyTorch, cài lại worker). Thiếu RoFormer thì dùng MDX; thiếu cả hai thì job vẫn chạy với tiếng gốc + ducking như cũ và ghi cảnh báo. Lời gốc rất to hoặc có hát có thể còn vọng nhỏ.

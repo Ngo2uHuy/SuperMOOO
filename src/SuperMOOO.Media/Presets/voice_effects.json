@@ -1,0 +1,12 @@
+[
+  { "Id": "None", "Name": "Giữ nguyên" },
+  { "Id": "MaleToFemale", "Name": "Nam sang nữ", "PitchSemitones": 4.273726 },
+  { "Id": "FemaleToMale", "Name": "Nữ sang nam", "PitchSemitones": -4.301448 },
+  { "Id": "DeepVoice", "Name": "Giọng trầm", "PitchSemitones": -2.611097, "FfmpegFilter": "equalizer=f=120:width_type=o:width=2:g=5" },
+  { "Id": "Chipmunk", "Name": "Giọng sóc chuột", "PitchSemitones": 6.432635 },
+  { "Id": "Robot", "Name": "Robot", "FfmpegFilter": "flanger=delay=8:depth=6:regen=65:width=80:speed=0.4" },
+  { "Id": "Telephone", "Name": "Điện thoại", "FfmpegFilter": "highpass=f=400,lowpass=f=3200" },
+  { "Id": "Echo", "Name": "Vang (echo)", "FfmpegFilter": "aecho=0.8:0.9:300|400:0.3|0.25" },
+  { "Id": "Reverb", "Name": "Hội trường (reverb)", "FfmpegFilter": "aecho=0.8:0.88:60:0.4" },
+  { "Id": "Bass", "Name": "Tăng trầm", "FfmpegFilter": "equalizer=f=80:width_type=o:width=2:g=8" }
+]

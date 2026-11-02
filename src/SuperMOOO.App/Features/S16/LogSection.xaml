@@ -1,0 +1,18 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.LogSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+  <ui:Card Style="{StaticResource FillSection}" Margin="0">
+    <DockPanel>
+      <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+        <TextBlock Text="Mức tối thiểu" VerticalAlignment="Center" Margin="0,0,8,0" />
+        <ComboBox ItemsSource="{Binding Levels}" SelectedItem="{Binding Level}" Width="140" Margin="0,0,16,0" />
+        <ui:Button Content="Lưu ra file…" Icon="{ui:SymbolIcon Save24}" Command="{Binding ExportCommand}" />
+        <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Làm mới" Command="{Binding RefreshCommand}" />
+        <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Eraser24}" ToolTip="Xoá bộ đệm nhật ký đang hiện" Command="{Binding ClearCommand}" />
+        <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" VerticalAlignment="Center" Margin="12,0,0,0" />
+      </WrapPanel>
+      <ListBox ItemsSource="{Binding Lines}" FontFamily="Consolas" FontSize="12" ScrollViewer.HorizontalScrollBarVisibility="Auto" />
+    </DockPanel>
+  </ui:Card>
+</UserControl>

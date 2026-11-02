@@ -1,0 +1,97 @@
+{
+  "id": "localize",
+  "title": "Lồng tiếng video",
+  "steps": [
+    {
+      "id": "download",
+      "kind": "download",
+      "when": "download"
+    },
+    {
+      "id": "probe",
+      "kind": "probe"
+    },
+    {
+      "id": "warm",
+      "kind": "warm_tts",
+      "when": "dub"
+    },
+    {
+      "id": "audio",
+      "kind": "extract_audio",
+      "options": {
+        "sampleRate": 16000,
+        "mono": true
+      }
+    },
+    {
+      "id": "denoise",
+      "kind": "denoise",
+      "when": "denoise"
+    },
+    {
+      "id": "asr",
+      "kind": "asr",
+      "options": {
+        "wordTimestamps": true
+      }
+    },
+    {
+      "id": "translate",
+      "kind": "translate",
+      "when": "translate"
+    },
+    {
+      "id": "tts",
+      "kind": "tts",
+      "when": "dub"
+    },
+    {
+      "id": "fit",
+      "kind": "fit_tempo",
+      "when": "dub",
+      "options": {
+        "maxTempo": 1.8,
+        "borrowGapSeconds": 0.6
+      }
+    },
+    {
+      "id": "dub",
+      "kind": "assemble_dub",
+      "when": "dub",
+      "options": {
+        "export": true
+      }
+    },
+    {
+      "id": "separate",
+      "kind": "separate_vocals",
+      "when": "separate"
+    },
+    {
+      "id": "mix",
+      "kind": "mix_audio",
+      "options": {
+        "smartDucking": true
+      }
+    },
+    {
+      "id": "text",
+      "kind": "burned_text",
+      "when": "burnedText"
+    },
+    {
+      "id": "compose",
+      "kind": "compose_localized"
+    },
+    {
+      "id": "subs",
+      "kind": "export_subtitles"
+    },
+    {
+      "id": "deliver",
+      "kind": "deliver",
+      "when": "deliver"
+    }
+  ]
+}

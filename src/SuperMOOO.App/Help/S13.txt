@@ -1,0 +1,23 @@
+Công cụ media
+
+Dùng để:
+Xử lý nhanh một file video/âm thanh bằng ffmpeg.
+
+Các bước:
+1. Chọn công cụ ở cột trái: Nâng chất lượng, Đổi định dạng, Nén, Tách âm thanh, Cắt, Tách video, Cắt Shorts / Hook, Nối clip, Ghép âm thanh, Nền nhạc, Logo/chữ, Điều chỉnh tốc độ, Che phụ đề, Gắn phụ đề, Xem thông tin, Đổi giọng.
+2. Chọn file và nhập thông số.
+3. Bấm "Chạy".
+4. Xem "Kết quả"; bấm "Mở file" hoặc mở thư mục chứa file.
+
+Mẹo:
+- Kết quả lưu ở thư mục xuất (mặc định Videos\SuperMOOO\MediaTools, đổi ở Cài đặt) và không bao giờ ghi đè file có sẵn.
+- Cắt: nhập giây, mm:ss hoặc hh:mm:ss. Tắt "Mã hoá lại" để cắt nhanh theo keyframe, bật để cắt chính xác.
+- Tách video: chia đều theo số phần, theo thời lượng mỗi phần, hoặc theo chuyển cảnh (chỉnh "Ngưỡng chuyển cảnh" 0,05–0,9, càng thấp càng nhiều đoạn; "Độ dài tối thiểu" bỏ qua đoạn quá ngắn). Các đoạn nằm trong thư mục con mới "<tên>_split" của thư mục xuất. Tắt "Mã hoá lại" thì cắt nhanh theo keyframe (mốc có thể lệch).
+- Cắt Shorts / Hook: nhận diện lời thoại, AI (LLM ở Cài đặt > Model AI, có thể tính phí) chọn đoạn hay 15–60 giây kèm tiêu đề + câu hook; chế độ "Hook" chọn đoạn mở đầu gây chú ý tối đa 10 giây. Mỗi đoạn được cắt, đổi khung dọc 9:16 (nền mờ hoặc lấp đầy cắt giữa), tuỳ chọn đốt phụ đề và chữ tiêu đề/hook 3,5 giây đầu. Chạy nền, theo dõi ở "Tác vụ của màn này"; kết quả gồm các file .mp4 và "<tên>_shorts_titles.txt" trong thư mục con "<tên>_shorts".
+- Nối clip: mỗi dòng một đường dẫn; khác độ phân giải/định dạng thì app tự chuẩn hoá.
+- Ghép âm thanh / Nền nhạc: bật "ducking" để tiếng gốc hoặc nhạc tự nhỏ khi có lời.
+- Huỷ giữa chừng sẽ dừng ffmpeg và xoá file dở.
+
+Lưu ý / lỗi thường gặp:
+- Cắt Shorts / Hook: chưa cấu hình LLM hoặc tắt "Dùng AI chọn đoạn" thì app chọn đoạn theo mật độ lời thoại (không xét âm lượng) và ghi cảnh báo trong kết quả tác vụ; tiêu đề lấy từ lời thoại.
+- Video không có lời thoại thì Shorts báo lỗi (cần thoại để chọn đoạn).

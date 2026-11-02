@@ -1,0 +1,66 @@
+<UserControl x:Class="SuperMOOO.App.Features.S02.SubtitleListPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <ui:Card Style="{StaticResource FillSection}" Margin="0">
+    <DockPanel>
+      <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+        <StackPanel Orientation="Horizontal">
+          <ui:Button Content="Nhập SRT" Icon="{ui:SymbolIcon ArrowImport24}" Command="{Binding ImportSrtCommand}" />
+          <ui:Button Content="Xuất SRT" Icon="{ui:SymbolIcon ArrowExportLtr24}" Command="{Binding ExportSrtCommand}" Margin="8,0,0,0" />
+          <Rectangle Width="1" Margin="12,6" Fill="{DynamicResource DividerStrokeColorDefaultBrush}" />
+          <ui:Button Style="{StaticResource IconButton}" Margin="0" Icon="{ui:SymbolIcon Add24}" ToolTip="Thêm câu sau câu đang chọn" Command="{Binding AddLineCommand}" />
+          <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Xoá câu đang chọn" Command="{Binding DeleteLineCommand}" />
+        </StackPanel>
+        <TextBlock Text="{Binding CountText}" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+      </DockPanel>
+
+      <Border DockPanel.Dock="Bottom" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" Padding="0,12,0,0" Margin="0,12,0,0">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="140" />
+            <ColumnDefinition Width="140" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <c:Field Header="Bắt đầu" Margin="0,0,8,8">
+            <ui:TextBox Text="{Binding EditStart, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="00:00:01,000" />
+          </c:Field>
+          <c:Field Grid.Column="1" Header="Kết thúc" Margin="0,0,8,8">
+            <ui:TextBox Text="{Binding EditEnd, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="00:00:03,500" />
+          </c:Field>
+          <ui:Button Grid.Column="3" Content="Lưu câu này" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveLineCommand}" VerticalAlignment="Bottom" Margin="0,0,0,8" />
+          <c:Field Grid.Row="1" Grid.ColumnSpan="4" Header="Lời gốc" Margin="0,0,0,8">
+            <ui:TextBox Text="{Binding EditText, UpdateSourceTrigger=PropertyChanged}" />
+          </c:Field>
+          <c:Field Grid.Row="2" Grid.ColumnSpan="4" Header="Bản dịch" Margin="0"
+                   Visibility="{Binding ShowTranslation, Converter={StaticResource BoolToVis}}">
+            <ui:TextBox Text="{Binding EditTranslation, UpdateSourceTrigger=PropertyChanged}" />
+          </c:Field>
+        </Grid>
+      </Border>
+
+      <Grid>
+        <DataGrid ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}" AutoGenerateColumns="False" IsReadOnly="True"
+                  SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="#" Binding="{Binding Number, Mode=OneWay}" Width="48" />
+            <DataGridTextColumn Header="Bắt đầu" Binding="{Binding Start, Mode=OneWay}" Width="110" />
+            <DataGridTextColumn Header="Kết thúc" Binding="{Binding End, Mode=OneWay}" Width="110" />
+            <DataGridTextColumn Header="Dài" Binding="{Binding Duration, Mode=OneWay}" Width="70" />
+            <DataGridTextColumn Header="Lời thoại" Binding="{Binding Text, Mode=OneWay}" Width="*" />
+            <DataGridTextColumn x:Name="TranslationColumn" Header="Bản dịch" Binding="{Binding Translation, Mode=OneWay}" Width="*" />
+          </DataGrid.Columns>
+        </DataGrid>
+        <c:EmptyState Icon="ClosedCaption24" Text="Chưa có phụ đề. Bóc phụ đề từ video (ASR) hoặc bấm Nhập SRT."
+                      Visibility="{Binding Rows.Count, Converter={StaticResource EmptyToVis}}" />
+      </Grid>
+    </DockPanel>
+  </ui:Card>
+</UserControl>

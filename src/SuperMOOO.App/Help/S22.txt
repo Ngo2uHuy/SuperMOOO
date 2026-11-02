@@ -1,0 +1,27 @@
+Chiến dịch đăng tự động
+
+Dùng để:
+Tự chọn video từ Kho thành phẩm (S21), chia lượt giữa các kênh và đăng theo slot giờ đã đặt. Mỗi chiến dịch có quy tắc chọn video, kênh đích, slot, giới hạn bài/ngày, cách xử lý khi trễ lịch, mức tự động và điều kiện tự dừng. Có thể tự đặt sản xuất thêm video (Talkshow S03, video vẽ tay S18) khi kho sắp hết.
+
+Các bước:
+1. Bấm "Thêm", đặt tên, múi giờ của slot, trọng số chia lượt (chiến dịch chung kênh chia slot theo tỉ lệ này) và mức tự động: "Chỉ gợi ý" (không tạo bài, bạn xem trước rồi tự đăng), "Cần duyệt" (tạo bài chờ bạn duyệt từng bài) hoặc "Tự động" (tự đăng trong giới hạn; bài có cảnh báo rủi ro vẫn chờ duyệt). Bấm "Lưu chiến dịch".
+2. Tab "Quy tắc & kênh": thêm quy tắc lọc video theo nguồn, nhãn, ngôn ngữ, thời lượng, tỉ lệ khung rồi tick các kênh đích. Video khớp quy tắc nào thì được đăng lên kênh của quy tắc đó.
+3. Tab "Lịch đăng": thêm slot (thứ + giờ, cho mọi kênh hoặc một kênh); "Gợi ý giờ tốt" lấy từ số liệu tab Hiệu quả của S14. Đặt tối đa bài/ngày/kênh, khoảng cách tối thiểu, lệch ngẫu nhiên, khung giờ cấm và cách xử lý khi trễ lịch (bỏ bài, dời sang slot kế tiếp, hoặc đăng bù có trần).
+4. Tab "Xem trước 7 ngày": xem các bài app sẽ xếp trong 7 ngày tới theo cấu hình đang soạn (không ghi gì).
+5. Bấm "Bật" ở danh sách để chiến dịch chạy. App lập lịch mỗi phút; "Lập lịch ngay" chạy một lượt ngay. Bài chờ duyệt xử lý ở tab "Chờ duyệt" (tick rồi "Duyệt" hoặc "Từ chối").
+6. Tab "Đặt sản xuất": bật "Tự đặt sản xuất khi tồn kho thấp", nhập chủ đề (mỗi dòng một chủ đề, luân phiên), tồn tối thiểu và mức bổ sung theo số ngày đăng. Hoặc "Đặt sản xuất" ngay một video. Job sản xuất hiện ở cột phải; video xong tự vào Kho thành phẩm và được chiến dịch ưu tiên chọn.
+7. "Dừng tất cả" tạm dừng mọi chiến dịch đang chạy.
+
+Mẹo:
+- Ngôn ngữ trong quy tắc lọc và yêu cầu sản xuất chọn bằng dropdown có tìm kiếm; mục "Không đặt / theo mặc định" giữ cách xử lý khi để trống trước đây.
+- Evergreen: đăng lại video cũ trên cùng kênh sau tối thiểu N ngày; không bật thì mỗi video chỉ đăng một lần trên mỗi kênh.
+- Ngân sách bài và hạn dùng nội dung giúp chiến dịch tự kết thúc: chạm ngân sách là tự dừng.
+- Giờ slot hiểu theo múi giờ của chiến dịch (có đổi giờ mùa hè); giờ trong lịch S14 là giờ Việt Nam.
+- Chiến dịch tạm dừng không tạo bài mới; bài đã hẹn chờ tới khi chiến dịch chạy lại. Dừng hẳn thì bài chưa đăng bị huỷ.
+- Tạm dừng đăng tự động (khay hệ thống) cũng dừng lập lịch và đặt sản xuất của mọi chiến dịch.
+
+Lưu ý / lỗi thường gặp:
+- Chiến dịch tự dừng kèm lý do (hiện dưới danh sách và ở hộp Cần xử lý của S14): quá N bài lỗi liên tiếp, tài khoản mất quyền hoặc ngắt mạch, tuyến mạng/VPN không đạt, hết ngân sách, hoặc kênh bất thường (nếu bật ở Cài đặt → Đăng bài). Xử lý nguyên nhân rồi bấm "Bật"; app không tự chạy lại.
+- "Không đăng tự động được" ở một kênh: thường do tài khoản chưa kết nối API hoặc nền tảng thiếu quyền/host (Instagram cần media host); xem màn Tài khoản & kênh (S23).
+- Video cảnh báo rủi ro (trùng video, đăng lại, thiếu khai báo AI) luôn vào chờ duyệt; video bị chặn thì không được xếp và có ghi chú trong xem trước.
+- Đặt sản xuất lỗi (hết hạn mức, pipeline lỗi) hiện ở danh sách yêu cầu và hộp Cần xử lý; mỗi chiến dịch chỉ có một yêu cầu tự đặt đang mở.

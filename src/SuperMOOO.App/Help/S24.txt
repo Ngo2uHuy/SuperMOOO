@@ -1,0 +1,53 @@
+Live tương tác · Chùa Online
+
+Dùng để:
+Hiển thị nhân vật, lời cầu an và hiệu ứng theo sự kiện TikFinity; phát hình và giọng đọc local qua TikTok LIVE Studio hoặc OBS.
+
+Các bước:
+1. Cài và mở TikFinity trên cùng máy, đăng nhập tài khoản TikTok và bật WebSocket. Địa chỉ mặc định ws://localhost:21213/.
+2. Chọn Chế độ giả lập để thử cảnh khi chưa live. Chọn giọng local, âm lượng và giới hạn câu/phút. Bấm Bắt đầu.
+3. Bấm Mở cửa sổ phát. Cửa sổ này (tiêu đề "Chùa Online") chỉ có cảnh, đã ẩn bảng giả lập và HUD, tự bật tiếng. Dùng các nút Vào phòng, Cầu an, Thả tim, Theo dõi, Tặng quà hoặc Bão quà trên S24 để xem cảnh giả lập.
+4. Muốn bấm giả lập ngay trên trang: bấm Xem thử (có bảng giả lập). Cửa sổ xem thử không dùng để phát.
+5. Để nhận sự kiện thật: Dừng, bỏ Chế độ giả lập, rồi Bắt đầu. TikFinity phải đang kết nối phòng live của bạn.
+6. Trong TikTok LIVE Studio, thêm Window capture, chọn cửa sổ Edge "Chùa Online", đặt khung dọc và bật âm thanh hệ thống. Kiểm tra hình, tiếng trước khi tự bấm phát trực tiếp.
+7. Nếu dùng OBS: bấm Sao chép URL cho OBS (URL đã có obs=1), thêm Browser Source với kích thước 1080 × 1920. Bật tiếng nguồn trong OBS.
+8. Xem Giám sát để kiểm tra sự kiện và top phiên; Sổ công đức hiển thị 7 ngày gần nhất. Dừng để lưu và đóng máy chủ.
+9. Lập luật ở tab Luật & nội dung: bấm Thêm luật quà hoặc Thêm luật bình luận, chọn quà trong ô Quà đã thấy (tự điền mã và tên quà) hoặc gõ tên quà / từ khoá (nhiều mục cách nhau bằng dấu phẩy), chọn Khớp, Hành động, Nhãn hiển thị, Hồi (giây) cho lệnh bình luận. Bấm Lưu & áp dụng luật (áp dụng ngay cả khi phiên đang chạy).
+10. Bấm Bắn thử ở dòng luật để phát một sự kiện giả qua đúng engine (cần phiên đang chạy, thật hoặc giả lập). Nhân vật "Thử luật" diễn hiệu ứng; sự kiện thử không tính vào sổ công đức, thống kê hay danh hiệu.
+
+Mẹo:
+- Người xem tham gia miễn phí bằng bình luận và thả tim; quà chỉ thêm hiệu ứng. Không hứa tặng quà sẽ được phù hộ; câu đọc dùng "tùy hỷ".
+- Thứ tự chọn hiệu ứng cho quà: luật theo mã quà → luật theo tên quà (không dấu, không phân biệt hoa thường; "Đúng nguyên tên" hoặc "Có chứa") → bảng tên quà giftAliases trong theme.json → mức xu ở tab Luật & nội dung (mặc định 1 xu dâng hương, 5 xu lễ Phật lạy ba lạy, 10 xu hoa sen, 100 xu đại lễ). Tối đa 100 luật.
+- Hành động dùng được: Dâng hương, Lễ Phật, Hoa sen, Đại lễ, Niệm Phật, Hoa sen bay, Lấp lánh, Đổi áo, cùng các hành động riêng khai báo ở mục "actions" của theme.json (mặc định có Thỉnh chuông, Thả đèn hoa đăng).
+- Lệnh bình luận có sẵn: "!doi" (hoặc "đổi áo") đổi áo lam ↔ áo vàng, "thỉnh chuông" thỉnh chuông. Mỗi người chờ hết thời gian hồi của luật; cả phòng chạy tối đa số lệnh/phút đặt ở ô "Lệnh bình luận tối đa mỗi phút". Bình luận khớp lệnh không hiện bong bóng chữ.
+- Áo vàng là phần thưởng miễn phí khi theo dõi, chia sẻ hoặc đăng ký trong phiên; lệnh đổi áo chỉ đổi qua lại cho người đã có, quà không mua được áo vàng.
+- Danh hiệu theo tổng xu của người xem trong phiên (mặc định 10 Nén Hương, 50 Đèn Sen, 200 Chuông Ngân, 1000 Liên Hoa; sửa ở mục "titles" của theme.json). Danh hiệu hiện dưới tên nhân vật; lên danh hiệu có hào quang nhỏ và câu đọc ngắn đi cùng câu cảm ơn (vẫn theo giới hạn câu/phút).
+- Ba người tặng nhiều nhất phiên đứng bục vinh danh trước tượng Phật, viền vàng / bạc / đồng, và được giữ lại đến hết phiên. Vị trí và cỡ bục ở mục "podium" của theme.json.
+- Quà thật đã nhận được ghi nhớ (mã, tên, ảnh, số xu, lần cuối thấy; tối đa 500) ở DataRoot\livegame\observed-gifts.json để chọn khi lập luật. Bấm Tải lại quà đã thấy sau một phiên live.
+- Combo quà chỉ được tính một lần khi TikFinity báo kết thúc; nếu không có báo kết thúc, combo tự chốt sau 4 giây không có cập nhật. Gói trùng (cùng mã gói, hoặc cùng người + cùng nội dung trong 2,5 giây) bị bỏ.
+- Viết tắt trong lời cầu (ko, k, khum → không; đc → được; mn → mọi người; j → gì; vs → với; ntn → như thế nào; cx → cũng; bn → bao nhiêu; ae → anh em; sk → sức khỏe…) được đổi thành chữ đầy đủ trước khi chọn chủ đề cầu an và gửi LLM; bong bóng chữ trên cảnh vẫn giữ nguyên. Sửa bảng ở mục "slang" của theme.json, hoặc thêm file DataRoot\livegame\slang.json (dạng {"ko": "không"}) để ghi đè từng mục.
+- Nhạc nền riêng: chép nhạc bạn có bản quyền (.mp3, .ogg, .wav, tối đa 200 MB mỗi bài, 300 bài) vào DataRoot\themes\temple\music\. Trang phát ngẫu nhiên lần lượt, không lặp liền bài, bỏ qua bài lỗi; thư mục trống thì dùng nhạc nền mặc định của chủ đề. Bắt đầu lại phiên để nạp danh sách mới.
+- Câu đọc theo mức quà, câu cầu an theo chủ đề (sức khỏe, bình an, gia đạo, công việc, thi cử), vị trí hàng quỳ, lư hương, tượng, đèn lưu ly nằm trong theme.json của gói chủ đề.
+- Đổi asset chủ đề: đặt file cùng tên vào thư mục DataRoot\themes\temple\ (mặc định %LOCALAPPDATA%\SuperMOOO.Data\themes\temple\), ví dụ backdrop.jpg, monk_blue.png, monk_gold.png, monk.json, bell.wav, mo.wav, gong.wav, temple_zen.mp3, theme.json. File ở đó được dùng thay bản có sẵn. Chỉ nhận đuôi .json .png .jpg .webp .mp3 .ogg .wav .mp4; json tối đa 1 MB, ảnh 16 MB, âm thanh/video 200 MB. theme.json chỉ cần ghi phần muốn đổi: mỗi khoá cấp một (ví dụ "speech", "titles") ghi trong file thay cả khoá đó của bản có sẵn. Bắt đầu lại phiên để áp dụng.
+- Thả tim làm đèn lưu ly sáng dần theo tổng tim của phiên. Niệm "Nam mô", "A Di Đà" thì nhân vật lạy và tỏa hào quang. Mùng 1, rằm và ngày lễ có dây cờ, đèn lồng, hoa.
+- Cầu an AI chỉ dùng cho bình luận "cầu…" và quà đại lễ, theo cấu hình model local của S16; quá 4 giây, lỗi, hoặc máy đang thiếu tài nguyên thì dùng câu mẫu.
+- Cài đặt được áp dụng khi bắt đầu phiên (riêng luật quà & bình luận áp dụng ngay khi bấm Lưu & áp dụng luật). Dừng trước khi đổi cấu hình khác.
+- Tạo ba nền AI: chọn dịch vụ ảnh rồi bấm nút. Mô tả chùa sáng/chiều/tối được gửi đến dịch vụ đã chọn và có thể tính phí; API key lấy từ S16. Theo dõi tác vụ dưới màn. Hoàn tất rồi bắt đầu phiên mới để dùng video nền; gói cũ được giữ lại.
+- Phiên giả lập không tính vào sổ công đức thật.
+- Bảng giả lập trên cửa sổ xem thử chỉ hoạt động khi S24 đang ở phiên giả lập. Bão quà trên trang tạo 100 sự kiện; không gửi vào phiên live thật.
+- Âm lượng trên trang xem thử chỉ áp dụng cho cửa sổ đó; cửa sổ phát dùng âm lượng của S24.
+- Trang dùng FPS và mức quà từ S24; tối đa 300 nhân vật đầy đủ, người còn lại là chấm để giảm tải. Khi bão quà, số hiệu ứng/âm báo được giới hạn nhưng engine vẫn tính thống kê sự kiện đã nhận.
+- Trang tự nối lại khi mất WebSocket và tự tải lại khi im lặng quá 60 giây, mất WebGL hoặc vòng vẽ bị đứng; reload khôi phục nhân vật và bộ đếm.
+- Chỉ mở một cửa sổ có tiếng để tránh đọc trùng.
+
+Lưu ý / lỗi thường gặp:
+- Không nghe tiếng: cửa sổ phát tự bật tiếng; nếu Edge vẫn chặn, bấm một lần vào cửa sổ phát. Kiểm tra thu âm hệ thống trong LIVE Studio.
+- Không nhận sự kiện: kiểm tra TikFinity đang chạy trên cùng máy, WebSocket bật và tài khoản đang live. Bật Ghi JSON TikFinity thô khi cần đối chiếu payload; log có tên và bình luận người xem.
+- Đang "Đã kết nối" mà không nhận gói nào quá số phút ở ô "Nối lại TikFinity nếu không nhận gói nào quá" (mặc định 10) thì app tự đóng và nối lại, S24 hiện trạng thái "Mất kết nối TikFinity". Phòng live rất vắng có thể bị nối lại vô ích: tăng số phút.
+- Bắn thử báo cần bắt đầu phiên: bấm Bắt đầu (có thể ở Chế độ giả lập) trước. Luật đang tắt không bắn thử được.
+- Lệnh bình luận không chạy: kiểm tra luật đang bật, người đó đã hết thời gian hồi, cả phòng chưa vượt giới hạn lệnh/phút. Đổi áo không có tác dụng với người chưa theo dõi/chia sẻ.
+- TTS lỗi lẻ thì bỏ câu đó và đọc tiếp. Lỗi 5 lần liên tiếp hoặc model/server không dùng được thì giọng đọc tạm dừng 2 phút rồi tự thử lại cùng giọng (không đổi model giữa phiên); S24 hiện dòng cảnh báo màu vàng. Lỗi kéo dài: khắc phục model ở S16 rồi Dừng và Bắt đầu lại.
+- Một phiên giữ tối đa 10.000 người tặng trong bộ nhớ; vượt trần thì người mới vẫn có hiệu ứng và lời cảm ơn, xu được cộng chung vào "Người tặng khác" và S24 hiện cảnh báo. Mở phiên mới nếu cần sổ chi tiết từng người.
+- Avatar TikTok được lưu tạm trong DataRoot\cache\livegame_avatars (tối đa khoảng 50 MB / 2.000 ảnh, tự xoá ảnh cũ nhất).
+- URL overlay chứa mã truy cập riêng của phiên. Chỉ dùng trong phần mềm phát trên máy.
+- Cảnh là nội dung tương tác; cần kiểm tra thực tế với TikFinity và giám sát tài nguyên trước khi vận hành dài ngày.

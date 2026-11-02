@@ -1,0 +1,102 @@
+<UserControl x:Class="SuperMOOO.App.Features.S19.AvatarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Avatar khớp môi"
+                    Description="Biến video người nói và lời thoại thành video khớp môi bằng MuseTalk (chạy CPU, rất chậm).">
+      <ui:Button Appearance="Primary" Content="Tạo video" Icon="{ui:SymbolIcon Play24}" Command="{Binding StartCommand}" />
+    </c:ScreenHeader>
+    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Hint}" Text="{Binding Status}" Margin="0,8,0,0"
+               Visibility="{Binding Status, Converter={StaticResource NotEmptyToVis}}" />
+
+    <c:SplitView PrimaryRatio="1.15">
+      <c:SplitView.Primary>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel Margin="0,0,16,0">
+            <ui:InfoBar IsOpen="True" IsClosable="False" Severity="Warning" Title="Chưa dùng được MuseTalk" Margin="{StaticResource CardGap}"
+                        Message="{Binding RuntimeMessage}"
+                        Visibility="{Binding RuntimeMissing, Converter={StaticResource BoolToVis}}" />
+            <ui:Card Style="{StaticResource Section}">
+              <StackPanel>
+                <TextBlock Style="{StaticResource CardTitle}" Text="Avatar" />
+                <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,8" TextWrapping="Wrap"
+                           Text="Video người nhìn thẳng, rõ mặt, MP4/MOV/WebM/MKV, tối đa 250 MB và 3 phút. Video được chép vào thư viện của app." />
+                <Grid MinHeight="90" MaxHeight="180" Margin="0,0,0,8">
+                  <ListBox ItemsSource="{Binding Avatars}" SelectedItem="{Binding Selected}" DisplayMemberPath="Name" />
+                  <c:EmptyState Icon="PersonVoice24" Text="Chưa có avatar. Bấm &quot;Thêm video&quot;."
+                                Visibility="{Binding Avatars.Count, Converter={StaticResource EmptyToVis}}" />
+                </Grid>
+                <TextBlock Style="{StaticResource Hint}" Text="{Binding SelectedFaceText}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                <WrapPanel>
+                  <ui:Button Content="Thêm video" Icon="{ui:SymbolIcon Add24}" Command="{Binding AddAvatarCommand}" Margin="0,0,8,8" />
+                  <ComboBox ItemsSource="{Binding FaceSecondsChoices}" SelectedItem="{Binding FaceSeconds}" Width="70" Margin="0,0,4,8" ToolTip="Dò mặt cho lời thoại dài tới (giây)" />
+                  <ui:Button Content="Dò mặt trước" Icon="{ui:SymbolIcon Scan24}" Command="{Binding PrepareFaceCommand}" Margin="0,0,8,8" />
+                  <ui:Button Content="Xoá" Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeleteAvatarCommand}" Margin="0,0,8,8" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Làm mới danh sách" Command="{Binding RefreshListCommand}" Margin="0,0,0,8" />
+                </WrapPanel>
+              </StackPanel>
+            </ui:Card>
+            <ui:Card Style="{StaticResource Section}">
+              <StackPanel>
+                <TextBlock Style="{StaticResource CardTitle}" Text="Lời thoại" />
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                  <RadioButton Content="Đọc bằng giọng (TTS)" IsChecked="{Binding UseTts, Mode=OneWay}" GroupName="source" Margin="0,0,16,0" />
+                  <RadioButton Content="Dùng file audio" IsChecked="{Binding UseAudioFile}" GroupName="source" />
+                </StackPanel>
+                <StackPanel Visibility="{Binding UseTts, Converter={StaticResource BoolToVis}}">
+                  <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="12" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:TextBox Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Tên sản phẩm (để gợi ý lời thoại)" MaxLength="200" />
+                    <ui:TextBox Grid.Column="2" Text="{Binding ProductFacts, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Thông tin đã xác thực: giá, ưu đãi…" MaxLength="3000" />
+                  </Grid>
+                  <DockPanel Margin="0,0,0,4">
+                    <ui:Button DockPanel.Dock="Right" Content="Gợi ý lời thoại" Icon="{ui:SymbolIcon Sparkle24}" Command="{Binding SuggestScriptCommand}" />
+                    <TextBlock Text="Lời thoại (tối đa 2500 ký tự)" VerticalAlignment="Center" />
+                  </DockPanel>
+                  <ui:TextBox Text="{Binding ScriptText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="110" MaxLength="2500"
+                              VerticalAlignment="Top" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12" />
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="12" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <c:Field Header="Giọng đọc" Margin="0">
+                      <ComboBox ItemsSource="{Binding Voices}" SelectedItem="{Binding Voice}" DisplayMemberPath="DisplayName" />
+                    </c:Field>
+                    <c:Field Grid.Column="2" Header="Tốc độ đọc" Margin="0">
+                      <Slider Minimum="0.5" Maximum="2" Value="{Binding Speed}" TickFrequency="0.1" IsSnapToTickEnabled="True" />
+                    </c:Field>
+                  </Grid>
+                </StackPanel>
+                <StackPanel Visibility="{Binding UseAudioFile, Converter={StaticResource BoolToVis}}">
+                  <DockPanel>
+                    <ui:Button DockPanel.Dock="Right" Content="Chọn…" Command="{Binding PickAudioCommand}" Margin="8,0,0,0" />
+                    <ui:TextBox Text="{Binding AudioPath, Mode=OneWay}" IsReadOnly="True" PlaceholderText="Chọn file audio lời thoại" />
+                  </DockPanel>
+                </StackPanel>
+                <TextBlock Style="{StaticResource Hint}" Text="{Binding EstimateText}" TextWrapping="Wrap" Margin="0,12,0,0"
+                           Visibility="{Binding EstimateText, Converter={StaticResource NotEmptyToVis}}" />
+              </StackPanel>
+            </ui:Card>
+            <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap"
+                       Text="Cài MuseTalk ở Cài đặt → Avatar khớp môi (~5,8 GB, tuỳ chọn). Toạ độ mặt đã dò được lưu cạnh avatar nên các lần dựng sau nhanh hơn. Chỉ dùng avatar có quyền sử dụng hình ảnh." />
+          </StackPanel>
+        </ScrollViewer>
+      </c:SplitView.Primary>
+
+      <c:SplitView.Secondary>
+        <DockPanel>
+          <c:ScreenJobsPanel x:Name="ScreenJobs" DockPanel.Dock="Bottom" Margin="0,12,0,0" />
+          <ContentControl x:Name="ClipHost" Focusable="False" />
+        </DockPanel>
+      </c:SplitView.Secondary>
+    </c:SplitView>
+  </DockPanel>
+</UserControl>

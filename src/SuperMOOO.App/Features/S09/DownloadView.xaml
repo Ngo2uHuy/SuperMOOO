@@ -1,0 +1,207 @@
+<UserControl x:Class="SuperMOOO.App.Features.S09.DownloadView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <UserControl.Resources>
+    <DataTemplate x:Key="PlatformCardTemplate">
+      <StackPanel Margin="10,4" Opacity="{Binding Dim}">
+        <TextBlock Text="{Binding Name}" />
+        <TextBlock Style="{StaticResource Hint}" Text="{Binding Badge}" Visibility="{Binding Badge, Converter={StaticResource NotEmptyToVis}}" />
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Tải video"
+                    Description="Dán liên kết (mỗi dòng một liên kết) hoặc nhập từ Excel/CSV; file tải về nằm trong Kho file bên phải.">
+      <ui:Button Appearance="Primary" Content="Tải xuống" Icon="{ui:SymbolIcon ArrowDownload24}" Command="{Binding StartCommand}" />
+    </c:ScreenHeader>
+
+    <c:SplitView PrimaryRatio="0.8">
+      <c:SplitView.Primary>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel Margin="0,0,16,0">
+            <ui:Card Style="{StaticResource Section}">
+              <StackPanel>
+                <TextBlock Style="{StaticResource CardTitle}" Text="Nền tảng" />
+                <TextBlock Style="{StaticResource Hint}" Text="Trung Quốc" Margin="0,0,0,4" />
+                <ListBox ItemsSource="{Binding ChinaPlatforms}" SelectedItem="{Binding SelectedChina}" BorderThickness="0" Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemTemplate="{StaticResource PlatformCardTemplate}">
+                  <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                  </ListBox.ItemsPanel>
+                </ListBox>
+                <TextBlock Style="{StaticResource Hint}" Text="Quốc tế" Margin="0,8,0,4" />
+                <ListBox ItemsSource="{Binding GlobalPlatforms}" SelectedItem="{Binding SelectedGlobal}" BorderThickness="0" Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemTemplate="{StaticResource PlatformCardTemplate}">
+                  <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                  </ListBox.ItemsPanel>
+                </ListBox>
+                <TextBlock Style="{StaticResource Hint}" Text="{Binding PlatformHint}" TextWrapping="Wrap" Margin="0,8,0,0"
+                           Visibility="{Binding PlatformHint, Converter={StaticResource NotEmptyToVis}}" />
+              </StackPanel>
+            </ui:Card>
+
+            <ui:Card Style="{StaticResource Section}" Visibility="{Binding CanSearch, Converter={StaticResource BoolToVis}}">
+              <StackPanel>
+                <TextBlock Style="{StaticResource CardTitle}" Text="Tìm theo từ khoá" />
+                <DockPanel>
+                  <ui:Button DockPanel.Dock="Right" Style="{StaticResource ToolButton}" Content="Tìm" Icon="{ui:SymbolIcon Search24}" Command="{Binding SearchCommand}" />
+                  <ui:TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Nhập từ khoá rồi bấm Tìm (20 kết quả đầu)" />
+                </DockPanel>
+              </StackPanel>
+            </ui:Card>
+
+            <ui:Card Style="{StaticResource Section}">
+              <StackPanel>
+                <TextBlock Style="{StaticResource CardTitle}" Text="Liên kết video" />
+                <ui:TextBox Text="{Binding UrlsText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="NoWrap"
+                            MinHeight="140" MaxHeight="260" VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto"
+                            PlaceholderText="{Binding UrlPlaceholder}" />
+                <WrapPanel Margin="0,12,0,0">
+                  <ui:Button Style="{StaticResource ToolButton}" Content="Dán" Icon="{ui:SymbolIcon ClipboardPaste24}" Command="{Binding PasteCommand}"
+                             ToolTip="Dán liên kết từ clipboard vào cuối danh sách" />
+                  <ui:Button Style="{StaticResource ToolButton}" Content="Nhập Excel / CSV…" Icon="{ui:SymbolIcon ArrowImport24}" Command="{Binding ImportFileCommand}"
+                             ToolTip="Đọc cột liên kết từ file .xlsx hoặc .csv" />
+                  <ui:Button Style="{StaticResource ToolButton}" Content="Lưu Excel mẫu…" Icon="{ui:SymbolIcon DocumentTable24}" Command="{Binding SaveTemplateCommand}" />
+                  <ui:Button Style="{StaticResource ToolButton}" Content="Xem thông tin" Icon="{ui:SymbolIcon Info24}" Command="{Binding InfoCommand}"
+                             ToolTip="Đọc tiêu đề, thời lượng, định dạng của liên kết đầu tiên mà không tải" />
+                </WrapPanel>
+              </StackPanel>
+            </ui:Card>
+
+            <ui:Card Style="{StaticResource Section}">
+              <StackPanel>
+                <TextBlock Style="{StaticResource CardTitle}" Text="Tuỳ chọn tải" />
+                <TextBlock Style="{StaticResource Hint}" Text="Bộ lọc xét ngày đăng và chỉ áp dụng cho 200 mục đầu mỗi danh sách hoặc 20 kết quả tìm kiếm đầu. Mục thiếu ngày đăng không khớp khoảng ngày." TextWrapping="Wrap" Margin="0,0,0,8" />
+                <WrapPanel Margin="0,0,0,12">
+                  <c:Field Header="Từ ngày" Margin="0,0,12,0">
+                    <DatePicker SelectedDate="{Binding DateFrom}" Width="150" />
+                  </c:Field>
+                  <c:Field Header="Đến ngày" Margin="0,0,12,0">
+                    <DatePicker SelectedDate="{Binding DateTo}" Width="150" />
+                  </c:Field>
+                  <c:Field Header="Sắp xếp">
+                    <ComboBox ItemsSource="{Binding SortOptions}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding SortBy}" MinWidth="150" />
+                  </c:Field>
+                  <ui:Button Style="{StaticResource ToolButton}" Content="Áp dụng bộ lọc" Command="{Binding ApplyFilterCommand}" VerticalAlignment="Bottom" />
+                </WrapPanel>
+                <c:Field Header="Định dạng">
+                  <ComboBox ItemsSource="{Binding FormatOptions}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding SelectedFormat}" HorizontalAlignment="Left" MinWidth="200" />
+                </c:Field>
+                <ui:ToggleSwitch Content="Không watermark (khi nguồn hỗ trợ)" IsChecked="{Binding NoWatermark}" Margin="0,0,0,4" />
+                <TextBlock Style="{StaticResource Hint}" Text="Áp dụng mọi nền tảng: bỏ nguồn được đánh dấu có watermark. Không xoá logo đã gắn vào hình; nguồn thiếu thông tin vẫn có thể có watermark." TextWrapping="Wrap" Margin="0,0,0,12" />
+                <c:Field Header="Thư mục tải">
+                  <DockPanel>
+                    <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Open24}" ToolTip="Mở thư mục tải" Command="{Binding OpenFolderCommand}" />
+                    <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn thư mục tải…" Command="{Binding ChooseFolderCommand}" />
+                    <ui:TextBox Text="{Binding FolderText, Mode=OneWay}" IsReadOnly="True" />
+                  </DockPanel>
+                </c:Field>
+              </StackPanel>
+            </ui:Card>
+
+            <ui:Card Style="{StaticResource Section}" Visibility="{Binding EntriesTitle, Converter={StaticResource NotEmptyToVis}}">
+              <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource CardTitle}" Text="{Binding EntriesTitle}" />
+                <WrapPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+                  <ui:Button Style="{StaticResource ToolButton}" Content="Chọn tất cả" Command="{Binding SelectAllEntriesCommand}" />
+                  <ui:Button Style="{StaticResource ToolButton}" Content="Bỏ chọn" Command="{Binding ClearEntriesCommand}" />
+                  <ui:Button Style="{StaticResource ToolButton}" Appearance="Primary" Content="Tải mục đã chọn" Icon="{ui:SymbolIcon ArrowDownload24}"
+                             Command="{Binding DownloadEntriesCommand}" ToolTip="Mỗi mục một tác vụ, dùng Định dạng và Thư mục tải bên dưới" />
+                </WrapPanel>
+                <DataGrid ItemsSource="{Binding Entries}" AutoGenerateColumns="False" CanUserAddRows="False" HeadersVisibility="Column"
+                          SelectionMode="Single" MaxHeight="360" RowHeight="56">
+                  <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Tải" Width="50">
+                      <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                          <CheckBox IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </DataTemplate>
+                      </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Ảnh" Width="90" IsReadOnly="True">
+                      <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                          <Image Source="{Binding Thumb}" Height="48" Stretch="Uniform" />
+                        </DataTemplate>
+                      </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title, Mode=OneWay}" Width="*" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Ngày đăng" Binding="{Binding Published, Mode=OneWay}" Width="100" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Lượt xem" Binding="{Binding Views, Mode=OneWay}" Width="100" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Thời lượng" Binding="{Binding Duration, Mode=OneWay}" Width="90" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Tác giả" Binding="{Binding Author, Mode=OneWay}" Width="130" IsReadOnly="True" />
+                  </DataGrid.Columns>
+                </DataGrid>
+              </DockPanel>
+            </ui:Card>
+
+            <ui:InfoBar Title="Thông tin" Message="{Binding InfoText}" IsOpen="True" IsClosable="False" Severity="Informational"
+                        Visibility="{Binding InfoText, Converter={StaticResource NotEmptyToVis}}" Margin="{StaticResource CardGap}" />
+            <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" Visibility="{Binding Status, Converter={StaticResource NotEmptyToVis}}" />
+            <c:ScreenJobsPanel x:Name="ScreenJobs" Margin="0,12,0,0" />
+          </StackPanel>
+        </ScrollViewer>
+      </c:SplitView.Primary>
+
+      <c:SplitView.Secondary>
+        <ui:Card Style="{StaticResource FillSection}" Margin="0">
+          <DockPanel>
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+              <TextBlock Style="{StaticResource CardTitle}" Text="Kho file đã tải" Margin="0" VerticalAlignment="Center" />
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Làm mới" Command="{Binding RefreshCommand}" />
+                <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Open24}" ToolTip="Mở file đã chọn" Command="{Binding OpenSelectedCommand}" />
+                <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Copy24}" ToolTip="Sao chép đường dẫn các file đã chọn" Command="{Binding CopySelectedPathsCommand}" />
+                <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Xoá file đã chọn khỏi ổ đĩa" Command="{Binding DeleteSelectedCommand}" />
+              </StackPanel>
+            </DockPanel>
+            <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+              <ui:Button Style="{StaticResource ToolButton}" Content="Chọn tất cả" Command="{Binding SelectAllHistoryCommand}" />
+              <ui:Button Style="{StaticResource ToolButton}" Content="Bỏ chọn" Command="{Binding ClearHistorySelectionCommand}" />
+              <TextBlock Style="{StaticResource Hint}" Text="Tích chọn để xoá/copy nhiều file; chuột phải để thao tác từng file." VerticalAlignment="Center" TextWrapping="Wrap" />
+            </WrapPanel>
+            <Grid>
+              <DataGrid ItemsSource="{Binding History}" SelectedItem="{Binding Selected}" AutoGenerateColumns="False" IsReadOnly="True"
+                        SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column">
+                <DataGrid.RowStyle>
+                  <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                    <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}" />
+                    <Setter Property="ContextMenu">
+                      <Setter.Value>
+                        <ContextMenu DataContext="{Binding PlacementTarget, RelativeSource={RelativeSource Self}}">
+                          <MenuItem Header="Xem video / Mở file" Command="{Binding Tag.OpenHistoryCommand}" CommandParameter="{Binding DataContext}" />
+                          <MenuItem Header="Sao chép đường dẫn" Command="{Binding Tag.CopyHistoryPathCommand}" CommandParameter="{Binding DataContext}" />
+                          <Separator />
+                          <MenuItem Header="Xoá file" Command="{Binding Tag.DeleteHistoryCommand}" CommandParameter="{Binding DataContext}" />
+                        </ContextMenu>
+                      </Setter.Value>
+                    </Setter>
+                  </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                  <DataGridTemplateColumn Header="Chọn" Width="56" CanUserSort="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Chọn file để xoá hoặc sao chép đường dẫn" />
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Header="Tên file" Binding="{Binding Name, Mode=OneWay}" Width="2*" />
+                  <DataGridTextColumn Header="Loại" Binding="{Binding Kind, Mode=OneWay}" Width="90" />
+                  <DataGridTextColumn Header="Định dạng" Binding="{Binding Operation, Mode=OneWay}" Width="120" />
+                  <DataGridTextColumn Header="Dung lượng" Binding="{Binding Size, Mode=OneWay}" Width="110" />
+                  <DataGridTextColumn Header="Nguồn" Binding="{Binding Source, Mode=OneWay}" Width="2*" />
+                </DataGrid.Columns>
+              </DataGrid>
+              <c:EmptyState Icon="ArrowDownload24" Text="Chưa có file nào. Dán liên kết bên trái rồi bấm Tải xuống."
+                            Visibility="{Binding History.Count, Converter={StaticResource EmptyToVis}}" />
+            </Grid>
+          </DockPanel>
+        </ui:Card>
+      </c:SplitView.Secondary>
+    </c:SplitView>
+  </DockPanel>
+</UserControl>

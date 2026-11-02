@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SuperMOOO.Core\SuperMOOO.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Presets\*.json" />
+    <None Include="Assets\whiteboard\*" CopyToOutputDirectory="PreserveNewest" LinkBase="Assets\whiteboard" />
+  </ItemGroup>
+</Project>

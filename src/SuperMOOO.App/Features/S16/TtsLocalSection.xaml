@@ -1,0 +1,101 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.TtsLocalSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel>
+    <Border DockPanel.Dock="Bottom" Padding="0,12,0,0">
+      <StackPanel>
+        <WrapPanel>
+          <ui:Button Appearance="Primary" Content="Lưu" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
+          <ui:Button Content="Khởi động server" Icon="{ui:SymbolIcon Play24}" Command="{Binding StartCommand}" Margin="0,0,8,8" />
+          <ui:Button Content="Dừng server" Icon="{ui:SymbolIcon Stop24}" Command="{Binding StopCommand}" Margin="0,0,8,8" />
+          <ui:Button Content="Nạp model" Icon="{ui:SymbolIcon BrainCircuit24}" Command="{Binding WarmCommand}" Margin="0,0,8,8" />
+          <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Làm mới trạng thái" Command="{Binding RefreshCommand}" Margin="0,0,0,8" />
+        </WrapPanel>
+        <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" />
+      </StackPanel>
+    </Border>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="0,0,16,0">
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Server TTS trên máy" />
+            <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,8"
+                       Text="VieNeu (tiếng Việt), Chatterbox, Qwen3-TTS, CosyVoice3, Breeze TTS 2, Irodori, Supertonic (CPU) và OmniVoice (GPU Vulkan; quốc tế, clone) chạy bằng audiocpp_server.exe, không cần mạng." />
+            <TextBlock Text="{Binding ServerStatus}" TextWrapping="Wrap" />
+          </StackPanel>
+        </ui:Card>
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Ngôn ngữ → model" />
+            <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,8"
+                       Text="Giọng mặc định (VieNeu) đọc ngôn ngữ khác thì dùng model đầu tiên đã cài theo thứ tự này, giữ giới tính giọng. Model lỗi khi đọc thì báo lỗi, không tự đổi model giữa chừng." />
+            <ItemsControl ItemsSource="{Binding Routes}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" Padding="0,6">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130" />
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                      <ComboBox Grid.Column="1" ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding Options}" SelectedItem="{Binding First}"
+                                ToolTip="Model ưu tiên 1" Margin="0,0,12,0" />
+                      <TextBlock Grid.Column="2" Text="{Binding Active}" TextWrapping="Wrap" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ui:Card>
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Cấu hình" />
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+              </Grid.RowDefinitions>
+              <c:Field Header="Backend">
+                <ComboBox ItemsSource="{Binding Backends}" SelectedItem="{Binding Backend}" />
+              </c:Field>
+              <c:Field Grid.Column="2" Header="Cổng (1024–65535)">
+                <ui:TextBox Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" />
+              </c:Field>
+              <c:Field Grid.Row="1" Header="Số luồng (1–64)">
+                <ui:TextBox Text="{Binding Threads, UpdateSourceTrigger=PropertyChanged}" />
+              </c:Field>
+              <c:Field Grid.Row="1" Grid.Column="2" Header="Thiết bị GPU (0–16)">
+                <c:ValuePicker Options="{x:Static c:InputChoices.GpuDevices}" Value="{Binding Device}" />
+              </c:Field>
+              <c:Field Grid.Row="2" Header="Model nạp đồng thời (1–2)">
+                <c:ValuePicker Options="{x:Static c:InputChoices.LoadedModels}" Value="{Binding MaxLoadedModels}" />
+              </c:Field>
+              <c:Field Grid.Row="2" Grid.Column="2" Header="Độ dài khối (80–1200)">
+                <ui:TextBox Text="{Binding ChunkSize, UpdateSourceTrigger=PropertyChanged}" />
+              </c:Field>
+              <c:Field Grid.Row="3" Header="Số bước OmniVoice (4–64)" Margin="0">
+                <ui:TextBox Text="{Binding Steps, UpdateSourceTrigger=PropertyChanged}" />
+              </c:Field>
+              <c:Field Grid.Row="3" Grid.Column="2" Header="Ngôn ngữ mặc định" Margin="0">
+                <c:ValuePicker Options="{x:Static c:InputChoices.SpeechLanguages}" Value="{Binding Language}" />
+              </c:Field>
+            </Grid>
+            <ui:ToggleSwitch Content="Tiết kiệm RAM (OmniVoice)" IsChecked="{Binding LowMemory}" Margin="0,12,0,0" />
+          </StackPanel>
+        </ui:Card>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

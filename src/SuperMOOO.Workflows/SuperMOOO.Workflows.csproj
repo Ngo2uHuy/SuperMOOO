@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\SuperMOOO.Core\SuperMOOO.Core.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Media\SuperMOOO.Media.csproj" />
+    <ProjectReference Include="..\SuperMOOO.AI\SuperMOOO.AI.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Social\SuperMOOO.Social.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Publishing\SuperMOOO.Publishing.csproj" />
+    <PackageReference Include="Quartz" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Definitions\*.json" />
+    <EmbeddedResource Include="Review\script_styles.json" />
+    <EmbeddedResource Include="Live\Web\*" LogicalName="Live.Web.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="LiveGame\Web\*" LogicalName="LiveGame.Web.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="LiveGame\Themes\**\*" LogicalName="LiveGame.Themes.%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Include="Assets\talkshow\*.png" CopyToOutputDirectory="PreserveNewest" LinkBase="Assets\talkshow" />
+  </ItemGroup>
+</Project>

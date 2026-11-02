@@ -1,0 +1,25 @@
+Cài đặt & hệ thống
+
+Dùng để:
+Cấu hình đường dẫn, API key, model AI, mạng, giao diện và kiểm tra hệ thống.
+
+Các bước:
+1. Chọn nhóm cần chỉnh ở danh sách bên trái.
+2. Sửa thiết lập rồi lưu ở ngay nhóm đó.
+3. AI worker: bản cài mới tự mở mục này và cài Python, thư viện, toàn bộ model AI local và MuseTalk. Cần Internet và nhiều chục GB trống; theo dõi, huỷ hoặc thử lại ngay trong khung tác vụ.
+4. Bấm "Cài đầy đủ thành phần" để tiếp tục hoặc sửa môi trường; "Kiểm tra khả năng" kiểm tra AI worker sau khi cài.
+
+Mẹo:
+- TTS local: chọn GPU, số model nạp đồng thời và ngôn ngữ từ dropdown. Model ASR/TTS cloud có danh sách gợi ý theo nhà cung cấp, vẫn cho nhập model riêng. Các ô nhập trống hiển thị gợi ý; mật khẩu/API key vẫn được che.
+- Mặc định đóng cửa sổ sẽ hỏi xác nhận thoát. Chỉ bật "Đóng cửa sổ thì chạy nền" khi muốn app tiếp tục chạy trong khay hệ thống.
+- Gỡ SuperMOOO trong Cài đặt Windows sẽ XOÁ SẠCH thư mục dữ liệu của app (CSDL, API key, tài khoản, giọng, avatar, dự án, model, môi trường AI, MuseTalk, nhật ký, bản sao lưu nằm trong đó) và tắt khởi động cùng Windows, không hỏi lại. Chỉ giữ video đã xuất ở Videos\SuperMOOO. Cần giữ dữ liệu thì tạo bản sao lưu và lưu ra ngoài trước khi gỡ. Xoá riêng file EXE không chạy trình gỡ cài đặt.
+- Đường dẫn & công cụ: thư mục xuất, vị trí ffmpeg, yt-dlp… (để trống = tự tìm trong tools\ rồi PATH).
+- API key: nhập theo nhà cung cấp, lưu mã hoá DPAPI, chỉ hiện 4 ký tự cuối.
+- Model AI: chọn "OpenAI-compatible (URL tuỳ chỉnh)" để dùng bất kỳ server tương thích OpenAI (nhập Base URL; key nhập ở API key, nhà cung cấp openai_compat, là tuỳ chọn). Ô "Base URL OpenAI TTS" đổi địa chỉ TTS OpenAI. Ảnh AI: "Base URL OpenAI/Gemini" để trống = địa chỉ chính thức; Pollinations có key (API key, nhà cung cấp pollinations) thì giãn cách ảnh theo thanh trượt, không key cố định 45 giây.
+- TTS local (C++): bảng "Ngôn ngữ → model" cho biết mỗi ngôn ngữ đang đọc bằng model nào (đã cài/chưa cài, CPU/GPU); đổi model ưu tiên 1 rồi bấm Lưu.
+- Mạng: thêm/nhập proxy cho mọi kết nối ra ngoài, kiểm tra IP thật, nối VPN có sẵn trong Windows. Trạng thái chỉ giữ trong phiên; mở lại app về kết nối trực tiếp.
+- Đăng bài: nhập OAuth client (Client ID/Secret, lưu DPAPI) cho YouTube, Meta, TikTok kèm Redirect URI cần khai báo; cấu hình media host S3/R2 cho Instagram và bấm "Kiểm tra kết nối"; bật cờ "đã qua audit Direct Post" của TikTok (tắt thì chỉ đăng "Chỉ mình tôi"); đặt quota YouTube/ngày, giới hạn bài/ngày, giãn cách, băng thông upload (KB/s) và số upload đồng thời rồi bấm "Lưu cài đặt". Quyền xin thêm (video.publish, thống kê, insights) chỉ có hiệu lực sau khi kết nối lại tài khoản. Cũng ở mục này: ngân sách đồng bộ số liệu mỗi ngày theo từng nền tảng (0 = không đồng bộ), số ngày giữ số liệu chi tiết và công tắc "tự dừng chiến dịch khi kênh bất thường" (mặc định tắt: chỉ cảnh báo).
+- Chạy nền: đóng cửa sổ (nút X) thì app ẩn xuống khay hệ thống và lịch đăng bài vẫn chạy; bấm icon khay để Mở, Tạm dừng/Tiếp tục đăng tự động hoặc Thoát (thoát khi còn bài hẹn giờ trong 24 giờ tới sẽ hỏi xác nhận). Mở app lần hai chỉ đưa cửa sổ đang chạy lên. "Khởi động cùng Windows" chạy app ở chế độ nền (chỉ icon khay, chưa bật server AI/TTS; mở cửa sổ khi cần). Tắt "Đóng cửa sổ thì chạy nền" thì nút X thoát hẳn như trước. Các công tắc lưu ngay khi đổi.
+- Sao lưu & lưu trữ: "Sao lưu ngay" / "Sao lưu vào…" tạo file .zip gồm cơ sở dữ liệu (cài đặt, dự án, kho, lịch đăng, API key và token mã hoá), giọng clone/giọng neo và avatar khớp môi; bật "Kèm media" để thêm cả thư mục xuất (có thể rất lớn). KHÔNG gồm model AI, cache, worker/venv Python, MuseTalk (quá lớn, cài lại được). Khôi phục: chọn bản trong danh sách hoặc "Chọn file .zip…", xác nhận; app sao lưu dữ liệu hiện tại rồi dựng bản chờ, bạn thoát hẳn app (menu khay > Thoát) và mở lại thì bản khôi phục được áp (dữ liệu cũ giữ lại với hậu tố .before-restore, "Huỷ khôi phục đang chờ" để bỏ). Khôi phục sang máy/tài khoản Windows khác: API key và token đăng nhập không giải mã được, hãy nhập lại API key và kết nối lại tài khoản đăng bài. Sao lưu tự động theo lịch giữ N bản mới nhất. "Cảnh báo khi ổ còn dưới" tạo mục Cần xử lý + thông báo; "Tạm dừng job khi còn dưới" dời tác vụ render và upload cho tới khi đủ chỗ. Bảng Dung lượng cho thấy từng thư mục dữ liệu; "Dọn log cũ" theo số ngày giữ, "Dọn cache" không đụng file còn bài chờ đăng.
+- Nhật ký: xem, lọc theo mức, xoá bộ đệm, lưu ra file.
+- Kiểm tra hệ thống: thông số máy, công cụ đang có, dọn cache.

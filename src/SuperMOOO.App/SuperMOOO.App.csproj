@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>SuperMOOO.App</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SuperMOOO.Core\SuperMOOO.Core.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Data\SuperMOOO.Data.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Infrastructure\SuperMOOO.Infrastructure.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Media\SuperMOOO.Media.csproj" />
+    <ProjectReference Include="..\SuperMOOO.AI\SuperMOOO.AI.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Social\SuperMOOO.Social.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Publishing\SuperMOOO.Publishing.csproj" />
+    <ProjectReference Include="..\SuperMOOO.Workflows\SuperMOOO.Workflows.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="LibVLCSharp.WPF" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" />
+    <PackageReference Include="Velopack" />
+    <PackageReference Include="WPF-UI" />
+    <PackageReference Include="WPF-UI.Tray" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Help\*.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

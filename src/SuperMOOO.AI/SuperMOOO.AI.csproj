@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\SuperMOOO.Core\SuperMOOO.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Grpc.Net.Client" />
+    <PackageReference Include="Google.Protobuf" />
+    <PackageReference Include="Grpc.Tools" PrivateAssets="all" />
+    <Protobuf Include="..\..\proto\aivs_worker.proto" Link="Worker\aivs_worker.proto" GrpcServices="Client" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Mã Python của worker đi cùng output để AiWorkerHost tìm thấy ở cả dev lẫn bản cài. -->
+    <Content Include="..\..\ai_worker\aivs_worker\**\*.py" Link="ai_worker\aivs_worker\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\ai_worker\requirements.lock" Link="ai_worker\requirements.lock" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="Catalog/*.json" />
+  </ItemGroup>
+</Project>

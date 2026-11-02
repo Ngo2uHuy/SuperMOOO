@@ -1,0 +1,33 @@
+Reup tự động
+
+Dùng để:
+Theo dõi trang cá nhân/kênh (TikTok, YouTube, Facebook, Instagram) và tự xử lý, đăng video mới.
+
+Các bước:
+1. Bấm "Luồng mới".
+2. Tab "Nguồn & bộ lọc": nhập nguồn, lọc theo từ khoá, độ dài; chọn "Video đã có sẵn" (lấy cả video cũ, chỉ video mới, hoặc N video gần nhất). "Mạng khi quét nguồn" chọn tuyến của S23 (vd VPN cùng quốc gia với kênh nguồn) hoặc để "Trực tiếp".
+3. Tab "Xử lý & đăng": chọn cách xử lý, đặt mẫu tiêu đề/mô tả và lịch chung của luồng.
+4. Bảng "Kênh đích": tích "Bật" cho kênh muốn đăng, chọn "Hồ sơ" cho từng kênh: "Theo tài khoản" (hồ sơ thị trường gắn với tài khoản ở S23), một hồ sơ cụ thể, hoặc "Cài đặt chung" (mẫu và lịch của luồng).
+5. Cần chỉnh riêng một kênh: bấm "Tuỳ chỉnh", sửa trường cần đổi (trường đang ghi đè in đậm, "Về như hồ sơ" bỏ ghi đè; "Ngày được đăng" chọn T2…CN, bỏ chọn hết = mọi ngày) rồi bấm "Áp dụng".
+6. Bấm "Xem trước" để xem tiêu đề, mô tả (đã dịch nếu bật) và giờ đăng dự kiến (giờ địa phương và giờ máy) của từng kênh với video gần nhất của luồng.
+7. Bấm "Lưu luồng". App quét nguồn theo chu kỳ rồi tạo bài đăng.
+8. Chế độ chờ duyệt: bấm "Duyệt đăng" ở từng video; app hỏi xác nhận cảnh báo bản quyền (reup) một lần cho cả video.
+
+Mẹo:
+- Mẫu tiêu đề/mô tả dùng {title} {url} {author} {id} {platform} {hashtags}.
+- Chế độ tự đăng xếp lịch theo khoảng cách và giới hạn mỗi ngày. Kênh theo hồ sơ thị trường chỉ đăng trong khung giờ địa phương của hồ sơ (ngoài khung thì dời tới đầu khung kế tiếp) và đếm giới hạn theo ngày địa phương.
+- Thứ tự áp dụng cho mỗi kênh: tuỳ chỉnh của kênh → hồ sơ thị trường → cài đặt chung của luồng.
+- Bật dịch: chỉ tiêu đề video gốc ({title}) được dịch, một lần cho mỗi video và ngôn ngữ; nhiều kênh cùng ngôn ngữ dùng chung bản dịch.
+- Luồng cũ và kênh chưa chỉnh gì vẫn dùng cài đặt chung như trước.
+- Đổi nguồn thì phải tạo luồng mới.
+- Cùng video và kênh đã có ở luồng khác, hoặc video đã có trên kênh, sẽ ghi "Đã có ở luồng khác", không đăng lại.
+- Bài đăng của luồng cũng hiện ở S14 (Đăng bài & lịch đăng).
+- YouTube quét nhanh qua RSS của kênh (miễn phí, không tốn hạn mức, khoảng 15 video gần nhất gồm cả Shorts). Lần quét đầu lấy nhiều hơn 15 video, hoặc luồng lọc theo độ dài / chọn riêng Video, Shorts, Live thì dùng yt-dlp; RSS lỗi cũng tự chuyển sang yt-dlp.
+- Instagram dùng cookie tài khoản cá nhân: đăng nhập instagram.com trên trình duyệt, chép cookie vào Cài đặt > Nền tảng > Instagram > cookie. Chỉ lấy video/reel; chu kỳ quét tối thiểu 15 phút.
+
+Lưu ý / lỗi thường gặp:
+- Bài lỗi có thể bấm "Gửi lại"; bài có thể đã lên nền tảng thì app từ chối gửi lại, xử lý ở mục "Cần xử lý" của S14 để tránh đăng trùng.
+- Instagram báo "Cần cookie Instagram" khi chưa lưu cookie hoặc cookie hết hạn/bị yêu cầu xác minh: đăng nhập lại trên trình duyệt rồi lưu cookie mới. Quét dày hoặc nhiều luồng Instagram có thể bị Instagram giới hạn tạm thời hoặc khoá tài khoản cá nhân; bị giới hạn thì lần quét sau tự thử lại.
+- Facebook: trang của người khác hiện chưa hỗ trợ lấy danh sách video, luồng Facebook chỉ dùng được khi nguồn đọc được.
+- Dịch tiêu đề lỗi: bài vẫn được đăng với tiêu đề gốc, cột "Ghi chú" của video ghi cảnh báo.
+- Tuyến quét nguồn chưa sẵn sàng (VPN rớt, sai quốc gia, đang bận đăng bài): luồng ghi "Bỏ lần quét này…" và thử lại sau vài phút, không quét bằng mạng khác. Tuyến VPN cả máy được giữ suốt lần quét nên bài đăng dùng tuyến khác phải chờ.

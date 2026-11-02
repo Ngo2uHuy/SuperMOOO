@@ -1,0 +1,395 @@
+<UserControl x:Class="SuperMOOO.App.Features.S08.AutoReupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls"
+             xmlns:local="clr-namespace:SuperMOOO.App.Features.S08">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Reup tự động"
+                    Description="Theo dõi trang nguồn, lọc video mới, biến đổi rồi đưa vào lịch đăng của tài khoản đích.">
+      <ui:Button Appearance="Primary" Content="Lưu luồng" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" />
+    </c:ScreenHeader>
+
+    <c:SplitView PrimaryRatio="1.05">
+      <c:SplitView.Primary>
+        <DockPanel>
+          <ui:Card DockPanel.Dock="Top" Style="{StaticResource Section}" Margin="0,0,16,12">
+            <DockPanel>
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <TextBlock Style="{StaticResource CardTitle}" Text="Luồng đang có" Margin="0" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                  <ui:Button Content="Luồng mới" Icon="{ui:SymbolIcon Add24}" Command="{Binding NewRuleCommand}" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Pause24}" ToolTip="Bật / tạm dừng luồng đang chọn" Command="{Binding ToggleEnabledCommand}" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowSync24}" ToolTip="Quét nguồn ngay" Command="{Binding CheckNowCommand}" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Xoá luồng" Command="{Binding DeleteRuleCommand}" />
+                </StackPanel>
+              </DockPanel>
+              <Grid Height="132">
+                <DataGrid ItemsSource="{Binding Rules}" SelectedItem="{Binding SelectedRule}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+                          CanUserAddRows="False" HeadersVisibility="Column">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Luồng" Binding="{Binding Name}" Width="*" />
+                    <DataGridTextColumn Header="Trạng thái" Binding="{Binding State}" Width="110" />
+                    <DataGridTextColumn Header="Video" Binding="{Binding Counts}" Width="*" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <c:EmptyState Icon="ArrowRepeatAll24" Text="Chưa có luồng nào. Điền thông tin bên dưới rồi bấm Lưu luồng."
+                              Visibility="{Binding Rules.Count, Converter={StaticResource EmptyToVis}}" IsHitTestVisible="False" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+
+          <c:ScreenJobsPanel x:Name="ScreenJobs" DockPanel.Dock="Bottom" Margin="0,12,16,0" />
+          <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Hint}" Margin="0,12,16,0" Text="{Binding Status}" />
+
+          <TabControl>
+            <TabItem Header="Nguồn &amp; bộ lọc">
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0,12,16,0">
+                  <ui:Card Style="{StaticResource Section}">
+                    <StackPanel>
+                      <TextBlock Style="{StaticResource CardTitle}" Text="Trang nguồn" />
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="12" />
+                          <ColumnDefinition Width="140" />
+                        </Grid.ColumnDefinitions>
+                        <c:Field Header="Tên luồng">
+                          <ui:TextBox Text="{Binding RuleName, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Ví dụ: Kênh ẩm thực" />
+                        </c:Field>
+                        <c:Field Grid.Column="2" Header="Nền tảng">
+                          <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{x:Static local:AutoReupViewModel.Platforms}" SelectedItem="{Binding Platform}" />
+                        </c:Field>
+                      </Grid>
+                      <c:Field Header="Địa chỉ trang cá nhân / kênh" Hint="Ví dụ https://www.tiktok.com/@abc. Đổi nguồn của luồng đã lưu thì phải tạo luồng mới.">
+                        <ui:TextBox Text="{Binding SourceUrl, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="https://www.tiktok.com/@ten-kenh" />
+                      </c:Field>
+                      <c:Field Header="Mạng khi quét nguồn" Margin="0"
+                               Hint="Tuyến của màn Tài khoản &amp; kênh (S23), vd VPN cùng quốc gia với kênh nguồn. Tuyến chưa sẵn sàng thì bỏ lần quét đó và thử lại sau vài phút.">
+                        <ComboBox ItemsSource="{Binding SourceRoutes}" SelectedValuePath="Value" DisplayMemberPath="Name" SelectedValue="{Binding SourceRouteId}"
+                                  IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" />
+                      </c:Field>
+                    </StackPanel>
+                  </ui:Card>
+                  <ui:Card Style="{StaticResource Section}">
+                    <StackPanel>
+                      <TextBlock Style="{StaticResource CardTitle}" Text="Lấy video nào" />
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="12" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <c:Field Header="Video đã có sẵn">
+                          <ComboBox ItemsSource="{x:Static local:AutoReupViewModel.Histories}" SelectedItem="{Binding History}" DisplayMemberPath="Name" />
+                        </c:Field>
+                        <c:Field Grid.Column="2" Header="Loại nội dung">
+                          <ComboBox ItemsSource="{x:Static local:AutoReupViewModel.ContentTypes}" SelectedItem="{Binding ContentType}" DisplayMemberPath="Name" />
+                        </c:Field>
+                      </Grid>
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="12" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <c:Field Header="Số video gần nhất (khi chọn N video)">
+                          <ui:TextBox Text="{Binding HistoryLimit}" />
+                        </c:Field>
+                        <c:Field Grid.Column="2" Header="Quét lại sau (phút)" Hint="{Binding IntervalHint}">
+                          <ui:TextBox Text="{Binding IntervalMinutes}" />
+                        </c:Field>
+                      </Grid>
+                      <ui:ToggleSwitch Content="Xử lý video mới nhất trước" IsChecked="{Binding NewestFirst}" />
+                    </StackPanel>
+                  </ui:Card>
+                  <ui:Card Style="{StaticResource Section}">
+                    <StackPanel>
+                      <TextBlock Style="{StaticResource CardTitle}" Text="Bộ lọc" />
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="12" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <c:Field Header="Tiêu đề phải chứa" Hint="Nhiều từ cách nhau bằng dấu phẩy">
+                          <ui:TextBox Text="{Binding Include, UpdateSourceTrigger=PropertyChanged}" />
+                        </c:Field>
+                        <c:Field Grid.Column="2" Header="Bỏ qua nếu tiêu đề chứa" Hint="Nhiều từ cách nhau bằng dấu phẩy">
+                          <ui:TextBox Text="{Binding Exclude, UpdateSourceTrigger=PropertyChanged}" />
+                        </c:Field>
+                      </Grid>
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="12" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <c:Field Header="Dài tối thiểu (giây)" Margin="0">
+                          <ui:TextBox Text="{Binding MinSeconds}" />
+                        </c:Field>
+                        <c:Field Grid.Column="2" Header="Dài tối đa (giây, 0 = không giới hạn)" Margin="0">
+                          <ui:TextBox Text="{Binding MaxSeconds}" />
+                        </c:Field>
+                      </Grid>
+                    </StackPanel>
+                  </ui:Card>
+                </StackPanel>
+              </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Xử lý &amp; đăng">
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0,12,16,0">
+                  <ui:Card Style="{StaticResource Section}">
+                    <StackPanel>
+                      <TextBlock Style="{StaticResource CardTitle}" Text="Xử lý video" />
+                      <c:Field Header="Cách xử lý">
+                        <ComboBox ItemsSource="{x:Static local:AutoReupViewModel.Processings}" SelectedItem="{Binding Processing}" DisplayMemberPath="Name" />
+                      </c:Field>
+                      <c:Field Header="Preset biến đổi (khi chọn preset reup)" Margin="0">
+                        <ComboBox ItemsSource="{Binding Presets}" SelectedItem="{Binding Preset}" DisplayMemberPath="Name" />
+                      </c:Field>
+                    </StackPanel>
+                  </ui:Card>
+                  <ui:Card Style="{StaticResource Section}">
+                    <StackPanel>
+                      <TextBlock Style="{StaticResource CardTitle}" Text="Đăng bài" />
+                      <c:Field Header="Chế độ">
+                        <ComboBox ItemsSource="{x:Static local:AutoReupViewModel.PublishModes}" SelectedItem="{Binding PublishMode}" DisplayMemberPath="Name" />
+                      </c:Field>
+                      <c:Field Header="Mẫu tiêu đề" Hint="Cài đặt chung của luồng. Dùng {title} {url} {author} {id} {platform} {hashtags}">
+                        <ui:TextBox Text="{Binding TitleTemplate, UpdateSourceTrigger=PropertyChanged}" />
+                      </c:Field>
+                      <c:Field Header="Mẫu mô tả">
+                        <ui:TextBox Text="{Binding CaptionTemplate, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="64" VerticalContentAlignment="Top" />
+                      </c:Field>
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="8" />
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="8" />
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="8" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <c:Field Header="Quyền riêng tư" Margin="0">
+                          <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{x:Static local:AutoReupViewModel.Privacies}" SelectedItem="{Binding Privacy}" />
+                        </c:Field>
+                        <c:Field Grid.Column="2" Header="Chờ (phút)" Margin="0">
+                          <ui:TextBox Text="{Binding DelayMinutes}" />
+                        </c:Field>
+                        <c:Field Grid.Column="4" Header="Cách nhau (phút)" Margin="0">
+                          <ui:TextBox Text="{Binding SpacingMinutes}" />
+                        </c:Field>
+                        <c:Field Grid.Column="6" Header="Tối đa/ngày" Margin="0">
+                          <ui:TextBox Text="{Binding DailyLimit}" />
+                        </c:Field>
+                      </Grid>
+                    </StackPanel>
+                  </ui:Card>
+                  <ui:Card Style="{StaticResource Section}">
+                    <StackPanel>
+                      <DockPanel Margin="0,0,0,8">
+                        <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowSync24}" ToolTip="Tải lại danh sách kênh và hồ sơ"
+                                   Command="{Binding ReloadDestinationsCommand}" />
+                        <ui:Button DockPanel.Dock="Right" Content="Xem trước" Icon="{ui:SymbolIcon Eye24}" Command="{Binding PreviewCommand}" Margin="0,0,8,0"
+                                   ToolTip="Tiêu đề, mô tả (đã dịch nếu bật) và giờ đăng dự kiến của từng kênh đang bật" />
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Kênh đích" Margin="0" VerticalAlignment="Center" />
+                      </DockPanel>
+                      <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                 Text="Kết nối tài khoản, đồng bộ kênh và tạo hồ sơ thị trường ở S23. &quot;Theo tài khoản&quot; dùng hồ sơ gắn với tài khoản; &quot;Cài đặt chung&quot; dùng mẫu và lịch ở trên. Bài reup luôn có cảnh báo bản quyền khi duyệt." />
+                      <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="40" /><ColumnDefinition Width="2*" /><ColumnDefinition Width="160" /><ColumnDefinition Width="2*" /><ColumnDefinition Width="90" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Bật" Style="{StaticResource Hint}" />
+                        <TextBlock Grid.Column="1" Text="Kênh" Style="{StaticResource Hint}" />
+                        <TextBlock Grid.Column="2" Text="Hồ sơ" Style="{StaticResource Hint}" />
+                        <TextBlock Grid.Column="3" Text="Giờ đăng" Style="{StaticResource Hint}" Margin="8,0,0,0" />
+                      </Grid>
+                      <Grid>
+                        <ItemsControl ItemsSource="{Binding DestinationRows}">
+                          <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                              <StackPanel Margin="0,0,0,6">
+                              <Grid>
+                                <Grid.ColumnDefinitions>
+                                  <ColumnDefinition Width="40" /><ColumnDefinition Width="2*" /><ColumnDefinition Width="160" /><ColumnDefinition Width="2*" /><ColumnDefinition Width="90" />
+                                </Grid.ColumnDefinitions>
+                                <CheckBox IsChecked="{Binding Option.IsSelected}" VerticalAlignment="Center" MinWidth="0" ToolTip="{Binding Option.Hint}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Label}" ToolTip="{Binding Option.Hint}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="2" ItemsSource="{Binding DataContext.ProfileChoices, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                          SelectedValuePath="Value" DisplayMemberPath="Name" SelectedValue="{Binding ProfileChoice}"
+                                          IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" />
+                                <TextBlock Grid.Column="3" Text="{Binding Schedule}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="8,0,0,0" />
+                                <ui:Button Grid.Column="4" Content="Tuỳ chỉnh" Margin="8,0,0,0" CommandParameter="{Binding}"
+                                           Command="{Binding DataContext.CustomizeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                  <ui:Button.Style>
+                                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                      <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasOverrides}" Value="True"><Setter Property="FontWeight" Value="Bold" /></DataTrigger>
+                                      </Style.Triggers>
+                                    </Style>
+                                  </ui:Button.Style>
+                                </ui:Button>
+                              </Grid>
+                              <TextBlock Style="{StaticResource Hint}" Foreground="#9A5700" Text="{Binding ProfileWarning}" TextWrapping="Wrap" Margin="40,2,0,0"
+                                         Visibility="{Binding ProfileWarning, Converter={StaticResource NotEmptyToVis}}" />
+                              </StackPanel>
+                            </DataTemplate>
+                          </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" IsHitTestVisible="False"
+                                   Text="Chưa có kênh nào. Kết nối tài khoản và đồng bộ kênh ở màn Tài khoản &amp; kênh (S23) rồi bấm tải lại."
+                                   Visibility="{Binding DestinationRows.Count, Converter={StaticResource EmptyToVis}}" />
+                      </Grid>
+                      <TextBlock Style="{StaticResource Hint}" Text="{Binding Destinations.Error}" TextWrapping="Wrap"
+                                 Visibility="{Binding Destinations.Error, Converter={StaticResource NotEmptyToVis}}" />
+
+                      <Border Margin="0,8,0,0" Padding="12" CornerRadius="6" BorderThickness="1" BorderBrush="#DDE1E8"
+                              Visibility="{Binding IsCustomizing, Converter={StaticResource BoolToVis}}">
+                        <StackPanel>
+                          <TextBlock Style="{StaticResource CardTitle}" Text="{Binding CustomRow.Label, StringFormat='Tuỳ chỉnh: {0}'}" TextWrapping="Wrap" />
+                          <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,8"
+                                     Text="Trường in đậm đang ghi đè cho riêng kênh này; &quot;Về như hồ sơ&quot; bỏ ghi đè, lấy lại giá trị của hồ sơ (hoặc cài đặt chung)." />
+                          <ItemsControl ItemsSource="{Binding OverrideFields}">
+                            <ItemsControl.ItemTemplate>
+                              <DataTemplate>
+                                <Grid Margin="0,0,0,8">
+                                  <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                  <StackPanel>
+                                    <TextBlock Text="{Binding Header}" Margin="0,0,0,4">
+                                      <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                          <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSet}" Value="True"><Setter Property="FontWeight" Value="Bold" /></DataTrigger>
+                                          </Style.Triggers>
+                                        </Style>
+                                      </TextBlock.Style>
+                                    </TextBlock>
+                                    <ui:TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="{Binding MultiLine}" TextWrapping="Wrap"
+                                                Visibility="{Binding IsText, Converter={StaticResource BoolToVis}}" />
+                                    <ItemsControl ItemsSource="{Binding DayToggles}" Visibility="{Binding IsDays, Converter={StaticResource BoolToVis}}">
+                                      <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                      <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                          <CheckBox Content="{Binding Label}" IsChecked="{Binding IsChecked}" MinWidth="0" Margin="0,0,12,0" />
+                                        </DataTemplate>
+                                      </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <ComboBox ItemsSource="{Binding Options}" SelectedValuePath="Value" DisplayMemberPath="Name" SelectedValue="{Binding ChoiceValue}"
+                                              IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True"
+                                              Visibility="{Binding IsChoice, Converter={StaticResource BoolToVis}}" />
+                                  </StackPanel>
+                                  <ui:Button Grid.Column="1" Content="Về như hồ sơ" Command="{Binding ResetCommand}" Margin="8,0,0,0" VerticalAlignment="Bottom"
+                                             Visibility="{Binding IsSet, Converter={StaticResource BoolToVis}}" />
+                                </Grid>
+                              </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                          </ItemsControl>
+                          <WrapPanel>
+                            <ui:Button Appearance="Primary" Content="Áp dụng" Icon="{ui:SymbolIcon Checkmark24}" Command="{Binding ApplyCustomCommand}" Margin="0,0,8,0" />
+                            <ui:Button Content="Đóng" Command="{Binding CloseCustomCommand}" />
+                          </WrapPanel>
+                        </StackPanel>
+                      </Border>
+
+                      <StackPanel Margin="0,12,0,0" Visibility="{Binding Previews.Count, Converter={StaticResource NotEmptyToVis}}">
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Xem trước" />
+                        <ItemsControl ItemsSource="{Binding Previews}">
+                          <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                              <Border Padding="0,0,0,8" Margin="0,0,0,8" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
+                                <StackPanel>
+                                  <TextBlock FontWeight="SemiBold" TextWrapping="Wrap">
+                                    <Run Text="{Binding Channel, Mode=OneWay}" /> · <Run Text="{Binding Profile, Mode=OneWay}" />
+                                  </TextBlock>
+                                  <TextBlock Text="{Binding Title}" TextWrapping="Wrap" />
+                                  <TextBlock Style="{StaticResource Hint}" Text="{Binding Caption}" TextWrapping="Wrap" />
+                                  <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap">
+                                    <Run Text="Giờ đăng dự kiến: " /><Run Text="{Binding DueLocal, Mode=OneWay}" /> · giờ máy <Run Text="{Binding DueMachine, Mode=OneWay}" />
+                                  </TextBlock>
+                                  <TextBlock Style="{StaticResource Hint}" Foreground="#9A5700" Text="{Binding Warning}" TextWrapping="Wrap"
+                                             Visibility="{Binding Warning, Converter={StaticResource NotEmptyToVis}}" />
+                                </StackPanel>
+                              </Border>
+                            </DataTemplate>
+                          </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                      </StackPanel>
+                    </StackPanel>
+                  </ui:Card>
+                  <ui:Card Style="{StaticResource Section}">
+                    <c:Field Header="Số lần tự thử lại khi xử lý lỗi" Hint="Lỗi ở bước cloud tính phí luôn chờ bạn bấm Thử lại." Margin="0">
+                      <ui:TextBox Text="{Binding Retries}" Width="120" HorizontalAlignment="Left" />
+                    </c:Field>
+                  </ui:Card>
+                </StackPanel>
+              </ScrollViewer>
+            </TabItem>
+          </TabControl>
+        </DockPanel>
+      </c:SplitView.Primary>
+
+      <c:SplitView.Secondary>
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="1.6*" MinHeight="160" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="*" MinHeight="120" />
+          </Grid.RowDefinitions>
+          <ui:Card Style="{StaticResource FillSection}" Margin="0">
+            <DockPanel>
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <TextBlock Style="{StaticResource CardTitle}" Text="Video của luồng" Margin="0" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                  <ui:Button Content="Duyệt đăng" Icon="{ui:SymbolIcon Checkmark24}" Command="{Binding ApproveCommand}" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Thử lại video lỗi" Command="{Binding RetryItemCommand}" />
+                </StackPanel>
+              </DockPanel>
+              <Grid>
+                <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+                          CanUserAddRows="False" HeadersVisibility="Column">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Video" Binding="{Binding Title}" Width="*" />
+                    <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="120" />
+                    <DataGridTextColumn Header="Đăng" Binding="{Binding Posts}" Width="90" />
+                    <DataGridTextColumn Header="Ghi chú" Binding="{Binding Detail}" Width="*" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <c:EmptyState Icon="VideoClipMultiple24" Text="Chưa có video nào. Lưu luồng, app sẽ quét nguồn và liệt kê video ở đây."
+                              Visibility="{Binding Items.Count, Converter={StaticResource EmptyToVis}}" IsHitTestVisible="False" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+          <ui:Card Grid.Row="2" Style="{StaticResource FillSection}" Margin="0">
+            <DockPanel>
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <TextBlock Style="{StaticResource CardTitle}" Text="Bài đăng (đã đăng / chưa đăng)" Margin="0" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                  <ui:Button Content="Gửi lại" Icon="{ui:SymbolIcon Send24}" Command="{Binding ResendCommand}" ToolTip="Đăng lại bài lỗi chưa gửi lên nền tảng" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Huỷ bài đang chọn" Command="{Binding CancelPostCommand}" />
+                </StackPanel>
+              </DockPanel>
+              <Grid>
+                <DataGrid ItemsSource="{Binding Posts}" SelectedItem="{Binding SelectedPost}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+                          CanUserAddRows="False" HeadersVisibility="Column">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Kênh" Binding="{Binding Account}" Width="*" />
+                    <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status}" Width="110" />
+                    <DataGridTextColumn Header="Giờ đăng" Binding="{Binding Due}" Width="130" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <c:EmptyState Icon="Send24" Text="Chọn một video đã xử lý để xem các bài đăng của nó."
+                              Visibility="{Binding Posts.Count, Converter={StaticResource EmptyToVis}}" IsHitTestVisible="False" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+        </Grid>
+      </c:SplitView.Secondary>
+    </c:SplitView>
+  </DockPanel>
+</UserControl>

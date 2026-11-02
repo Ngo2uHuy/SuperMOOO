@@ -1,0 +1,264 @@
+<UserControl x:Class="SuperMOOO.App.Features.S14.ComposeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls"
+             Background="#F3F4F6" Foreground="#24262B" FontFamily="Segoe UI">
+  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ui:ThemesDictionary Theme="Light" /></ResourceDictionary.MergedDictionaries>
+    <Style x:Key="PostCard" TargetType="Border">
+      <Setter Property="Background" Value="White"/><Setter Property="BorderBrush" Value="#DDE1E8"/>
+      <Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="8"/><Setter Property="Padding" Value="16"/>
+      <Setter Property="Margin" Value="0,0,0,16"/>
+    </Style>
+    <Style x:Key="PostHeading" TargetType="TextBlock"><Setter Property="FontSize" Value="14"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,0,0,12"/></Style>
+    <Style x:Key="PostHint" TargetType="TextBlock"><Setter Property="Foreground" Value="#666B76"/><Setter Property="FontSize" Value="12"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  </ResourceDictionary></UserControl.Resources>
+  <DockPanel Margin="20">
+    <Grid DockPanel.Dock="Top" Margin="0,0,0,18">
+      <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <StackPanel>
+        <TextBlock Text="Tạo bài đăng mới" FontSize="24" FontWeight="SemiBold"/>
+        <TextBlock Style="{StaticResource PostHint}" Text="Chọn ảnh/video, soạn nội dung, chọn tài khoản và lịch đăng tự động" Margin="0,3,0,0"/>
+      </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" IsEnabled="{Binding CanEdit}">
+        <ui:Button Content="Lưu nháp" Command="{Binding SaveDraftCommand}" Margin="12,0,12,0" Padding="14,10"/>
+        <ui:Button Content="{Binding QueueButtonText}" Command="{Binding QueueCommand}" Appearance="Primary" Background="#126BC0" Foreground="White" Padding="16,10"/>
+      </StackPanel>
+    </Grid>
+    <Border DockPanel.Dock="Bottom" Background="Transparent" Padding="0,5" Margin="0,8,0,0">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Right" Text="{Binding SelectionSummary}" Foreground="#666B76" FontSize="12"/>
+        <TextBlock Text="{Binding DraftStatus}" Foreground="#666B76" FontSize="12"/>
+      </DockPanel>
+    </Border>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <Grid IsEnabled="{Binding CanEdit}">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*" MinWidth="380"/><ColumnDefinition Width="18"/><ColumnDefinition Width="330"/></Grid.ColumnDefinitions>
+        <StackPanel>
+          <Border Style="{StaticResource PostCard}" AllowDrop="True" Drop="MediaDrop" DragOver="MediaDragOver">
+            <StackPanel>
+              <DockPanel>
+                <ui:Button DockPanel.Dock="Right" Content="Chọn từ thư viện" Command="{Binding ToggleLibraryCommand}" Padding="8,2"/>
+                <TextBlock Style="{StaticResource PostHeading}" Text="1. Ảnh / Video"/>
+              </DockPanel>
+              <StackPanel Visibility="{Binding ShowLibrary, Converter={StaticResource BoolToVis}}" Margin="0,0,0,12">
+                <DockPanel>
+                  <ui:Button DockPanel.Dock="Right" Content="Tìm" Command="{Binding SearchContentCommand}" Margin="8,0,0,6"/>
+                  <ui:TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Tìm trong kho thành phẩm…" Margin="0,0,0,6"/>
+                </DockPanel>
+                <DockPanel>
+                  <ui:Button DockPanel.Dock="Right" Content="Thêm tệp" Command="{Binding AddSelectedMediaCommand}" Margin="8,0,0,0"/>
+                  <ComboBox IsEditable="True" IsTextSearchEnabled="True" ItemsSource="{Binding Contents}" SelectedItem="{Binding SelectedContent}" DisplayMemberPath="Title"/>
+                </DockPanel>
+              </StackPanel>
+              <ItemsControl ItemsSource="{Binding SelectedMedia}">
+                <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Width="140" Margin="0,0,12,12">
+                      <Border Background="#117B77" CornerRadius="6" Height="120">
+                        <Grid>
+                          <Image Source="{Binding Thumbnail}" Stretch="UniformToFill"/>
+                          <TextBlock Text="{Binding Kind}" Foreground="White" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                          <Border Background="#B0000000" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="6" Padding="4,2" CornerRadius="3">
+                            <TextBlock Text="{Binding Info}" Foreground="White" FontSize="10"/>
+                          </Border>
+                        </Grid>
+                      </Border>
+                      <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" FontSize="11" Margin="0,6,0,4" ToolTip="{Binding Title}"/>
+                      <StackPanel Orientation="Horizontal">
+                        <ui:Button Content="←" ToolTip="Đưa lên trước" Padding="6,0" Command="{Binding DataContext.MoveMediaUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                        <ui:Button Content="Bỏ chọn" Padding="6,0" Margin="6,0,0,0" Command="{Binding DataContext.RemoveMediaCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                      </StackPanel>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <Border BorderBrush="#AAB1BF" BorderThickness="1" CornerRadius="5" Padding="14" Background="#FAFAFC">
+                <StackPanel>
+                  <TextBlock Text="＋  Kéo thả hoặc chọn tệp" HorizontalAlignment="Center" Foreground="#555B65" Margin="0,0,0,8"/>
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <ui:Button Content="Ảnh / carousel" Command="{Binding BrowseImagesCommand}" Margin="0,0,8,0"/>
+                    <ui:Button Content="Video" Command="{Binding BrowseVideoCommand}"/>
+                  </StackPanel>
+                </StackPanel>
+              </Border>
+              <WrapPanel Margin="0,12,0,0">
+                <CheckBox Content="Xoá metadata" IsChecked="{Binding StripMetadata}" Margin="0,0,16,6"/>
+                <CheckBox Content="Chèn watermark logo" IsChecked="{Binding AddWatermark}" Margin="0,0,16,6"/>
+                <CheckBox Content="Tự cắt theo tỉ lệ nền tảng" IsChecked="{Binding AutoCrop}" Margin="0,0,0,6"/>
+              </WrapPanel>
+              <DockPanel Visibility="{Binding AddWatermark, Converter={StaticResource BoolToVis}}">
+                <ui:Button DockPanel.Dock="Right" Content="Chọn logo" Command="{Binding PickLogoCommand}"/>
+                <TextBlock Text="{Binding LogoPath}" Style="{StaticResource PostHint}" VerticalAlignment="Center"/>
+              </DockPanel>
+            </StackPanel>
+          </Border>
+          <Border Style="{StaticResource PostCard}">
+            <StackPanel>
+              <TextBlock Style="{StaticResource PostHeading}" Text="2. Nội dung"/>
+              <TabControl>
+                <TabItem Header="Chung">
+                  <StackPanel Margin="0,12,0,0">
+                    <TextBlock Text="Tiêu đề" Style="{StaticResource PostHint}" Margin="0,0,0,5"/>
+                    <ui:TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" Margin="0,0,0,10"/>
+                    <TextBlock Text="Chú thích" Style="{StaticResource PostHint}" Margin="0,0,0,5"/>
+                    <ui:TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="125" VerticalContentAlignment="Top" PlaceholderText="Dùng {biến thể 1|biến thể 2} để mỗi tài khoản nhận nội dung khác nhau."/>
+                    <DockPanel Margin="0,12,0,0">
+                      <CheckBox DockPanel.Dock="Right" Content="Xáo trộn thứ tự hashtag" IsChecked="{Binding ShuffleTags}" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                      <ui:TextBox Text="{Binding TagsText, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="#hashtag1, #hashtag2"/>
+                    </DockPanel>
+                    <TextBlock Text="{Binding CharacterSummary}" Style="{StaticResource PostHint}" Margin="0,12,0,0"/>
+                  </StackPanel>
+                </TabItem>
+                <TabItem Header="Theo nền tảng">
+                  <TabControl ItemsSource="{Binding PlatformCaptions}" Margin="0,8,0,0">
+                    <TabControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding Platform}"/></DataTemplate></TabControl.ItemTemplate>
+                    <TabControl.ContentTemplate>
+                      <DataTemplate>
+                        <StackPanel Margin="0,10,0,0">
+                          <TextBlock Text="Để trống để dùng nội dung chung. Nội dung riêng từng kênh được ưu tiên." Style="{StaticResource PostHint}" Margin="0,0,0,8"/>
+                          <ui:TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Tiêu đề riêng" Margin="0,0,0,8"/>
+                          <ui:TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Chú thích riêng" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="125" VerticalContentAlignment="Top"/>
+                          <ui:TextBox Text="{Binding TagsText, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Hashtag riêng" Margin="0,12,0,0"/>
+                        </StackPanel>
+                      </DataTemplate>
+                    </TabControl.ContentTemplate>
+                  </TabControl>
+                </TabItem>
+              </TabControl>
+              <Expander Header="AI gợi ý nội dung" Margin="0,16,0,0">
+                <StackPanel Margin="0,8,0,0">
+                  <c:LlmPicker DataContext="{Binding ScriptAi}"/>
+                  <ui:TextBox Text="{Binding AiHint, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Gợi ý thêm cho AI" Margin="0,6,0,8"/>
+                  <ui:Button Content="AI gợi ý caption" Command="{Binding SuggestCommonCommand}"/>
+                  <CheckBox Content="Nội dung do AI tạo" IsChecked="{Binding IsAiContent}" Margin="0,8,0,0"/>
+                </StackPanel>
+              </Expander>
+            </StackPanel>
+          </Border>
+          <Expander Header="Tuỳ chọn riêng từng kênh / quyền riêng tư" Margin="0,0,0,16">
+                      <ItemsControl ItemsSource="{Binding Targets}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <Expander Margin="0,2" Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}">
+                              <Expander.Header>
+                                <StackPanel Orientation="Horizontal">
+                                  <TextBlock Text="{Binding Display}" />
+                                  <TextBlock Text="{Binding Blocked}" Style="{StaticResource Hint}" Margin="12,0,0,0" VerticalAlignment="Center" />
+                                </StackPanel>
+                              </Expander.Header>
+                              <StackPanel Margin="24,8,0,8">
+                                <c:Field Header="Tiêu đề"><ui:TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" /></c:Field>
+                                <c:Field Header="Mô tả">
+                                  <ui:TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" VerticalContentAlignment="Top" />
+                                </c:Field>
+                                <c:Field Header="Thẻ"><ui:TextBox Text="{Binding TagsText, UpdateSourceTrigger=PropertyChanged}" /></c:Field>
+                                <WrapPanel>
+                                  <TextBlock Text="Hiển thị" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                  <ComboBox IsEditable="True" IsReadOnly="True" IsTextSearchEnabled="True" ItemsSource="{Binding PrivacyOptions}" SelectedItem="{Binding Privacy}" ItemTemplate="{StaticResource LabelItem}" Width="150" Margin="0,0,16,0" />
+                                  <CheckBox Content="Dành cho trẻ em" IsChecked="{Binding MadeForKids}" Margin="0,0,16,0" />
+                                  <CheckBox Content="Nội dung AI/tổng hợp" IsChecked="{Binding ContainsSyntheticMedia}" Margin="0,0,16,0" />
+                                  <ui:Button Content="AI gợi ý" Icon="{ui:SymbolIcon Sparkle24}"
+                                             Command="{Binding DataContext.SuggestTargetCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                </WrapPanel>
+                                <StackPanel Visibility="{Binding IsTikTok, Converter={StaticResource BoolToVis}}" Margin="0,12,0,0">
+                                  <TextBlock Style="{StaticResource CardTitle}" Text="TikTok" />
+                                  <ComboBox IsEditable="True" IsReadOnly="True" IsTextSearchEnabled="True" ItemsSource="{Binding TikTokModes}" SelectedValue="{Binding TikTokMode}" SelectedValuePath="Key" DisplayMemberPath="Label" Width="260" HorizontalAlignment="Left" />
+                                  <StackPanel Visibility="{Binding IsDirectPost, Converter={StaticResource BoolToVis}}" Margin="0,8,0,0">
+                                    <ui:Button Content="Lấy thông tin tài khoản TikTok" Icon="{ui:SymbolIcon PersonInfo24}" HorizontalAlignment="Left"
+                                               Command="{Binding DataContext.LoadCreatorInfoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                                    <TextBlock Style="{StaticResource Hint}" Text="{Binding CreatorInfo}" Margin="0,4,0,8" />
+                                    <c:Field Header="Ai được xem (bắt buộc chọn)">
+                                      <ComboBox IsEditable="True" IsReadOnly="True" IsTextSearchEnabled="True" ItemsSource="{Binding TikTokPrivacyChoices}" SelectedValue="{Binding TikTokPrivacy}" SelectedValuePath="Key" DisplayMemberPath="Label" Width="260" HorizontalAlignment="Left" />
+                                    </c:Field>
+                                    <WrapPanel>
+                                      <CheckBox Content="Cho bình luận" IsChecked="{Binding AllowComment}" Margin="0,0,16,0" />
+                                      <CheckBox Content="Cho Duet" IsChecked="{Binding AllowDuet}" Margin="0,0,16,0" />
+                                      <CheckBox Content="Cho Stitch" IsChecked="{Binding AllowStitch}" />
+                                    </WrapPanel>
+                                    <CheckBox Content="Công bố nội dung thương mại" IsChecked="{Binding DiscloseContent}" Margin="0,8,0,0" />
+                                    <WrapPanel Visibility="{Binding DiscloseContent, Converter={StaticResource BoolToVis}}">
+                                      <CheckBox Content="Thương hiệu của bạn" IsChecked="{Binding YourBrand}" Margin="24,4,16,0" />
+                                      <CheckBox Content="Nội dung có thương hiệu (Branded content)" IsChecked="{Binding BrandedContent}" Margin="0,4,0,0" />
+                                    </WrapPanel>
+                                    <CheckBox Content="Tôi đồng ý Music Usage Confirmation (và Branded Content Policy nếu có)" IsChecked="{Binding UserConsented}" Margin="0,8,0,0" />
+                                  </StackPanel>
+                                </StackPanel>
+                              </StackPanel>
+                            </Expander>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+          </Expander>
+        </StackPanel>
+        <StackPanel Grid.Column="2">
+          <Border Style="{StaticResource PostCard}">
+            <StackPanel>
+              <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Text="{Binding SelectedTargetSummary}" Style="{StaticResource PostHint}"/>
+                <TextBlock Style="{StaticResource PostHeading}" Text="3. Tài khoản"/>
+              </DockPanel>
+              <WrapPanel Margin="0,0,0,10">
+                <ui:Button Content="Chọn khả dụng" Command="{Binding SelectAvailableTargetsCommand}" Padding="8,3" Margin="0,0,8,0"/>
+                <ui:Button Content="Bỏ chọn" Command="{Binding ClearTargetsCommand}" Padding="8,3"/>
+                <ui:Button Content="Cập nhật" Command="{Binding SearchContentCommand}" Padding="8,3" Margin="8,0,0,0" ToolTip="Cập nhật kết nối và trạng thái tạm dừng tài khoản"/>
+              </WrapPanel>
+              <ItemsControl ItemsSource="{Binding Targets}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <DockPanel Margin="0,8,0,12">
+                      <CheckBox IsChecked="{Binding IsSelected}" IsEnabled="{Binding CanSelect}" VerticalAlignment="Center" Margin="4,0,10,0"/>
+                      <Border Width="30" Height="30" CornerRadius="15" Background="#126BC0" Margin="0,0,10,0" DockPanel.Dock="Left">
+                        <TextBlock Text="{Binding Initial}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
+                      </Border>
+                      <StackPanel>
+                        <TextBlock Text="{Binding Destination.ConnectionName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding Destination.Platform}" Style="{StaticResource PostHint}"/>
+                        <TextBlock Text="{Binding Blocked}" Style="{StaticResource PostHint}" Foreground="#B91C1C" Visibility="{Binding Blocked, Converter={StaticResource NotEmptyToVis}}"/>
+                      </StackPanel>
+                    </DockPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Text="Kết nối tài khoản và đồng bộ kênh tại Tài khoản &amp; kênh." Style="{StaticResource PostHint}" Visibility="{Binding Targets.Count, Converter={StaticResource EmptyToVis}}"/>
+            </StackPanel>
+          </Border>
+          <Border Style="{StaticResource PostCard}">
+            <StackPanel>
+              <TextBlock Style="{StaticResource PostHeading}" Text="4. Lịch đăng"/>
+              <ComboBox ItemsSource="{Binding ScheduleModes}" SelectedValue="{Binding ScheduleMode}" SelectedValuePath="Key" DisplayMemberPath="Label" IsEditable="True" IsReadOnly="True" IsTextSearchEnabled="True" Margin="0,0,0,12"/>
+              <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="10"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                <StackPanel><TextBlock Text="Ngày" Style="{StaticResource PostHint}" Margin="0,0,0,4"/><DatePicker SelectedDate="{Binding ScheduleDate}" SelectedDateFormat="Short" Language="vi-VN"/></StackPanel>
+                <StackPanel Grid.Column="2"><TextBlock Text="Lặp lại" Style="{StaticResource PostHint}" Margin="0,0,0,4"/><ComboBox ItemsSource="{Binding RepeatModes}" SelectedValue="{Binding RepeatMode}" SelectedValuePath="Key" DisplayMemberPath="Label" IsEditable="True" IsReadOnly="True" IsTextSearchEnabled="True"/></StackPanel>
+              </Grid>
+              <Grid Margin="0,12,0,0">
+                <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="10"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                <StackPanel><TextBlock Text="Từ" Style="{StaticResource PostHint}" Margin="0,0,0,4"/><ui:TextBox Text="{Binding ScheduleTime, UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+                <StackPanel Grid.Column="2"><TextBlock Text="Đến (khi rải giờ)" Style="{StaticResource PostHint}" Margin="0,0,0,4"/><ui:TextBox Text="{Binding ScheduleEnd, UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+              </Grid>
+              <TextBlock Text="Giãn cách ngẫu nhiên giữa các lượt (phút)" Style="{StaticResource PostHint}" Margin="0,12,0,4"/>
+              <StackPanel Orientation="Horizontal">
+                <ui:TextBox Text="{Binding MinGap, UpdateSourceTrigger=PropertyChanged}" Width="82"/>
+                <TextBlock Text="–" Margin="8,0" VerticalAlignment="Center"/>
+                <ui:TextBox Text="{Binding MaxGap, UpdateSourceTrigger=PropertyChanged}" Width="82"/>
+              </StackPanel>
+              <DockPanel Margin="0,10,0,0" Visibility="{Binding IsRepeating, Converter={StaticResource BoolToVis}}">
+                <TextBlock Text="Số đợt (gồm đợt đầu)" Style="{StaticResource PostHint}" VerticalAlignment="Center"/>
+                <ui:TextBox Text="{Binding RepeatCount, UpdateSourceTrigger=PropertyChanged}" Width="64" HorizontalAlignment="Right"/>
+              </DockPanel>
+              <ui:Button Content="Xem trước lịch" Command="{Binding PreviewScheduleCommand}" Margin="0,14,0,10" HorizontalAlignment="Stretch"/>
+              <ItemsControl ItemsSource="{Binding Preview}">
+                <ItemsControl.ItemTemplate><DataTemplate><StackPanel Margin="0,0,0,8"><TextBlock Text="{Binding At}" FontWeight="SemiBold" FontSize="12"/><TextBlock Text="{Binding Target}" Style="{StaticResource PostHint}"/><TextBlock Text="{Binding Content}" Style="{StaticResource PostHint}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Caption}"/></StackPanel></DataTemplate></ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBlock Text="{Binding PlanStatus}" Style="{StaticResource PostHint}"/>
+              <Expander Header="Tuỳ chọn hẹn giờ" Margin="0,12,0,0"><CheckBox Content="YouTube tự công khai đúng giờ" IsChecked="{Binding UseNativeSchedule}" Margin="0,8,0,0"/></Expander>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+
+      </Grid>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

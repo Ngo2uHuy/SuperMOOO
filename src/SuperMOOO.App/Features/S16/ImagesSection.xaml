@@ -1,0 +1,55 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.ImagesSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel>
+    <Border DockPanel.Dock="Bottom" Padding="0,12,0,0">
+      <StackPanel Orientation="Horizontal">
+        <ui:Button Appearance="Primary" Content="Lưu" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" />
+        <ui:Button Content="Kiểm tra kết nối" Icon="{ui:SymbolIcon PlugConnected24}" Command="{Binding CheckCommand}" Margin="8,0,0,0" />
+        <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" VerticalAlignment="Center" Margin="12,0,0,0" />
+      </StackPanel>
+    </Border>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="0,0,16,0">
+        <TextBlock Style="{StaticResource Hint}" Margin="0,0,0,12"
+                   Text="Nguồn ảnh cho video vẽ tay (S18). Key OpenAI/Gemini nhập ở mục API key. Ảnh đã tạo được lưu cache, cùng prompt/model/cỡ/seed thì dùng lại, không tốn thêm." />
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Nhà cung cấp ảnh" />
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <c:Field Header="Nhà cung cấp mặc định" Margin="0,0,8,12">
+                <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding Providers}" SelectedItem="{Binding Provider}" />
+              </c:Field>
+              <c:Field Grid.Column="1" Header="Model" Hint="{Binding ModelHint}">
+                <ui:TextBox Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" />
+              </c:Field>
+            </Grid>
+            <c:Field Header="URL Stable Diffusion WebUI" Hint="Mở WebUI với tham số --api. Mặc định http://127.0.0.1:7860."
+                     Visibility="{Binding IsSdWebUi, Converter={StaticResource BoolToVis}}">
+              <ui:TextBox Text="{Binding SdWebUiUrl, UpdateSourceTrigger=PropertyChanged}" />
+            </c:Field>
+            <c:Field Header="Base URL OpenAI (tuỳ chọn)" Hint="Để trống = https://api.openai.com/v1. Dùng cho server tương thích OpenAI.">
+              <ui:TextBox Text="{Binding OpenAiUrl, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="https://api.openai.com/v1" />
+            </c:Field>
+            <c:Field Header="Base URL Gemini (tuỳ chọn)" Hint="Để trống = https://generativelanguage.googleapis.com/v1beta.">
+              <ui:TextBox Text="{Binding GeminiUrl, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="https://generativelanguage.googleapis.com/v1beta" />
+            </c:Field>
+            <c:Field Header="Giãn cách giữa hai ảnh (giây)" Hint="Không có key Pollinations: cố định 45 giây (server chỉ cho ~1 ảnh/45 giây), mọi ảnh xếp hàng chung. Có key (nhập ở mục API key, nhà cung cấp pollinations): theo giá trị này."
+                     Visibility="{Binding IsPollinations, Converter={StaticResource BoolToVis}}" Margin="0">
+              <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding IntervalSeconds}" MinWidth="32" />
+                <Slider Minimum="10" Maximum="120" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding IntervalSeconds}" />
+              </DockPanel>
+            </c:Field>
+          </StackPanel>
+        </ui:Card>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

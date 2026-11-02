@@ -1,0 +1,79 @@
+<UserControl x:Class="SuperMOOO.App.Features.S12.CampaignsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel Margin="0,12,0,0">
+    <ui:Card DockPanel.Dock="Top" Style="{StaticResource Section}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="150" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <c:Field Header="Liên kết video / bài viết cần quét bình luận" Margin="0,0,8,0">
+          <ui:TextBox Text="{Binding NewUrl, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="https://www.youtube.com/watch?v=…" />
+        </c:Field>
+        <c:Field Grid.Column="1" Header="Tối đa bình luận" Margin="0,0,8,0">
+          <ui:TextBox Text="{Binding MaxComments, UpdateSourceTrigger=PropertyChanged}" />
+        </c:Field>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Bottom">
+          <ui:ProgressRing IsIndeterminate="True" Width="20" Height="20" Margin="0,0,12,0"
+                           Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" />
+          <ui:Button Appearance="Primary" Content="Quét bình luận" Icon="{ui:SymbolIcon CommentMultiple24}" Command="{Binding CrawlCommand}" />
+        </StackPanel>
+      </Grid>
+    </ui:Card>
+
+    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Hint}" Text="{Binding Status}" Margin="0,8,0,0"
+               Visibility="{Binding Status, Converter={StaticResource NotEmptyToVis}}" />
+
+    <ui:Card Style="{StaticResource FillSection}" Margin="0">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="2*" MinHeight="100" />
+          <RowDefinition Height="16" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="3*" MinHeight="120" />
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,8">
+          <TextBlock Style="{StaticResource CardTitle}" Text="Chiến dịch" Margin="0" VerticalAlignment="Center" />
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <ui:Button Content="Xuất Excel / CSV" Icon="{ui:SymbolIcon ArrowExportLtr24}" Command="{Binding ExportCommand}" />
+            <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Xoá chiến dịch đang chọn và toàn bộ bình luận"
+                       Command="{Binding DeleteCommand}" />
+          </StackPanel>
+        </DockPanel>
+        <Grid Grid.Row="1">
+          <DataGrid ItemsSource="{Binding Campaigns}" SelectedItem="{Binding Selected}" AutoGenerateColumns="False" IsReadOnly="True"
+                    SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title, Mode=OneWay}" Width="3*" />
+              <DataGridTextColumn Header="Nền tảng" Binding="{Binding Platform, Mode=OneWay}" Width="*" />
+              <DataGridTextColumn Header="Bình luận" Binding="{Binding Comments, Mode=OneWay}" Width="*" />
+              <DataGridTextColumn Header="Cảm xúc +/-/=" Binding="{Binding Sentiment, Mode=OneWay}" Width="1.2*" />
+              <DataGridTextColumn Header="Lead" Binding="{Binding Leads, Mode=OneWay}" Width="0.7*" />
+              <DataGridTextColumn Header="Tạo lúc" Binding="{Binding Created, Mode=OneWay}" Width="*" />
+            </DataGrid.Columns>
+          </DataGrid>
+          <c:EmptyState Icon="CommentMultiple24" Text="Chưa có chiến dịch. Dán liên kết ở trên rồi bấm Quét bình luận."
+                        Visibility="{Binding Campaigns.Count, Converter={StaticResource EmptyToVis}}" />
+        </Grid>
+        <DockPanel Grid.Row="3" Margin="0,0,0,8">
+          <TextBlock Style="{StaticResource CardTitle}" Text="Bình luận của chiến dịch đang chọn" Margin="0" VerticalAlignment="Center" />
+          <ui:ToggleSwitch Content="Chỉ lead" IsChecked="{Binding LeadsOnly}" HorizontalAlignment="Right" />
+        </DockPanel>
+        <DataGrid Grid.Row="4" ItemsSource="{Binding Comments}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Tác giả" Binding="{Binding Author, Mode=OneWay}" Width="*" />
+            <DataGridTextColumn Header="Nội dung" Binding="{Binding Text, Mode=OneWay}" Width="4*" />
+            <DataGridTextColumn Header="Likes" Binding="{Binding Likes, Mode=OneWay}" Width="0.6*" />
+            <DataGridTextColumn Header="Cảm xúc" Binding="{Binding Sentiment, Mode=OneWay}" Width="*" />
+            <DataGridTextColumn Header="Lead" Binding="{Binding Lead, Mode=OneWay}" Width="1.5*" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </Grid>
+    </ui:Card>
+  </DockPanel>
+</UserControl>

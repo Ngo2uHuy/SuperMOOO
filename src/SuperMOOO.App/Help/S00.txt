@@ -1,0 +1,21 @@
+Tổng quan
+
+Dùng để:
+Xem nhanh tình trạng tác vụ và sức khoẻ máy ngay khi mở app.
+
+Các bước:
+1. Xem các ô số liệu: đang chạy, đang chờ, xong/lỗi trong hôm nay, số việc cần xử lý.
+2. Bấm vào một ô để mở màn Tác vụ (ô "Cần xử lý" mở màn Đăng bài & lịch đăng).
+3. Xem "Tác vụ gần đây" để biết việc nào vừa chạy, tiến độ và lỗi; bấm "Xem tất cả" để huỷ hoặc chạy lại.
+4. Xem "Sức khoẻ máy": CPU, RAM, dung lượng ổ và các thành phần cần thiết; bấm "Kiểm tra chi tiết" để sang Cài đặt.
+
+Mẹo:
+- Ô nhập trống hiển thị gợi ý theo nhãn; gợi ý không phải dữ liệu đã nhập. Dropdown có ô tìm không phân biệt dấu; quốc gia hiển thị tên nhưng vẫn lưu mã 2 chữ cái.
+- Nhóm "Hay dùng" ở đầu thanh bên tự đưa tối đa 5 màn được mở nhiều nhất lên trước. Cùng số lượt thì ưu tiên màn vừa mở gần đây; không tạo mục trùng trong nhóm cũ. Thứ tự được lưu giữa các lần chạy app; chưa có lịch sử thì giữ nhóm chức năng ban đầu.
+- Tác vụ và Cài đặt luôn ở cuối thanh bên. Màn tự mở khi khởi động không được tính là một lượt truy cập.
+- Số liệu tự cập nhật khi màn đang mở; bấm "Làm mới" để kiểm tra lại các thành phần.
+- Thanh trạng thái dưới cùng luôn hiện số tác vụ đang chạy, bấm vào để mở màn Tác vụ.
+
+Lưu ý / lỗi thường gặp:
+- "Thiếu Ffmpeg/YtDlp": chép công cụ vào thư mục tools hoặc đặt đường dẫn ở Cài đặt > Đường dẫn & công cụ.
+- Thiếu API key là bình thường nếu chỉ dùng model local.

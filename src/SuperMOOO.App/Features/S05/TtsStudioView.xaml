@@ -1,0 +1,181 @@
+<UserControl x:Class="SuperMOOO.App.Features.S05.TtsStudioView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Phòng thu giọng"
+                    Description="Đọc văn bản thành giọng nói với nhiều model, clone giọng, thêm hiệu ứng và xử lý audio.">
+      <ui:Button Appearance="Primary" Content="Tạo giọng &amp; nghe thử" Icon="{ui:SymbolIcon Play24}" Command="{Binding GenerateCommand}" />
+    </c:ScreenHeader>
+
+    <c:SplitView PrimaryRatio="0.85">
+      <c:SplitView.Primary>
+        <DockPanel>
+          <c:ScreenJobsPanel x:Name="ScreenJobs" DockPanel.Dock="Bottom" Margin="0,12,16,0" />
+          <c:JobStatusBar DockPanel.Dock="Bottom" Margin="0,12,16,0" />
+          <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,16,0">
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Giọng đọc" />
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="12" />
+                      <ColumnDefinition Width="1.4*" />
+                    </Grid.ColumnDefinitions>
+                    <c:Field Header="Model">
+                      <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding Engines}" SelectedItem="{Binding SelectedEngine}" />
+                    </c:Field>
+                    <c:Field Grid.Column="2" Header="Ngôn ngữ">
+                      <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}" DisplayMemberPath="Display" />
+                    </c:Field>
+                  </Grid>
+                  <c:Field Header="Giọng">
+                    <DockPanel>
+                      <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Làm mới danh sách giọng"
+                                 Command="{Binding ReloadVoicesCommand}" />
+                      <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Speaker224}" ToolTip="Nghe thử giọng đang chọn"
+                                 Command="{Binding PreviewVoiceCommand}" />
+                      <ComboBox ItemsSource="{Binding Voices}" SelectedItem="{Binding SelectedVoice}" DisplayMemberPath="DisplayName" />
+                    </DockPanel>
+                  </c:Field>
+                  <WrapPanel>
+                    <ui:Button x:Name="CloneButton" Content="Clone giọng…" Icon="{ui:SymbolIcon PersonVoice24}" Margin="0,0,8,0"
+                               ToolTip="Tạo giọng mới từ audio mẫu 3–30 giây (OmniVoice)" />
+                    <ui:Button x:Name="ServerButton" Content="TTS C++ local…" Icon="{ui:SymbolIcon Server24}"
+                               ToolTip="Cấu hình, khởi động và nạp model VieNeu/OmniVoice" />
+                  </WrapPanel>
+                </StackPanel>
+              </ui:Card>
+
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Điều chỉnh giọng" />
+                  <c:Field Header="Tốc độ">
+                    <DockPanel>
+                      <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding Speed, StringFormat={}{0:0.00}x}" />
+                      <Slider Minimum="0.8" Maximum="1.5" Value="{Binding Speed}" TickFrequency="0.05" IsSnapToTickEnabled="True" />
+                    </DockPanel>
+                  </c:Field>
+                  <c:Field Header="Cao độ" Hint="Chỉ giọng hỗ trợ (Edge, Windows).">
+                    <DockPanel>
+                      <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding Pitch, StringFormat={}{0:+0;-0;0}}" />
+                      <Slider Minimum="-6" Maximum="6" Value="{Binding Pitch}" TickFrequency="1" IsSnapToTickEnabled="True" />
+                    </DockPanel>
+                  </c:Field>
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="12" />
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="12" />
+                      <ColumnDefinition Width="100" />
+                    </Grid.ColumnDefinitions>
+                    <c:Field Header="Hiệu ứng giọng" Margin="0">
+                      <ComboBox ItemsSource="{Binding Effects}" SelectedItem="{Binding SelectedEffect}" DisplayMemberPath="Name" />
+                    </c:Field>
+                    <c:Field Grid.Column="2" Header="Cao độ hiệu ứng ±6" Margin="0">
+                      <DockPanel>
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" MinWidth="28" Text="{Binding EffectPitch, StringFormat={}{0:+0;-0;0}}" />
+                        <Slider Minimum="-6" Maximum="6" Value="{Binding EffectPitch}" TickFrequency="1" IsSnapToTickEnabled="True" />
+                      </DockPanel>
+                    </c:Field>
+                    <c:Field Grid.Column="4" Header="Định dạng" Margin="0">
+                      <ComboBox ItemsSource="{Binding Formats}" SelectedItem="{Binding Format}" />
+                    </c:Field>
+                  </Grid>
+                </StackPanel>
+              </ui:Card>
+
+              <ui:CardExpander Style="{StaticResource Advanced}" Header="Xử lý audio AI" Icon="{ui:SymbolIcon Sparkle24}">
+                <StackPanel>
+                  <c:Field Header="File audio">
+                    <DockPanel>
+                      <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn file audio…"
+                                 Command="{Binding BrowseAudioCommand}" />
+                      <ui:TextBox Text="{Binding AudioFile, UpdateSourceTrigger=PropertyChanged}" c:FileDrop.IsEnabled="True" PlaceholderText="Chọn hoặc kéo-thả file audio" />
+                    </DockPanel>
+                  </c:Field>
+                  <WrapPanel Margin="0,0,0,12">
+                    <CheckBox Content="Khử nhiễu" IsChecked="{Binding DoDenoise}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding DenoiseModes}" SelectedItem="{Binding DenoiseMode}" Width="90" Margin="0,0,16,0" />
+                    <CheckBox Content="Tìm lời nói (VAD)" IsChecked="{Binding DoDetect}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                    <CheckBox Content="Cắt khoảng lặng" IsChecked="{Binding DoTrim}" VerticalAlignment="Center" />
+                  </WrapPanel>
+                  <ui:Button Content="Xử lý" Icon="{ui:SymbolIcon Wand24}" Command="{Binding ProcessAudioCommand}" />
+                </StackPanel>
+              </ui:CardExpander>
+
+              <ui:CardExpander x:Name="RvcPanel" Style="{StaticResource Advanced}" Header="Chuyển giọng RVC (tuỳ chọn)" Icon="{ui:SymbolIcon PersonVoice24}"
+                               Visibility="Collapsed">
+                <StackPanel>
+                  <c:Field Header="Model RVC">
+                    <ComboBox ItemsSource="{Binding RvcModels}" SelectedItem="{Binding SelectedRvcModel}" DisplayMemberPath="Name" />
+                  </c:Field>
+                  <WrapPanel>
+                    <TextBlock Text="Cao độ" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ui:TextBox Text="{Binding RvcPitch}" Width="70" Margin="0,0,12,0" />
+                    <ui:Button Content="Nhập model…" Icon="{ui:SymbolIcon ArrowImport24}" Command="{Binding ImportRvcModelCommand}" Margin="0,0,8,0" />
+                    <ui:Button Content="Chuyển giọng" Icon="{ui:SymbolIcon ArrowSwap24}" Command="{Binding ConvertRvcCommand}" />
+                  </WrapPanel>
+                </StackPanel>
+              </ui:CardExpander>
+            </StackPanel>
+          </ScrollViewer>
+        </DockPanel>
+      </c:SplitView.Primary>
+
+      <c:SplitView.Secondary>
+        <DockPanel>
+          <ui:Card DockPanel.Dock="Bottom" Style="{StaticResource Section}" Margin="0,12,0,0">
+            <DockPanel>
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <TextBlock Style="{StaticResource CardTitle}" Text="Lịch sử giọng / audio" Margin="0" VerticalAlignment="Center" />
+                <ui:Button HorizontalAlignment="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Play24}" ToolTip="Nghe mục đã chọn"
+                           Command="{Binding PlayHistoryCommand}" />
+              </DockPanel>
+              <Grid Height="170">
+                <ListBox ItemsSource="{Binding History}" SelectedItem="{Binding SelectedHistory}">
+                  <ListBox.ItemTemplate>
+                    <DataTemplate>
+                      <StackPanel>
+                        <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding Operation}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" FontSize="12" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </ListBox.ItemTemplate>
+                </ListBox>
+                <c:EmptyState Icon="History24" Text="Audio đã tạo sẽ hiện ở đây." Visibility="{Binding History.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+
+          <ui:Card Style="{StaticResource FillSection}" Margin="0">
+            <DockPanel>
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <TextBlock Style="{StaticResource CardTitle}" Text="Văn bản cần đọc" Margin="0" VerticalAlignment="Center" />
+                <ui:Button HorizontalAlignment="Right" Content="Câu mẫu" Icon="{ui:SymbolIcon TextQuote24}" Command="{Binding LoadSampleCommand}"
+                           ToolTip="Nạp câu mẫu theo ngôn ngữ đang chọn" />
+              </DockPanel>
+              <DockPanel DockPanel.Dock="Bottom" Margin="0,12,0,0">
+                <TextBlock DockPanel.Dock="Right" Text="{Binding CountText}" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                <WrapPanel>
+                  <ui:Button Style="{StaticResource IconButton}" Margin="0" Icon="{ui:SymbolIcon Play24}" ToolTip="Nghe lại audio vừa tạo" Command="{Binding PlayLastCommand}" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Stop24}" ToolTip="Dừng phát" Command="{Binding StopCommand}" />
+                  <ui:Button Content="Lưu audio…" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveAsCommand}" Margin="8,0,0,0" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Mở thư mục audio" Command="{Binding OpenFolderCommand}" />
+                  <ui:Button Content="Hàng loạt (thư mục .txt)" Icon="{ui:SymbolIcon DocumentMultiple24}" Command="{Binding BatchCommand}" Margin="8,0,0,0" />
+                </WrapPanel>
+              </DockPanel>
+              <ui:TextBox Text="{Binding ScriptText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap"
+                          VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" MinHeight="140"
+                          PlaceholderText="Nhập hoặc dán văn bản cần đọc. Mỗi đoạn xuống dòng sẽ được đọc nối tiếp." />
+            </DockPanel>
+          </ui:Card>
+        </DockPanel>
+      </c:SplitView.Secondary>
+    </c:SplitView>
+  </DockPanel>
+</UserControl>

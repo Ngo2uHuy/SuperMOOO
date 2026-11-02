@@ -1,0 +1,36 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.LipSyncSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="0,0,16,0">
+      <ui:InfoBar IsOpen="True" IsClosable="False" Severity="Warning" Title="Tính năng tuỳ chọn, chạy CPU rất chậm" Margin="{StaticResource CardGap}"
+                  Message="{Binding SpeedNote}" />
+      <ui:Card Style="{StaticResource Section}">
+        <StackPanel>
+          <TextBlock Style="{StaticResource CardTitle}" Text="Trạng thái MuseTalk" />
+          <TextBlock Style="{StaticResource Hint}" Text="{Binding SizeNote}" TextWrapping="Wrap" Margin="0,-6,0,8" />
+          <ItemsControl ItemsSource="{Binding Components}" Margin="0,0,0,12" />
+          <c:Field Header="Python 3.10 (tuỳ chọn)" Hint="Để trống thì tự tìm bằng py -3.10. AI worker dùng Python khác nên MuseTalk có venv riêng.">
+            <DockPanel>
+              <ui:Button DockPanel.Dock="Right" Content="Chọn…" Command="{Binding PickPythonCommand}" Margin="8,0,0,0" />
+              <ui:TextBox Text="{Binding PythonPath, UpdateSourceTrigger=LostFocus}" />
+            </DockPanel>
+          </c:Field>
+          <WrapPanel>
+            <ui:Button Appearance="Primary" Content="Cài MuseTalk" Icon="{ui:SymbolIcon ArrowDownload24}" Command="{Binding InstallCommand}" Margin="0,0,8,8" />
+            <ui:Button Content="Nhập từ AILive" Icon="{ui:SymbolIcon FolderOpen24}" Command="{Binding ImportCommand}" Margin="0,0,8,8" />
+            <ui:Button Content="Huỷ" Icon="{ui:SymbolIcon Dismiss24}" Command="{Binding CancelCommand}" Margin="0,0,8,8" />
+            <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Kiểm tra lại" Command="{Binding RefreshCommand}" Margin="0,0,0,8" />
+          </WrapPanel>
+          <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" TextWrapping="Wrap" />
+        </StackPanel>
+      </ui:Card>
+      <ui:CardExpander Style="{StaticResource Advanced}" Header="Nhật ký cài đặt" Icon="{ui:SymbolIcon DocumentText24}">
+        <ui:TextBox Text="{Binding Log, Mode=OneWay}" IsReadOnly="True" Height="220" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"
+                    TextWrapping="NoWrap" HorizontalScrollBarVisibility="Auto" FontFamily="Consolas" />
+      </ui:CardExpander>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

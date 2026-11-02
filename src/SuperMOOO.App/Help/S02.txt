@@ -1,0 +1,16 @@
+Biên tập phụ đề
+
+Dùng để:
+Sửa thời gian, lời gốc và bản dịch từng câu, rồi dùng lại cho lồng tiếng.
+
+Các bước:
+1. Chọn hoặc kéo thả video vào màn ("Chọn video…").
+2. Bấm "Bóc phụ đề (ASR)", hoặc "Mở phụ đề đã lưu", hoặc "Nhập SRT" từ file có sẵn.
+3. Chọn một câu trong danh sách, sửa "Bắt đầu" / "Kết thúc" (dạng 00:00:01,000), lời gốc, bản dịch rồi bấm "Lưu câu này".
+4. Thêm hoặc xoá câu bằng "Thêm câu sau câu đang chọn" / "Xoá câu đang chọn".
+5. Mục "Dịch & nghe thử": chọn ngôn ngữ và giọng, bấm "Dịch câu này" hoặc "Dịch cả file", rồi "Nghe thử câu đang chọn".
+6. Bấm "Xuất SRT" để lưu file, hoặc "Áp dụng vào dự án lồng tiếng" để dùng ở S01.
+
+Mẹo:
+- Ở S01 bật "Dùng phụ đề đã chỉnh ở S02" để bỏ qua bước ASR.
+- Nghe thử từng câu trước khi lồng tiếng để chỉnh độ dài cho khớp.

@@ -1,0 +1,290 @@
+<UserControl x:Class="SuperMOOO.App.Features.S04.MovieReviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls"
+             xmlns:local="clr-namespace:SuperMOOO.App.Features.S04"
+             AllowDrop="True">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Review &amp; tóm tắt phim"
+                    Description="AI viết lời bình theo phong cách bạn chọn, bạn sửa từng cảnh rồi xuất video; hoặc để app chạy tự động từ đầu đến cuối.">
+      <StackPanel Orientation="Horizontal">
+        <ui:Button Content="Chỉnh trong Timeline" Command="{Binding EditTimelineCommand}" ToolTip="Chuyển nguồn và thành phần sang màn dựng Timeline" />
+      <ui:Button Appearance="Primary" Content="Xuất review" Icon="{ui:SymbolIcon MoviesAndTv24}" Command="{Binding ExportCommand}" />
+      </StackPanel>
+    </c:ScreenHeader>
+
+    <c:SplitView PrimaryRatio="1.15">
+      <c:SplitView.Primary>
+        <DockPanel>
+          <ui:Card DockPanel.Dock="Top" Style="{StaticResource Section}" Margin="0,0,16,12">
+            <StackPanel>
+              <TextBlock Style="{StaticResource CardTitle}" Text="Phim nguồn" />
+              <DockPanel>
+                <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon VideoAdd24}" ToolTip="Chọn video phim…" Command="{Binding BrowseMovieCommand}" />
+                <ui:TextBox Text="{Binding MoviePath, UpdateSourceTrigger=PropertyChanged}" c:FileDrop.IsEnabled="True"
+                            PlaceholderText="Kéo thả video phim vào đây, hoặc bấm chọn bên phải" />
+              </DockPanel>
+              <ComboBox ItemsSource="{Binding KnownMovies}" SelectedItem="{Binding MoviePath, Mode=OneWayToSource}" Margin="0,8,0,0"
+                        Visibility="{Binding KnownMovies.Count, Converter={StaticResource NotEmptyToVis}}" ToolTip="Phim đã làm review trước đây" />
+              <TextBlock Style="{StaticResource Hint}" Text="{Binding MovieInfo}" Margin="0,6,0,0" />
+            </StackPanel>
+          </ui:Card>
+
+          <c:ScreenJobsPanel x:Name="ScreenJobs" DockPanel.Dock="Bottom" Margin="0,12,16,0" />
+          <c:JobStatusBar DockPanel.Dock="Bottom" Margin="0,12,16,0" />
+
+          <TabControl>
+            <TabItem Header="1. Kịch bản">
+              <DockPanel Margin="0,12,16,0">
+                <ui:Card DockPanel.Dock="Top" Style="{StaticResource Section}">
+                  <StackPanel>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Phong cách biên kịch">
+                        <ComboBox ItemsSource="{Binding Styles}" SelectedItem="{Binding SelectedStyle}" DisplayMemberPath="Label" />
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Số cảnh">
+                        <DockPanel>
+                          <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding NumScenes}" MinWidth="24" />
+                          <Slider Minimum="1" Maximum="50" Value="{Binding NumScenes}" />
+                        </DockPanel>
+                      </c:Field>
+                      <c:Field Grid.Column="4" Header="Nhịp cảnh (giây)">
+                        <DockPanel>
+                          <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding ScenePace}" MinWidth="28" />
+                          <Slider Minimum="5" Maximum="120" Value="{Binding ScenePace}" />
+                        </DockPanel>
+                      </c:Field>
+                    </Grid>
+                    <c:LlmPicker DataContext="{Binding ScriptAi}" />
+                    <DockPanel>
+                      <ui:Button DockPanel.Dock="Right" Content="Tạo kịch bản AI" Icon="{ui:SymbolIcon Sparkle24}" Command="{Binding GenerateScriptCommand}" Margin="8,0,0,0" />
+                      <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Bỏ SRT (nhận diện thoại bằng ASR)" Command="{Binding ClearSrtCommand}" />
+                      <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon DocumentArrowLeft24}" ToolTip="Dùng SRT có sẵn thay cho nhận diện…" Command="{Binding BrowseSrtCommand}" />
+                      <ui:TextBox Text="{Binding SrtPath}" PlaceholderText="Thoại phim: để trống = tự nhận diện, hoặc chọn file SRT" c:FileDrop.IsEnabled="True" />
+                    </DockPanel>
+                  </StackPanel>
+                </ui:Card>
+
+                <ui:Card Style="{StaticResource FillSection}" Margin="0">
+                  <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                      <TextBlock Style="{StaticResource CardTitle}" Text="Các cảnh" Margin="0" VerticalAlignment="Center" />
+                      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <ui:Button Content="Thêm cảnh" Icon="{ui:SymbolIcon Add24}" Command="{Binding AddSceneCommand}" />
+                        <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Xoá cảnh đang chọn" Command="{Binding DeleteSceneCommand}" />
+                      </StackPanel>
+                    </DockPanel>
+                    <Grid>
+                      <ListBox ItemsSource="{Binding Scenes}" SelectedItem="{Binding SelectedScene}" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                          <DataTemplate>
+                            <Grid Margin="0,4">
+                              <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="190" />
+                                <ColumnDefinition Width="12" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                              </Grid.ColumnDefinitions>
+                              <StackPanel>
+                                <ui:TextBox Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}" ToolTip="HH:MM:SS - HH:MM:SS" />
+                                <ui:TextBox Text="{Binding Dialog, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Thoại (giọng 2, tuỳ chọn)" Margin="0,6,0,0" />
+                              </StackPanel>
+                              <ui:TextBox Grid.Column="2" Text="{Binding Narration, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap"
+                                          MinHeight="68" VerticalContentAlignment="Top" PlaceholderText="Lời bình của cảnh…" />
+                              <ui:Button Grid.Column="3" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Speaker224}" ToolTip="Nghe thử lời bình" VerticalAlignment="Top"
+                                         Command="{Binding DataContext.PreviewNarrationCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding}" />
+                            </Grid>
+                          </DataTemplate>
+                        </ListBox.ItemTemplate>
+                      </ListBox>
+                      <c:EmptyState Icon="MoviesAndTv24" Text="Chưa có cảnh nào. Chọn phim rồi bấm Tạo kịch bản AI, hoặc Thêm cảnh để tự viết."
+                                    Visibility="{Binding Scenes.Count, Converter={StaticResource EmptyToVis}}" IsHitTestVisible="False" />
+                    </Grid>
+                  </DockPanel>
+                </ui:Card>
+              </DockPanel>
+            </TabItem>
+
+            <TabItem Header="2. Giọng &amp; hiển thị">
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0,12,16,0">
+                  <ui:Card Style="{StaticResource Section}">
+                    <StackPanel>
+                      <TextBlock Style="{StaticResource CardTitle}" Text="Giọng đọc" />
+                      <c:Field Header="Ngôn ngữ lời bình">
+                        <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding Language}" DisplayMemberPath="Display" HorizontalAlignment="Left" MinWidth="240" />
+                      </c:Field>
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="12" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <c:Field Header="Giọng dẫn chuyện (lời bình)">
+                          <ComboBox ItemsSource="{Binding Voices}" SelectedItem="{Binding NarratorVoice}" DisplayMemberPath="DisplayName" />
+                        </c:Field>
+                        <c:Field Grid.Column="2" Header="Giọng thoại (cảnh có thoại)">
+                          <ComboBox ItemsSource="{Binding Voices}" SelectedItem="{Binding DialogVoice}" DisplayMemberPath="DisplayName" />
+                        </c:Field>
+                      </Grid>
+                      <c:Field Header="Tốc độ đọc" Margin="0">
+                        <DockPanel>
+                          <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding Speed, StringFormat={}{0:0.00}x}" />
+                          <Slider Minimum="0.8" Maximum="1.5" Value="{Binding Speed}" />
+                        </DockPanel>
+                      </c:Field>
+                    </StackPanel>
+                  </ui:Card>
+                  <ui:Card Style="{StaticResource Section}">
+                    <StackPanel>
+                      <TextBlock Style="{StaticResource CardTitle}" Text="Phụ đề &amp; hình" />
+                      <WrapPanel Margin="0,0,0,12">
+                        <ui:ToggleSwitch Content="Hiện phụ đề lời bình" IsChecked="{Binding Captions}" Margin="0,0,24,0" />
+                        <ui:ToggleSwitch Content="Chữ trên thẻ nền (bo tròn)" IsChecked="{Binding CardCaptions}" />
+                      </WrapPanel>
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="12" />
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="12" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <c:Field Header="Màu chữ lời bình" Hint="#RRGGBB">
+                          <ui:TextBox Text="{Binding CaptionColor, UpdateSourceTrigger=PropertyChanged}" />
+                        </c:Field>
+                        <c:Field Grid.Column="2" Header="Tỉ lệ khung">
+                          <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{x:Static local:MovieReviewViewModel.Aspects}" SelectedItem="{Binding Aspect}" />
+                        </c:Field>
+                        <c:Field Grid.Column="4" Header="Độ phân giải">
+                          <ComboBox ItemsSource="{x:Static local:MovieReviewViewModel.Heights}" SelectedItem="{Binding Height}" />
+                        </c:Field>
+                      </Grid>
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="12" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <c:Field Header="Mờ chuyển cảnh (giây)" Margin="0">
+                          <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding Fade, StringFormat={}{0:0.00}}" />
+                            <Slider Minimum="0" Maximum="2" Value="{Binding Fade}" />
+                          </DockPanel>
+                        </c:Field>
+                        <c:Field Grid.Column="2" Header="Tiếng gốc của phim" Margin="0">
+                          <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding Volume, StringFormat={}{0:P0}}" />
+                            <Slider Minimum="0" Maximum="1" Value="{Binding Volume}" />
+                          </DockPanel>
+                        </c:Field>
+                      </Grid>
+                    </StackPanel>
+                  </ui:Card>
+                  <ui:CardExpander Style="{StaticResource Advanced}" Header="Nhạc nền &amp; xuất file" Icon="{ui:SymbolIcon MusicNote224}">
+                    <StackPanel>
+                      <c:Field Header="Nhạc nền">
+                        <StackPanel>
+                          <DockPanel>
+                            <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Bỏ nhạc nền" Command="{Binding ClearMusicCommand}" />
+                            <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn nhạc nền…" Command="{Binding PickMusicCommand}" />
+                            <ui:TextBox Text="{Binding MusicPath}" c:FileDrop.IsEnabled="True" />
+                          </DockPanel>
+                          <DockPanel Margin="0,8,0,0">
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding MusicVolume, StringFormat={}{0:P0}}" />
+                            <Slider Minimum="0" Maximum="1" Value="{Binding MusicVolume}" />
+                          </DockPanel>
+                        </StackPanel>
+                      </c:Field>
+                      <ui:ToggleSwitch Content="Xuất mỗi cảnh một file MP4" IsChecked="{Binding EachSceneOwnFile}" Margin="0,0,0,12" />
+                      <c:Field Header="Thư mục xuất" Hint="Để trống = Videos\SuperMOOO\Review" Margin="0">
+                        <DockPanel>
+                          <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn thư mục xuất…" Command="{Binding ChooseOutputFolderCommand}" />
+                          <ui:TextBox Text="{Binding OutputFolder}" c:FileDrop.IsEnabled="True" />
+                        </DockPanel>
+                      </c:Field>
+                    </StackPanel>
+                  </ui:CardExpander>
+                </StackPanel>
+              </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="3. Chạy tự động">
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="0,12,16,0">
+                  <ui:Card Style="{StaticResource Section}">
+                    <StackPanel>
+                      <TextBlock Style="{StaticResource CardTitle}" Text="Dựng tự động từ thoại phim" />
+                      <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,12"
+                                 Text="App nhận diện thoại, chọn cảnh, viết lời bình, đọc và dựng video mà không cần sửa tay." />
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="12" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <c:Field Header="Kiểu dựng">
+                          <ComboBox ItemsSource="{x:Static local:MovieReviewViewModel.Modes}" SelectedItem="{Binding AutoMode}" DisplayMemberPath="Name" />
+                        </c:Field>
+                        <c:Field Grid.Column="2" Header="Độ dài video (giây)">
+                          <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding TargetSeconds}" MinWidth="36" />
+                            <Slider Minimum="5" Maximum="600" Value="{Binding TargetSeconds}" />
+                          </DockPanel>
+                        </c:Field>
+                      </Grid>
+                      <c:LlmPicker DataContext="{Binding ScriptAi}" />
+                      <WrapPanel>
+                        <CheckBox Content="Dùng AI chọn cảnh &amp; viết lời bình" IsChecked="{Binding UseAi}" Width="300" Margin="0,0,12,8" />
+                        <CheckBox Content="Đọc lời bình (TTS)" IsChecked="{Binding Narrate}" Width="300" Margin="0,0,12,8" />
+                        <CheckBox Content="Dịch thoại sang ngôn ngữ lời bình" IsChecked="{Binding Translate}" Width="300" Margin="0,0,12,8" />
+                        <CheckBox Content="Chưa có thoại: chia đều theo thời gian" IsChecked="{Binding SplitEvenly}" Width="300" Margin="0,0,12,8" />
+                      </WrapPanel>
+                      <c:Field Header="Độ dài mỗi phần khi chia đều (giây)" Visibility="{Binding SplitEvenly, Converter={StaticResource BoolToVis}}" Margin="0">
+                        <DockPanel>
+                          <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding SegmentSeconds}" MinWidth="36" />
+                          <Slider Minimum="5" Maximum="300" Value="{Binding SegmentSeconds}" />
+                        </DockPanel>
+                      </c:Field>
+                      <WrapPanel Margin="0,12,0,0">
+                        <ui:Button Style="{StaticResource ToolButton}" Appearance="Primary" Content="Chạy tự động phim này" Icon="{ui:SymbolIcon Flash24}" Command="{Binding RunAutoCommand}" />
+                        <ui:Button Style="{StaticResource ToolButton}" Content="Chạy hàng loạt cả thư mục" Icon="{ui:SymbolIcon FolderArrowRight24}" Command="{Binding RunFolderCommand}"
+                                   ToolTip="Mỗi phim trong thư mục là một tác vụ, theo dõi ở khung Tác vụ của màn này" />
+                      </WrapPanel>
+                    </StackPanel>
+                  </ui:Card>
+                </StackPanel>
+              </ScrollViewer>
+            </TabItem>
+          </TabControl>
+        </DockPanel>
+      </c:SplitView.Primary>
+
+      <c:SplitView.Secondary>
+        <DockPanel>
+          <ui:Card DockPanel.Dock="Bottom" Style="{StaticResource Section}" Margin="0,12,0,0">
+            <StackPanel>
+              <WrapPanel>
+                <ui:Button Content="Mở video" Icon="{ui:SymbolIcon Open24}" Command="{Binding OpenOutputCommand}" Margin="0,0,8,8" />
+                <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Mở thư mục kết quả" Command="{Binding OpenOutputFolderCommand}" Margin="0,0,0,8" />
+              </WrapPanel>
+              <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" />
+              <Expander Header="Nhật ký" Margin="0,8,0,0">
+                <ListBox ItemsSource="{Binding Log}" Height="90" FontSize="12" />
+              </Expander>
+            </StackPanel>
+          </ui:Card>
+          <ContentControl x:Name="ResultHost" Focusable="False" />
+        </DockPanel>
+      </c:SplitView.Secondary>
+    </c:SplitView>
+  </DockPanel>
+</UserControl>

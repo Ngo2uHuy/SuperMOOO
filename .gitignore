@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+tools/
+ai_worker/.venv/
+ai_worker/**/__pycache__/
+*.user
+
+# per-agent build output khi build song song
+.artifacts/
+artifacts/

@@ -1,0 +1,146 @@
+<UserControl x:Class="SuperMOOO.App.Features.S11.TrendsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel Margin="0,12,0,0">
+    <ui:Card DockPanel.Dock="Top" Style="{StaticResource Section}">
+      <StackPanel>
+        <ItemsControl ItemsSource="{Binding Modes}" Margin="0,0,0,12">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <RadioButton GroupName="TrendMode" Content="{Binding Label}" IsChecked="{Binding IsSelected}" IsEnabled="{Binding IsSupported}"
+                           ToolTip="{Binding Hint}" ToolTipService.ShowOnDisabled="True" Margin="0,0,20,0" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="140" />
+            <ColumnDefinition Width="170" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="90" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <c:Field Header="Nền tảng" Margin="0,0,8,0">
+            <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding Platforms}" SelectedItem="{Binding Platform}" />
+          </c:Field>
+          <c:Field Grid.Column="1" Header="Khu vực" Margin="0,0,8,0">
+            <ComboBox ItemsSource="{Binding Regions}" SelectedItem="{Binding SelectedRegion}" DisplayMemberPath="Label" IsEnabled="{Binding HasRegions}"
+                      ToolTip="{Binding RegionHint}" ToolTipService.ShowOnDisabled="True" />
+          </c:Field>
+          <c:Field Grid.Column="2" Header="Chủ đề" Margin="0,0,8,0">
+            <ComboBox ItemsSource="{Binding Topics}" SelectedItem="{Binding SelectedTopic}" DisplayMemberPath="Label" IsEnabled="{Binding HasTopics}"
+                      ToolTip="{Binding TopicHint}" ToolTipService.ShowOnDisabled="True" />
+          </c:Field>
+          <c:Field Grid.Column="3" Header="{Binding KeywordHeader}" Margin="0,0,8,0">
+            <ui:TextBox Text="{Binding Keyword, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="{Binding KeywordPlaceholder}">
+              <ui:TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding FetchCommand}" />
+              </ui:TextBox.InputBindings>
+            </ui:TextBox>
+          </c:Field>
+          <c:Field Grid.Column="4" Header="Số lượng" Margin="0,0,8,0">
+            <ui:TextBox Text="{Binding Limit, UpdateSourceTrigger=PropertyChanged}" ToolTip="1–200" />
+          </c:Field>
+          <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Bottom">
+            <ui:ProgressRing IsIndeterminate="True" Width="20" Height="20" Margin="0,0,12,0"
+                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" />
+            <ui:Button Appearance="Primary" Content="Lấy dữ liệu" Icon="{ui:SymbolIcon DataTrending24}" Command="{Binding FetchCommand}"
+                       IsEnabled="{Binding IsModeSupported}" ToolTip="Kết quả giữ 30 phút trong bộ nhớ để tiết kiệm hạn mức API" />
+            <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding RefreshCommand}"
+                       IsEnabled="{Binding IsModeSupported}" ToolTip="Làm mới (bỏ qua bộ nhớ đệm)" />
+          </StackPanel>
+        </Grid>
+        <TextBlock Style="{StaticResource Hint}" Text="{Binding ModeHint}" Margin="0,10,0,0" />
+      </StackPanel>
+    </ui:Card>
+
+    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Hint}" Text="{Binding Status}" Margin="0,8,0,0"
+               Visibility="{Binding Status, Converter={StaticResource NotEmptyToVis}}" />
+
+    <ui:Card Style="{StaticResource FillSection}" Margin="0">
+      <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+          <TextBlock Style="{StaticResource CardTitle}" Text="Kết quả" Margin="0" VerticalAlignment="Center" />
+          <WrapPanel HorizontalAlignment="Right">
+            <ui:Button Style="{StaticResource ToolButton}" Content="Xem video của hashtag" Icon="{ui:SymbolIcon VideoClip24}"
+                       Command="{Binding ShowHashtagVideosCommand}" Visibility="{Binding ShowHashtags, Converter={StaticResource BoolToVis}}"
+                       ToolTip="Chuyển sang &quot;Video theo hashtag&quot; với hashtag đang chọn (bấm đúp dòng cũng được)" />
+            <ui:Button Style="{StaticResource ToolButton}" Content="Chép link để tải" Icon="{ui:SymbolIcon ArrowDownload24}"
+                       Command="{Binding CopyForDownloadCommand}" Visibility="{Binding ShowVideos, Converter={StaticResource BoolToVis}}"
+                       ToolTip="Chép liên kết các video đã tích (hoặc dòng đang chọn) để dán vào màn Tải video" />
+            <ui:Button Style="{StaticResource ToolButton}" Content="Theo dõi" Icon="{ui:SymbolIcon Eye24}" Command="{Binding WatchCommand}"
+                       ToolTip="Thêm kênh (hoặc hashtag) của dòng đang chọn vào tab Theo dõi" />
+            <ui:Button Style="{StaticResource ToolButton}" Content="Xuất CSV / Excel" Icon="{ui:SymbolIcon ArrowExportLtr24}" Command="{Binding ExportCommand}" />
+            <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Open24}" ToolTip="Mở liên kết dòng đang chọn trong trình duyệt"
+                       Command="{Binding OpenLinkCommand}" Margin="0,0,0,4" />
+          </WrapPanel>
+        </DockPanel>
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Hint}" Text="{Binding Note}" Margin="0,0,0,8"
+                   Visibility="{Binding Note, Converter={StaticResource NotEmptyToVis}}" />
+        <Grid>
+          <DataGrid ItemsSource="{Binding Videos}" SelectedItem="{Binding SelectedVideo}" AutoGenerateColumns="False" CanUserAddRows="False"
+                    SelectionMode="Single" HeadersVisibility="Column" Visibility="{Binding ShowVideos, Converter={StaticResource BoolToVis}}">
+            <DataGrid.InputBindings>
+              <MouseBinding Gesture="LeftDoubleClick" Command="{Binding OpenLinkCommand}" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+              <DataGridTemplateColumn Header="Chọn" Width="56" SortMemberPath="IsChecked">
+                <DataGridTemplateColumn.CellTemplate>
+                  <DataTemplate>
+                    <CheckBox IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                              ToolTip="Chọn để chép link sang Tải video" />
+                  </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+              </DataGridTemplateColumn>
+              <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title, Mode=OneWay}" Width="3*" IsReadOnly="True" />
+              <DataGridTextColumn Header="Kênh" Binding="{Binding Channel, Mode=OneWay}" Width="*" IsReadOnly="True" />
+              <DataGridTextColumn Header="Lượt xem" Binding="{Binding Views, Mode=OneWay, StringFormat=N0}" Width="105" IsReadOnly="True" />
+              <DataGridTextColumn Header="Thích" Binding="{Binding Likes, Mode=OneWay, StringFormat=N0}" Width="90" IsReadOnly="True" />
+              <DataGridTextColumn Header="Bình luận" Binding="{Binding Comments, Mode=OneWay, StringFormat=N0}" Width="90" IsReadOnly="True" />
+              <DataGridTextColumn Header="Ngày đăng" Binding="{Binding Published, Mode=OneWay, StringFormat=dd/MM/yyyy}" Width="95" IsReadOnly="True" />
+              <DataGridTextColumn Header="Xem/giờ" Binding="{Binding ViewsPerHour, Mode=OneWay, StringFormat=N0}" Width="90" IsReadOnly="True" />
+              <DataGridTextColumn Header="Tương tác" Binding="{Binding Engagement, Mode=OneWay, StringFormat=P2}" Width="90" IsReadOnly="True" />
+            </DataGrid.Columns>
+          </DataGrid>
+          <DataGrid ItemsSource="{Binding Hashtags}" SelectedItem="{Binding SelectedHashtag}" AutoGenerateColumns="False" IsReadOnly="True"
+                    CanUserAddRows="False" SelectionMode="Single" HeadersVisibility="Column"
+                    Visibility="{Binding ShowHashtags, Converter={StaticResource BoolToVis}}">
+            <DataGrid.InputBindings>
+              <MouseBinding Gesture="LeftDoubleClick" Command="{Binding ShowHashtagVideosCommand}" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Hạng" Binding="{Binding Rank, Mode=OneWay}" Width="70" />
+              <DataGridTextColumn Header="Hashtag / chủ đề" Binding="{Binding Name, Mode=OneWay}" Width="3*" />
+              <DataGridTextColumn Header="Số bài" Binding="{Binding Posts, Mode=OneWay, StringFormat=N0}" Width="*" />
+              <DataGridTextColumn Header="Lượt xem" Binding="{Binding Views, Mode=OneWay, StringFormat=N0}" Width="*" />
+              <DataGridTextColumn Header="Xu hướng" Binding="{Binding Trend, Mode=OneWay}" Width="100" />
+            </DataGrid.Columns>
+          </DataGrid>
+          <DataGrid ItemsSource="{Binding Creators}" SelectedItem="{Binding SelectedCreator}" AutoGenerateColumns="False" IsReadOnly="True"
+                    CanUserAddRows="False" SelectionMode="Single" HeadersVisibility="Column"
+                    Visibility="{Binding ShowCreators, Converter={StaticResource BoolToVis}}">
+            <DataGrid.InputBindings>
+              <MouseBinding Gesture="LeftDoubleClick" Command="{Binding OpenLinkCommand}" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="Kênh" Binding="{Binding Name, Mode=OneWay}" Width="2*" />
+              <DataGridTextColumn Header="Liên kết" Binding="{Binding Url, Mode=OneWay}" Width="2*" />
+              <DataGridTextColumn Header="Người theo dõi" Binding="{Binding Followers, Mode=OneWay, StringFormat=N0}" Width="*" />
+              <DataGridTextColumn Header="Video trong trending" Binding="{Binding Videos, Mode=OneWay}" Width="*" />
+              <DataGridTextColumn Header="Tổng lượt xem" Binding="{Binding TotalViews, Mode=OneWay, StringFormat=N0}" Width="*" />
+            </DataGrid.Columns>
+          </DataGrid>
+          <c:EmptyState Icon="DataTrending24" Text="{Binding EmptyText}" Visibility="{Binding ResultCount, Converter={StaticResource EmptyToVis}}" />
+        </Grid>
+      </DockPanel>
+    </ui:Card>
+  </DockPanel>
+</UserControl>

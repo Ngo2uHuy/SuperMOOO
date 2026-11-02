@@ -1,0 +1,19 @@
+Dựng video / Timeline
+
+Dùng để:
+Dựng clip, voiceover, nhạc và phụ đề trên timeline; lưu dự án và xuất video.
+
+Các bước:
+1. Dự án: "Mới", "Mở dự án", "Lưu" (Ctrl+S), "Lưu thành…". Hoàn tác / làm lại bằng Ctrl+Z / Ctrl+Y.
+2. Panel "Thêm vào timeline": bấm "Video", "Voiceover", "Nhạc nền", "Phụ đề", "Nhập SRT", hoặc kéo thả file vào màn.
+3. Chỉnh trên timeline: kéo thân clip để di chuyển, kéo 2 mép để cắt, bấm vào thước để đặt vạch đỏ.
+4. Dưới timeline: "Cắt đôi" (phím S), "Xoá" (Delete), mũi tên ← / → để đưa clip đang chọn lên trước / ra sau, "Bắt dính", "Vừa khung".
+5. Panel "Thuộc tính clip": sửa điểm vào/ra, vị trí rồi "Áp dụng"; "Đổi nguồn" để thay file.
+6. Panel "Thiết lập dự án": tên, tỉ lệ, độ phân giải rồi "Áp dụng dự án".
+7. "Tạo preview" dưới khung xem, rồi "Xuất video" ở đầu màn.
+
+Mẹo:
+- Clip video tự nối liên tiếp nên không đặt vị trí tay được.
+- Thu phóng timeline bằng Ctrl + con lăn chuột.
+- "Bắt dính" làm clip tự dính vào mép clip khác và vạch đỏ.
+- "Chỉnh trong Timeline" ở S04 mở kịch bản review tại đây.

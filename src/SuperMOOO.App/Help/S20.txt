@@ -1,0 +1,25 @@
+Livestream bán hàng
+
+Dùng để:
+Trợ lý livestream bán hàng: lưu sản phẩm và FAQ, trả lời bình luận của khách (FAQ hoặc model AI + RAG), đọc thành tiếng và phát hình, tiếng lên OBS qua Browser Source (Facebook, YouTube, TikTok).
+
+Các bước:
+1. Tab "Sản phẩm & FAQ": bấm "Sản phẩm mới", nhập tên và thông tin đã xác thực (giá, size, ưu đãi...), bấm "Lưu sản phẩm". Bấm "Gợi ý lời thoại" để model soạn lời giới thiệu 80-120 từ rồi tự sửa lại.
+2. Cùng tab, phần FAQ: nhập câu hỏi và câu trả lời, bấm "Lưu FAQ". Có thể chọn clip dựng sẵn cho sản phẩm hoặc FAQ, hoặc bấm "Dựng clip" để tự dựng clip khớp môi từ lời thoại bằng avatar đang chọn ở màn Avatar khớp môi (S19); dựng nền rất chậm trên CPU, xong clip tự gắn vào mục (mở lại mục để thấy đường dẫn).
+   Nhập nhiều FAQ cùng lúc: dán mỗi dòng "câu hỏi | câu trả lời" vào ô "Nhập / xuất hàng loạt" rồi bấm "Nhập các dòng" (tối đa 100 FAQ mỗi sản phẩm); "Xuất ra ô" đưa FAQ hiện có về cùng dạng; "Thêm FAQ mẫu" thêm 4 FAQ mẫu (giá, ship, size, bảo hành) để sửa lại.
+3. Tab "Hỏi đáp thử": chọn sản phẩm và nguồn trả lời, gõ bình luận của khách, bấm "Trả lời". Bấm "Nghe lại" để nghe, "Đưa lên OBS" để phát.
+4. Tab "Phát OBS": chọn nền tảng, khung hình, cách hiển thị và video nền lặp. Bấm "Bật / tắt máy chủ phát", "Sao chép URL".
+5. Trong OBS: thêm Browser Source, dán URL, đặt kích thước đúng như màn hiển thị, bật Control audio via OBS. Bấm "Mở trang quản lý LIVE" để vào trang phát của nền tảng.
+
+Mẹo:
+- Nguồn "Model local + RAG" dùng Qwen3 1.7B chạy trên máy; tải model ở Cài đặt -> Livestream (LLM). Có thể đổi sang Ollama/LM Studio hoặc model đám mây ở cùng mục.
+- "Ưu tiên FAQ rồi model" trả đúng câu soạn sẵn khi khớp (cả khi khách gõ không dấu, viết tắt ko/bn/ship), không khớp mới hỏi model.
+- Chỉ nguồn đám mây mới gửi bình luận ra ngoài. Model local chỉ trả lời một câu mỗi lúc; câu giống hệt trong 5 phút được dùng lại.
+- Máy chủ phát chỉ chạy khi bạn bật và chỉ nhận kết nối từ máy này (127.0.0.1).
+- Bật "Tự đưa câu trả lời lên OBS" để mỗi câu trả lời tự vào hàng phát.
+
+Lưu ý / lỗi thường gặp:
+- "Model local đang bận": chờ câu trước xong rồi hỏi lại.
+- Không bật được máy chủ: cổng đang bị chương trình khác dùng, đổi cổng (không dùng 8765, 18089-18091).
+- OBS không có tiếng: bật Control audio via OBS; nếu video không tự chạy, mở Interact và bấm phát.
+- "Kèm khẩu hình" ở tab Hỏi đáp thử dựng clip khớp môi cho từng câu trả lời bằng MuseTalk; mỗi câu mất vài phút trên CPU nên chỉ nên dùng khi chuẩn bị trước. Chưa cài MuseTalk thì đọc giọng trên nền video lặp hoặc phát clip dựng sẵn.

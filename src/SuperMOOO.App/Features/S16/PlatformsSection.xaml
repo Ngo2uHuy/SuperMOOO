@@ -1,0 +1,46 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.PlatformsSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="3*" />
+      <ColumnDefinition Width="16" />
+      <ColumnDefinition Width="2*" MinWidth="300" />
+    </Grid.ColumnDefinitions>
+    <ui:Card Style="{StaticResource FillSection}" Margin="0">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource CardTitle}" Text="Nền tảng" />
+        <DataGrid ItemsSource="{Binding Rows}" SelectedItem="{Binding Selected}" AutoGenerateColumns="False" IsReadOnly="True"
+                  SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column">
+          <DataGrid.Columns>
+            <DataGridTextColumn Header="Nền tảng" Binding="{Binding Name, Mode=OneWay}" Width="*" />
+            <DataGridTextColumn Header="Tình trạng" Binding="{Binding State, Mode=OneWay}" Width="*" />
+            <DataGridTextColumn Header="Loại" Binding="{Binding AuthType, Mode=OneWay}" Width="*" />
+            <DataGridTextColumn Header="Ghi chú" Binding="{Binding Message, Mode=OneWay}" Width="2*" />
+          </DataGrid.Columns>
+        </DataGrid>
+      </DockPanel>
+    </ui:Card>
+    <ui:Card Grid.Column="2" Style="{StaticResource Section}" Margin="0">
+      <StackPanel>
+        <TextBlock Style="{StaticResource CardTitle}" Text="Thông tin đăng nhập" />
+        <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,12"
+                   Text="Cookie / token / API key của nền tảng đang chọn; chỉ lưu mã hoá, không hiện lại." />
+        <c:Field Header="Loại thông tin">
+          <ComboBox ItemsSource="{Binding SecretNames}" SelectedItem="{Binding SelectedSecretName}" />
+        </c:Field>
+        <c:Field Header="Giá trị">
+          <PasswordBox x:Name="ValueBox" PasswordChanged="OnValueChanged" />
+        </c:Field>
+        <WrapPanel>
+          <ui:Button Appearance="Primary" Content="Lưu" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" Margin="0,0,8,8" />
+          <ui:Button Content="Kiểm tra" Icon="{ui:SymbolIcon PlugConnected24}" Command="{Binding CheckCommand}" Margin="0,0,8,8" />
+          <ui:Button Content="Xoá" Icon="{ui:SymbolIcon Delete24}" Command="{Binding ClearCommand}" Margin="0,0,0,8" />
+        </WrapPanel>
+        <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" Margin="0,4,0,0" />
+      </StackPanel>
+    </ui:Card>
+  </Grid>
+</UserControl>

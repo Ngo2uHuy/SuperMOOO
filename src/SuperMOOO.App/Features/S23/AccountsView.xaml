@@ -1,0 +1,526 @@
+<UserControl x:Class="SuperMOOO.App.Features.S23.AccountsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <UserControl.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ui:ThemesDictionary Theme="Light" /></ResourceDictionary.MergedDictionaries></ResourceDictionary></UserControl.Resources>
+  <DockPanel Margin="{StaticResource PagePadding}" Background="#F3F4F6" TextElement.Foreground="#24262B">
+
+    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Hint}" Text="{Binding Status}" Margin="0,8,0,0"
+               Visibility="{Binding Status, Converter={StaticResource NotEmptyToVis}}" TextWrapping="Wrap" />
+
+    <TabControl SelectedIndex="{Binding SelectedTabIndex}">
+      <TabItem Header="Tổng quan">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#F3F4F6">
+          <StackPanel Margin="16" Background="#F3F4F6" TextElement.FontFamily="Segoe UI">
+            <Grid Margin="0,0,0,14">
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+              <StackPanel>
+                <TextBlock Text="Quản lý tài khoản" FontSize="22" FontWeight="SemiBold" Foreground="#172334" />
+                <TextBlock Text="Theo dõi tài khoản, lịch đăng và hoạt động gần đây" Foreground="#64748B" />
+              </StackPanel>
+              <WrapPanel Grid.Column="1" VerticalAlignment="Center">
+                <ui:Button Content="Làm mới" Command="{Binding RefreshCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Chạy tất cả" Command="{Binding ResumeAllCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Nhập tài khoản" Command="{Binding ImportAccountsCommand}" Margin="0,0,8,0" />
+                <ui:Button Appearance="Primary" Content="Thêm tài khoản" Command="{Binding OpenAddAccountCommand}" />
+              </WrapPanel>
+            </Grid>
+            <UniformGrid Columns="4" Margin="0,0,0,14">
+              <Border Background="White" BorderBrush="#DDE1E8" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,10,0">
+                <StackPanel><TextBlock Text="Tổng tài khoản" Foreground="#64748B" /><TextBlock Text="{Binding AccountSummary}" FontSize="26" FontWeight="Bold" Foreground="#126BC0" /></StackPanel>
+              </Border>
+              <Border Background="White" BorderBrush="#DDE1E8" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,10,0">
+                <StackPanel><TextBlock Text="Đã kết nối" Foreground="#64748B" /><TextBlock Text="{Binding ConnectedSummary}" FontSize="26" FontWeight="Bold" Foreground="#126BC0" /></StackPanel>
+              </Border>
+              <Border Background="White" BorderBrush="#DDE1E8" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,10,0">
+                <StackPanel><TextBlock Text="Bài đã đăng hôm nay" Foreground="#64748B" /><TextBlock Text="{Binding TodaySummary}" FontSize="26" FontWeight="Bold" Foreground="#126BC0" /></StackPanel>
+              </Border>
+              <Border Background="White" BorderBrush="#DDE1E8" BorderThickness="1" CornerRadius="8" Padding="16">
+                <StackPanel><TextBlock Text="Tài khoản cần xử lý" Foreground="#64748B" /><TextBlock Text="{Binding AttentionSummary}" FontSize="26" FontWeight="Bold" Foreground="#B91C1C" /></StackPanel>
+              </Border>
+            </UniformGrid>
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*" MinWidth="500" /><ColumnDefinition Width="340" /></Grid.ColumnDefinitions>
+              <Border Background="White" BorderBrush="#DDE1E8" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,12,0">
+                <DockPanel>
+                  <StackPanel DockPanel.Dock="Top">
+                    <TextBlock Text="Danh sách tài khoản" FontSize="16" FontWeight="SemiBold" Foreground="#172334" Margin="0,0,0,10" />
+                    <Grid Margin="0,0,0,10">
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="170" /></Grid.ColumnDefinitions>
+                      <ui:TextBox PlaceholderText="Tìm tên tài khoản" Text="{Binding AccountSearch, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0" />
+                      <ComboBox Grid.Column="1" ItemsSource="{Binding AccountPlatformFilters}" SelectedItem="{Binding AccountPlatformFilter}" IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" />
+                    </Grid>
+                    <WrapPanel Margin="0,0,0,10">
+                      <ui:Button Content="Chọn đang lọc" Command="{Binding SelectVisibleAccountsCommand}" Margin="0,0,8,8" />
+                      <ui:Button Content="Bỏ chọn" Command="{Binding ClearAccountSelectionCommand}" Margin="0,0,8,8" />
+                      <ui:Button Content="Đăng nhập lại" Command="{Binding ConnectCommand}" Margin="0,0,8,8" ToolTip="Kết nối lại tài khoản đang xem qua OAuth" />
+                      <ui:Button Content="Tạm dừng" Command="{Binding PauseSelectedCommand}" Margin="0,0,8,8" />
+                      <ui:Button Content="Tiếp tục" Command="{Binding ResumeSelectedCommand}" Margin="0,0,8,8" />
+                      <ComboBox Width="170" ItemsSource="{Binding RouteOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding BulkRouteId}" IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" Margin="0,0,8,8" />
+                      <ui:Button Content="Đổi tuyến" Command="{Binding ApplyBulkRouteCommand}" Margin="0,0,8,8" />
+                    </WrapPanel>
+                    <TextBlock Text="{Binding AccountSelectionSummary}" Foreground="#64748B" Margin="0,0,0,8" />
+                    <Border Background="#F8FAFC" Padding="8" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
+                      <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="28" /><ColumnDefinition Width="2*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="62" /><ColumnDefinition Width="90" /><ColumnDefinition Width="94" /></Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="1" Text="TÀI KHOẢN" FontWeight="SemiBold" Foreground="#64748B" />
+                        <TextBlock Grid.Column="2" Text="TRẠNG THÁI" FontWeight="SemiBold" Foreground="#64748B" />
+                        <TextBlock Grid.Column="3" Text="HÔM NAY" FontWeight="SemiBold" Foreground="#64748B" FontSize="10" />
+                        <TextBlock Grid.Column="4" Text="LƯỢT TIẾP" FontWeight="SemiBold" Foreground="#64748B" FontSize="10" />
+                        <TextBlock Grid.Column="5" Text="THAO TÁC" FontWeight="SemiBold" Foreground="#64748B" FontSize="10" />
+                      </Grid>
+                    </Border>
+                  </StackPanel>
+                  <ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding VisibleAccounts}" SelectedItem="{Binding SelectedAccount}" BorderThickness="0" MinHeight="300">
+                    <ListBox.ItemTemplate>
+                      <DataTemplate>
+                        <Grid Margin="4,8" ToolTip="{Binding Activity}"><Grid.ColumnDefinitions><ColumnDefinition Width="28" /><ColumnDefinition Width="2*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="62" /><ColumnDefinition Width="90" /><ColumnDefinition Width="94" /></Grid.ColumnDefinitions>
+                          <CheckBox IsChecked="{Binding IsChecked}" VerticalAlignment="Center" />
+                          <StackPanel Grid.Column="1"><TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="#172334" /><TextBlock Text="{Binding Platform}" Foreground="#64748B" /><TextBlock Text="{Binding Route}" Foreground="#64748B" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding Warning}" Foreground="#9A5700" TextWrapping="Wrap" Margin="0,2,8,0" Visibility="{Binding Warning, Converter={StaticResource NotEmptyToVis}}" /></StackPanel>
+                          <StackPanel Grid.Column="2" Margin="0,0,6,0"><TextBlock Text="{Binding Status}" TextWrapping="Wrap" /><TextBlock Text="{Binding RunState}" Foreground="#126BC0" />
+                            <ProgressBar Value="{Binding UploadProgress}" IsIndeterminate="{Binding UploadIndeterminate}" Height="4" Margin="0,5,0,0" Visibility="{Binding IsUploading, Converter={StaticResource BoolToVis}}" />
+                          </StackPanel>
+                          <TextBlock Grid.Column="3" Text="{Binding TodayCount}" Foreground="#475569" ToolTip="Số bài đã đăng hôm nay / giới hạn riêng nếu đã đặt" />
+                          <TextBlock Grid.Column="4" Text="{Binding NextRun}" TextWrapping="Wrap" Foreground="#475569" Margin="0,0,4,0" />
+                          <StackPanel Grid.Column="5" Orientation="Horizontal" VerticalAlignment="Center">
+                            <ui:Button Content="▶" Padding="5,3" Margin="0,0,3,0" ToolTip="Tiếp tục tài khoản" Command="{Binding DataContext.ResumeAccountRowCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                            <ui:Button Content="↗" Padding="5,3" Margin="0,0,3,0" ToolTip="Mở trình duyệt của tài khoản" Command="{Binding DataContext.OpenAccountBrowserRowCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                            <ui:Button Content="⋯" Padding="5,3" ToolTip="Chi tiết và kết nối" Command="{Binding DataContext.ShowAccountDetailsCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}" />
+                          </StackPanel>
+                        </Grid>
+                      </DataTemplate>
+                    </ListBox.ItemTemplate>
+                  </ListBox>
+                </DockPanel>
+              </Border>
+              <StackPanel Grid.Column="1">
+                <Border Background="White" BorderBrush="#DDE1E8" BorderThickness="1" CornerRadius="8" Padding="14" Margin="0,0,0,12">
+                  <StackPanel>
+                    <TextBlock Text="Hàng đợi đăng bài" FontSize="16" FontWeight="SemiBold" Foreground="#172334" />
+                    <CheckBox Content="Tất cả tài khoản" IsChecked="{Binding ShowAllAccountActivity}" Margin="0,6,0,4" ToolTip="Áp dụng cho hàng đợi và nhật ký bên dưới" />
+                    <TextBlock Text="{Binding WaitingSummary, StringFormat='Tổng bài đang chờ: {0}'}" Foreground="#64748B" />
+                    <TextBlock Text="{Binding NextSummary}" Foreground="#64748B" Margin="0,4,0,12" TextWrapping="Wrap" />
+                    <ItemsControl ItemsSource="{Binding Queue}"><ItemsControl.ItemTemplate><DataTemplate>
+                      <StackPanel Margin="0,0,0,10"><TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" /><ProgressBar Value="{Binding Progress}" IsIndeterminate="{Binding Indeterminate}" Height="4" Margin="0,5,0,5" Foreground="#126BC0"/><TextBlock Text="{Binding Destination}" Foreground="#64748B" /><TextBlock Text="{Binding State}" Foreground="#126BC0"/><TextBlock Text="{Binding At}" Foreground="#126BC0" /></StackPanel>
+                    </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                    <TextBlock Text="Chọn tài khoản để xem hàng đợi." Foreground="#64748B" Visibility="{Binding Queue.Count, Converter={StaticResource EmptyToVis}}" />
+                  </StackPanel>
+                </Border>
+                <Border Background="#192333" BorderBrush="#192333" BorderThickness="1" CornerRadius="8" Padding="14">
+                  <StackPanel>
+                    <TextBlock Text="Nhật ký hoạt động" FontSize="16" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,12" />
+                    <ItemsControl ItemsSource="{Binding History}"><ItemsControl.ItemTemplate><DataTemplate>
+                      <StackPanel Margin="0,0,0,10"><TextBlock Text="{Binding Title}" Foreground="White" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding At}" Foreground="#A9BCD2" /><TextBlock Text="{Binding Outcome}" Foreground="#7CC7FF" /><TextBlock Text="{Binding Detail}" Foreground="#F3B9B9" TextWrapping="Wrap" /></StackPanel>
+                    </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                    <TextBlock Text="Chưa có lần thử đăng." Foreground="#A9BCD2" Visibility="{Binding History.Count, Converter={StaticResource EmptyToVis}}" />
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </Grid>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Chi tiết &amp; kết nối">
+        <Grid Margin="0,12,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <ui:Card Style="{StaticResource Section}" Margin="0,0,12,0">
+            <DockPanel>
+              <StackPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <c:Field Header="Tài khoản đang xem">
+                  <ComboBox ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}" DisplayMemberPath="Display" IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" />
+                </c:Field>
+                <c:Field Header="Nền tảng">
+                  <ComboBox ItemsSource="{Binding Platforms}" SelectedItem="{Binding NewPlatform}" IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" />
+                </c:Field>
+                <c:Field Header="Tên tài khoản">
+                  <ui:TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" />
+                </c:Field>
+                <ui:Button Content="Thêm tài khoản" Icon="{ui:SymbolIcon Add24}" Command="{Binding AddAccountCommand}" HorizontalAlignment="Stretch" />
+              </StackPanel>
+              <TextBlock Text="Chọn một tài khoản trong bảng Tổng quan để xem và quản lý kết nối." Style="{StaticResource Hint}" TextWrapping="Wrap" />
+            </DockPanel>
+          </ui:Card>
+
+          <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,16,0">
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                <StackPanel DataContext="{Binding SelectedAccount}">
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Trạng thái kết nối" />
+                  <TextBlock Text="{Binding Status}" FontWeight="SemiBold" />
+                  <TextBlock Style="{StaticResource Hint}" Text="{Binding Token}" TextWrapping="Wrap" />
+                  <TextBlock Style="{StaticResource Hint}" Text="{Binding Limits}" TextWrapping="Wrap" />
+                  <TextBlock Style="{StaticResource Hint}" Text="{Binding Route, StringFormat='Tuyến mạng: {0}'}" Margin="0,0,0,8" />
+                  <TextBlock Style="{StaticResource Hint}" Foreground="#9A5700" Text="{Binding Warning}" TextWrapping="Wrap" Margin="0,0,0,8"
+                             Visibility="{Binding Warning, Converter={StaticResource NotEmptyToVis}}" />
+                </StackPanel>
+                <WrapPanel>
+                  <ui:Button Appearance="Primary" Content="Kết nối" Icon="{ui:SymbolIcon PlugConnected24}" Command="{Binding ConnectCommand}" Margin="0,0,8,8" />
+                  <ui:Button Content="Đồng bộ kênh" Icon="{ui:SymbolIcon ArrowSync24}" Command="{Binding SyncCommand}" Margin="0,0,8,8" />
+                  <ui:Button Content="Mở trình duyệt của tài khoản" Icon="{ui:SymbolIcon Globe24}" Command="{Binding OpenBrowserCommand}" Margin="0,0,8,8"
+                             ToolTip="Mở Edge với hồ sơ riêng của tài khoản (kèm proxy nếu tuyến là proxy)" />
+                  <ui:Button Content="Ngắt kết nối" Icon="{ui:SymbolIcon PlugDisconnected24}" Command="{Binding DisconnectCommand}" Margin="0,0,8,8" />
+                  <ui:Button Content="Thu hồi quyền" Icon="{ui:SymbolIcon ShieldDismiss24}" Command="{Binding RevokeCommand}" Margin="0,0,8,8" />
+                  <ui:Button Content="Xoá tài khoản" Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeleteAccountCommand}" Margin="0,0,0,8" />
+                </WrapPanel>
+                </StackPanel>
+              </ui:Card>
+
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Hồ sơ thị trường" />
+                  <c:Field Header="Hồ sơ của tài khoản" Hint="Luồng Reup (S08) chọn &quot;Theo tài khoản&quot; sẽ dùng giờ đăng, ngôn ngữ, mẫu chữ của hồ sơ này. Tạo hồ sơ ở tab Hồ sơ thị trường.">
+                    <ComboBox ItemsSource="{Binding MarketOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding AccountMarketId}"
+                              IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" />
+                  </c:Field>
+                  <TextBlock Style="{StaticResource Hint}" Foreground="#9A5700" Text="{Binding MarketWarning}" TextWrapping="Wrap"
+                             Visibility="{Binding MarketWarning, Converter={StaticResource NotEmptyToVis}}" />
+                </StackPanel>
+              </ui:Card>
+
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Kênh / trang, khả năng và giới hạn" />
+                  <Grid>
+                    <ItemsControl ItemsSource="{Binding Destinations}">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <StackPanel Margin="0,0,0,10">
+                            <TextBlock FontWeight="SemiBold">
+                              <Run Text="{Binding Platform, Mode=OneWay}" /> · <Run Text="{Binding Title, Mode=OneWay}" /> · <Run Text="{Binding State, Mode=OneWay}" />
+                            </TextBlock>
+                            <TextBlock Style="{StaticResource Hint}" Text="{Binding Capabilities}" TextWrapping="Wrap" />
+                            <TextBlock Style="{StaticResource Hint}" Text="{Binding Blocked, StringFormat='Không đăng tự động được: {0}'}" TextWrapping="Wrap"
+                                       Visibility="{Binding Blocked, Converter={StaticResource NotEmptyToVis}}" />
+                          </StackPanel>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <c:EmptyState Icon="Channel24" Text="Chưa có kênh. Kết nối tài khoản rồi bấm Đồng bộ kênh."
+                                  Visibility="{Binding Destinations.Count, Converter={StaticResource EmptyToVis}}" />
+                  </Grid>
+                </StackPanel>
+              </ui:Card>
+
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Lịch sử IP" />
+                  <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,8"
+                             Text="100 lần thử đăng gần nhất (giờ máy), tuyến và IP thật đã dùng. Dòng màu cam: quốc gia khác lần trước. Lần &quot;Kiểm tra IP&quot; ở tab Tuyến mạng không được lưu nên không có ở đây." />
+                  <StackPanel Margin="0,0,0,8" Visibility="{Binding PendingCountry, Converter={StaticResource NotEmptyToVis}}">
+                    <TextBlock Foreground="#9A5700" TextWrapping="Wrap" Margin="0,0,0,8"
+                               Text="{Binding PendingCountry, StringFormat='IP đổi sang quốc gia {0} so với lần đăng trước; bài đang dời chờ bạn chấp nhận.'}" />
+                    <ui:Button Content="Chấp nhận quốc gia mới" Icon="{ui:SymbolIcon Checkmark24}" Command="{Binding AcceptCountryCommand}" />
+                  </StackPanel>
+                  <Grid>
+                    <DataGrid ItemsSource="{Binding IpHistory}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" CanUserAddRows="False"
+                              HeadersVisibility="Column" MaxHeight="360" MinHeight="120">
+                      <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                          <Style.Triggers>
+                            <DataTrigger Binding="{Binding CountryChanged}" Value="True">
+                              <Setter Property="Background" Value="#FFF4E0" />
+                              <Setter Property="Foreground" Value="#9A5700" />
+                            </DataTrigger>
+                          </Style.Triggers>
+                        </Style>
+                      </DataGrid.RowStyle>
+                      <DataGrid.Columns>
+                        <DataGridTextColumn Header="Thời gian" Binding="{Binding At}" Width="*" />
+                        <DataGridTextColumn Header="Tuyến" Binding="{Binding Route}" Width="*" />
+                        <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="*" />
+                        <DataGridTextColumn Header="Quốc gia" Binding="{Binding Country}" Width="70" />
+                        <DataGridTextColumn Header="Kết quả" Binding="{Binding Outcome}" Width="*" />
+                      </DataGrid.Columns>
+                    </DataGrid>
+                    <c:EmptyState Icon="Globe24" Text="Chưa có lần thử đăng nào ghi IP."
+                                  Visibility="{Binding IpHistory.Count, Converter={StaticResource EmptyToVis}}" />
+                  </Grid>
+                </StackPanel>
+              </ui:Card>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Tuyến mạng">
+        <Grid Margin="0,12,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <ui:Card Style="{StaticResource Section}" Margin="0,0,12,0">
+            <DockPanel>
+              <ui:Button DockPanel.Dock="Top" Content="Tuyến mới" Icon="{ui:SymbolIcon Add24}" Command="{Binding NewRouteCommand}" HorizontalAlignment="Stretch" Margin="0,0,0,8" />
+              <Grid>
+                <ListBox ItemsSource="{Binding Routes}" SelectedItem="{Binding SelectedRoute}" DisplayMemberPath="Name" />
+                <c:EmptyState Icon="Globe24" Text="Chưa có tuyến. Nhập thông tin bên phải rồi bấm Lưu tuyến."
+                              Visibility="{Binding Routes.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+
+          <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,16,0">
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Tuyến mạng" />
+                  <c:Field Header="Tên tuyến">
+                    <ui:TextBox Text="{Binding RouteName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" />
+                  </c:Field>
+                  <c:Field Header="Loại">
+                    <ComboBox ItemsSource="{Binding KindOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding RouteKind}" />
+                  </c:Field>
+                  <c:Field Header="Tham chiếu" Hint="Proxy: hồ sơ ở Cài đặt → Mạng. VPN Windows: tên đã tạo trong Windows. WireGuard: đường dẫn file .conf. VPN bật tay: tên app VPN."
+                           Visibility="{Binding HasRouteReference, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                      <ComboBox ItemsSource="{Binding RefOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding RouteRef}"
+                                Margin="0,0,0,8" Visibility="{Binding RefNeedsPicker, Converter={StaticResource BoolToVis}}" />
+                      <DockPanel Visibility="{Binding RefNeedsText, Converter={StaticResource BoolToVis}}">
+                        <ui:Button DockPanel.Dock="Right" Content="Chọn .conf…" Command="{Binding PickConfCommand}" Margin="8,0,0,0"
+                                   Visibility="{Binding RefNeedsFile, Converter={StaticResource BoolToVis}}" />
+                        <ui:TextBox Text="{Binding RouteRef, UpdateSourceTrigger=PropertyChanged}" />
+                      </DockPanel>
+                    </StackPanel>
+                  </c:Field>
+                  <TextBlock Style="{StaticResource Hint}" Foreground="#9A5700" Text="{Binding RouteKillSwitch}" TextWrapping="Wrap" Margin="0,0,0,12"
+                             Visibility="{Binding RouteKillSwitch, Converter={StaticResource NotEmptyToVis}}" />
+                  <c:Field Header="Quốc gia mong muốn (tuỳ chọn)" Hint="Chọn quốc gia; app lưu mã 2 chữ cái. IP ra ngoài phải thuộc quốc gia này mới được đăng.">
+                    <c:ValuePicker Options="{x:Static c:InputChoices.Countries}" Value="{Binding RouteCountry}" MinWidth="240" HorizontalAlignment="Left" />
+                  </c:Field>
+                  <CheckBox Content="Đang bật" IsChecked="{Binding RouteEnabled}" Margin="0,0,0,12" />
+                  <WrapPanel>
+                    <ui:Button Appearance="Primary" Content="Lưu tuyến" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveRouteCommand}" Margin="0,0,8,0" />
+                    <ui:Button Content="Kiểm tra IP &amp; quốc gia" Icon="{ui:SymbolIcon Globe24}" Command="{Binding TestRouteCommand}" Margin="0,0,8,0" />
+                    <ui:Button Content="Xoá" Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeleteRouteCommand}" />
+                  </WrapPanel>
+                  <TextBlock Style="{StaticResource Hint}" Text="{Binding RouteCheck}" TextWrapping="Wrap" Margin="0,8,0,0"
+                             Visibility="{Binding RouteCheck, Converter={StaticResource NotEmptyToVis}}" />
+                </StackPanel>
+              </ui:Card>
+
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Chính sách IP của tài khoản" />
+                  <c:Field Header="Tài khoản">
+                    <ComboBox ItemsSource="{Binding Accounts}" SelectedItem="{Binding SelectedAccount}" DisplayMemberPath="Display" IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" />
+                  </c:Field>
+                  <c:Field Header="Tuyến chính" Hint="Chọn &quot;Không dùng tuyến riêng&quot; để tài khoản đi theo tuyến chung của app.">
+                    <ComboBox ItemsSource="{Binding RouteOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding PolicyRouteId}" />
+                  </c:Field>
+                  <c:Field Header="Tuyến dự phòng">
+                    <ComboBox ItemsSource="{Binding RouteOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding PolicyFallbackId}" />
+                  </c:Field>
+                  <c:Field Header="Quốc gia bắt buộc (tuỳ chọn)">
+                    <c:ValuePicker Options="{x:Static c:InputChoices.Countries}" Value="{Binding PolicyCountry}" MinWidth="240" HorizontalAlignment="Left" />
+                  </c:Field>
+                  <c:Field Header="Chế độ IP">
+                    <ComboBox ItemsSource="{Binding IpModeOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding PolicyIpMode}" />
+                  </c:Field>
+                  <c:Field Header="IP cố định (chỉ khi chọn IP cố định)">
+                    <DockPanel>
+                      <ui:Button DockPanel.Dock="Right" Content="Ghim IP vừa kiểm" Icon="{ui:SymbolIcon Pin24}" Margin="8,0,0,0"
+                                 ToolTip="Điền IP của lần &quot;Kiểm tra IP &amp; quốc gia&quot; gần nhất" Command="{Binding PinTestedIpCommand}" />
+                      <ui:TextBox Text="{Binding PolicyPinnedIp, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                  </c:Field>
+                  <c:Field Header="Khi tuyến chính không đạt">
+                    <ComboBox ItemsSource="{Binding FailoverOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding PolicyFailover}" />
+                  </c:Field>
+                  <c:Field Header="Khi đổi quốc gia so với lần đăng trước"
+                           Hint="Dừng chờ duyệt: dời bài, tạo mục Cần xử lý tới khi bạn bấm &quot;Chấp nhận quốc gia mới&quot;. Tài khoản không có chính sách luôn dừng chờ duyệt.">
+                    <ComboBox ItemsSource="{Binding CountryChangeOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding PolicyCountryChange}" />
+                  </c:Field>
+                  <ui:Button Appearance="Primary" Content="Lưu chính sách" Icon="{ui:SymbolIcon Save24}" Command="{Binding SavePolicyCommand}" />
+                  <StackPanel Margin="0,12,0,0" Visibility="{Binding PendingApproval, Converter={StaticResource NotEmptyToVis}}">
+                    <TextBlock Text="{Binding PendingApproval}" TextWrapping="Wrap" Margin="0,0,0,8" />
+                    <ui:Button Content="Duyệt dùng tuyến dự phòng" Icon="{ui:SymbolIcon Checkmark24}" Command="{Binding ApproveFallbackCommand}" />
+                  </StackPanel>
+                </StackPanel>
+              </ui:Card>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </TabItem>
+      <TabItem Header="Trình duyệt tài khoản">
+        <Grid Margin="16">
+          <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+          <StackPanel>
+            <TextBlock Text="Trình duyệt tài khoản" FontSize="22" FontWeight="SemiBold" Foreground="#172334" />
+            <TextBlock Text="Mỗi tài khoản dùng profile Edge riêng. Đăng nhập, CAPTCHA và xác minh được thực hiện trực tiếp trong cửa sổ của bạn."
+                       Foreground="#64748B" TextWrapping="Wrap" Margin="0,4,0,8" />
+            <TextBlock Text="{Binding BrowserSummary}" Foreground="#126BC0" Margin="0,0,0,12" />
+          </StackPanel>
+          <StackPanel Grid.Row="1">
+            <StackPanel IsEnabled="{Binding CanEditBrowsers}">
+              <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="180" /></Grid.ColumnDefinitions>
+                <ui:TextBox PlaceholderText="Tìm tên tài khoản" Text="{Binding BrowserSearch, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,8,0" />
+                <ComboBox Grid.Column="1" ItemsSource="{Binding AccountPlatformFilters}" SelectedItem="{Binding BrowserPlatformFilter}" IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" />
+              </Grid>
+              <WrapPanel>
+                <ui:Button Content="Chọn tất cả đang lọc" Command="{Binding SelectBrowserAccountsCommand}" Margin="0,0,8,8" />
+                <ui:Button Content="Bỏ chọn" Command="{Binding ClearBrowserSelectionCommand}" Margin="0,0,8,8" />
+                <ui:Button Appearance="Primary" Content="Mở đã chọn" Command="{Binding OpenSelectedBrowsersCommand}" Margin="0,0,8,8" />
+                <ComboBox Width="120" ItemsSource="{Binding BrowserColumnOptions}" DisplayMemberPath="Display" SelectedValuePath="Value" SelectedValue="{Binding BrowserColumns}"
+                          IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" Margin="0,0,8,8" ToolTip="Số cột khi xếp cửa sổ" />
+                <ui:Button Content="Xếp lưới đã chọn" Command="{Binding ArrangeBrowsersCommand}" Margin="0,0,8,8" />
+                <CheckBox Content="Tự xếp sau khi mở" IsChecked="{Binding BrowserAutoArrange}" VerticalAlignment="Center" Margin="0,0,8,8" />
+                <ui:Button Content="Cập nhật trạng thái" Command="{Binding RefreshBrowserStatesCommand}" Margin="0,0,0,8" />
+              </WrapPanel>
+            </StackPanel>
+            <WrapPanel Margin="0,0,0,8">
+              <ui:Button Content="Đưa lên trước" Command="{Binding FocusBrowserCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Đánh dấu cần xác minh" Command="{Binding MarkBrowserVerificationCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Đã xác minh" Command="{Binding ClearBrowserVerificationCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Dừng mở" Command="{Binding OpenSelectedBrowsersCancelCommand}" Visibility="{Binding BrowserBusy, Converter={StaticResource BoolToVis}}" />
+            </WrapPanel>
+          </StackPanel>
+          <Border Grid.Row="2" Background="White" BorderBrush="#DDE1E8" BorderThickness="1" CornerRadius="8" Padding="8">
+            <DockPanel>
+              <Border DockPanel.Dock="Top" Background="#F8FAFC" Padding="8">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="36" /><ColumnDefinition Width="2*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="2*" /><ColumnDefinition Width="2*" /></Grid.ColumnDefinitions>
+                  <TextBlock Grid.Column="1" Text="TÀI KHOẢN" Foreground="#64748B" FontWeight="SemiBold" />
+                  <TextBlock Grid.Column="2" Text="TUYẾN MẠNG" Foreground="#64748B" FontWeight="SemiBold" />
+                  <TextBlock Grid.Column="3" Text="CỬA SỔ" Foreground="#64748B" FontWeight="SemiBold" />
+                  <TextBlock Grid.Column="4" Text="XÁC MINH THỦ CÔNG" Foreground="#64748B" FontWeight="SemiBold" />
+                </Grid>
+              </Border>
+              <Grid>
+                <ListBox ItemsSource="{Binding BrowserAccounts}" SelectedItem="{Binding SelectedBrowserAccount}" HorizontalContentAlignment="Stretch" BorderThickness="0">
+                  <ListBox.ItemTemplate><DataTemplate>
+                    <Grid Margin="4,10">
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="36" /><ColumnDefinition Width="2*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="2*" /><ColumnDefinition Width="2*" /></Grid.ColumnDefinitions>
+                      <CheckBox IsChecked="{Binding BrowserChecked}" VerticalAlignment="Center" />
+                      <StackPanel Grid.Column="1"><TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" /><TextBlock Text="{Binding Platform}" Foreground="#64748B" /></StackPanel>
+                      <TextBlock Grid.Column="2" Text="{Binding Route}" TextWrapping="Wrap" Margin="0,0,8,0" />
+                      <StackPanel Grid.Column="3"><TextBlock Text="{Binding BrowserState}" TextWrapping="Wrap" /><TextBlock Text="{Binding BrowserWindowCount, StringFormat='Số cửa sổ: {0}'}" Foreground="#64748B" /></StackPanel>
+                      <TextBlock Grid.Column="4" Text="{Binding BrowserVerification}" Foreground="#9A5700" TextWrapping="Wrap" />
+                    </Grid>
+                  </DataTemplate></ListBox.ItemTemplate>
+                </ListBox>
+                <c:EmptyState Icon="Globe24" Text="Chưa có tài khoản phù hợp. Thêm tài khoản ở tab Chi tiết &amp; kết nối hoặc đổi bộ lọc."
+                              Visibility="{Binding BrowserAccounts.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </Border>
+          <StackPanel Grid.Row="3" Margin="0,12,0,0">
+            <ProgressBar Height="4" IsIndeterminate="True" Visibility="{Binding BrowserBusy, Converter={StaticResource BoolToVis}}" Margin="0,0,0,8" />
+            <TextBlock Text="{Binding BrowserProgress}" TextWrapping="Wrap" />
+            <TextBlock Text="Chỉ mở và xếp các tài khoản được đánh dấu trong danh sách đang lọc. Trạng thái cửa sổ tự cập nhật mỗi 15 giây."
+                       Foreground="#64748B" TextWrapping="Wrap" Margin="0,4,0,0" />
+            <TextBlock Text="Theo dõi cửa sổ mở từ phiên app này. VPN dùng chung toàn máy: bật đúng VPN trước khi mở; không mở đồng thời các tài khoản cần VPN khác nhau."
+                       Foreground="#64748B" TextWrapping="Wrap" Margin="0,4,0,0" />
+          </StackPanel>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Hồ sơ thị trường">
+        <Grid Margin="0,12,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <ui:Card Style="{StaticResource Section}" Margin="0,0,12,0">
+            <DockPanel>
+              <ui:Button DockPanel.Dock="Top" Content="Hồ sơ mới" Icon="{ui:SymbolIcon Add24}" Command="{Binding NewMarketCommand}" HorizontalAlignment="Stretch" Margin="0,0,0,8" />
+              <Grid>
+                <ListBox ItemsSource="{Binding Markets}" SelectedItem="{Binding SelectedMarket}" DisplayMemberPath="Name" />
+                <c:EmptyState Icon="Globe24" Text="Chưa có hồ sơ. Nhập thông tin bên phải rồi bấm Lưu hồ sơ."
+                              Visibility="{Binding Markets.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+
+          <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,16,0">
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Thị trường" />
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="12" />
+                      <ColumnDefinition Width="160" />
+                    </Grid.ColumnDefinitions>
+                    <c:Field Header="Tên hồ sơ">
+                      <ui:TextBox Text="{Binding MarketName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" PlaceholderText="Ví dụ: Mỹ" />
+                    </c:Field>
+                    <c:Field Grid.Column="2" Header="Quốc gia" Hint="Đặt thì IP khi đăng phải thuộc nước này.">
+                      <c:ValuePicker Options="{x:Static c:InputChoices.Countries}" Value="{Binding MarketCountry}" />
+                    </c:Field>
+                  </Grid>
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="12" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <c:Field Header="Ngôn ngữ">
+                      <ComboBox ItemsSource="{Binding LanguageOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding MarketLanguage}"
+                                IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" />
+                    </c:Field>
+                    <c:Field Grid.Column="2" Header="Múi giờ">
+                      <ComboBox ItemsSource="{Binding TimeZoneOptions}" SelectedValuePath="Value" DisplayMemberPath="Display" SelectedValue="{Binding MarketTimeZone}"
+                                IsTextSearchEnabled="True" IsEditable="True" IsReadOnly="True" />
+                    </c:Field>
+                  </Grid>
+                  <c:Field Header="Khung giờ đăng (giờ địa phương)" Hint="Ví dụ 07:00-09:00, 18:00-22:00. Để trống = cả ngày. Bài rơi ngoài khung được dời tới đầu khung kế tiếp.">
+                    <ui:TextBox Text="{Binding MarketWindows, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="18:00-22:00" />
+                  </c:Field>
+                  <c:Field Header="Ngày được đăng">
+                    <ItemsControl ItemsSource="{Binding MarketDays}">
+                      <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate><DataTemplate>
+                        <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}" Margin="0,0,12,0" MinWidth="0" />
+                      </DataTemplate></ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </c:Field>
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="12" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <c:Field Header="Tối đa bài/ngày (theo ngày địa phương)">
+                      <ui:TextBox Text="{Binding MarketDailyLimit}" />
+                    </c:Field>
+                    <c:Field Grid.Column="2" Header="Quyền riêng tư">
+                      <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding PrivacyOptions}" SelectedItem="{Binding MarketPrivacy}" />
+                    </c:Field>
+                  </Grid>
+                </StackPanel>
+              </ui:Card>
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Tiêu đề, mô tả, hashtag" />
+                  <ui:ToggleSwitch Content="Dịch tiêu đề video gốc sang ngôn ngữ của hồ sơ" IsChecked="{Binding MarketTranslate}" Margin="0,0,0,4" />
+                  <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,12"
+                             Text="Dùng bộ dịch ở Cài đặt → Model AI. Chỉ phần {title} lấy từ video gốc được dịch; chữ cố định trong mẫu hãy viết sẵn bằng ngôn ngữ của hồ sơ. Dịch lỗi thì dùng tiêu đề gốc." />
+                  <c:Field Header="Hashtag mặc định" Hint="Cách nhau bằng dấu cách hoặc dấu phẩy. Mẫu mô tả không có {hashtags} thì hashtag được gắn vào cuối mô tả.">
+                    <ui:TextBox Text="{Binding MarketHashtags, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="#food #recipe" />
+                  </c:Field>
+                  <c:Field Header="Mẫu tiêu đề" Hint="Dùng {title} {url} {author} {id} {platform} {hashtags}">
+                    <ui:TextBox Text="{Binding MarketTitleTemplate, UpdateSourceTrigger=PropertyChanged}" />
+                  </c:Field>
+                  <c:Field Header="Mẫu mô tả">
+                    <ui:TextBox Text="{Binding MarketCaptionTemplate, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="64" VerticalContentAlignment="Top" />
+                  </c:Field>
+                  <WrapPanel>
+                    <ui:Button Appearance="Primary" Content="Lưu hồ sơ" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveMarketCommand}" Margin="0,0,8,0" />
+                    <ui:Button Content="Xoá" Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeleteMarketCommand}" />
+                  </WrapPanel>
+                </StackPanel>
+              </ui:Card>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</UserControl>

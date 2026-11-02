@@ -1,0 +1,6 @@
+[
+  { "id": "dramatic", "label": "Kịch tính / Gay cấn (Review Phim Triệu View)", "icon": "Fire24" },
+  { "id": "humor", "label": "Hài hước / Châm biếm (Tốc độ cao)", "icon": "Emoji24" },
+  { "id": "philosophy", "label": "Triết lý / Chiêm nghiệm (Điện ảnh)", "icon": "Lightbulb24" },
+  { "id": "mystery", "label": "Bóc phốt / Vạch trần / Bí ẩn kinh dị", "icon": "Search24" }
+]

@@ -1,0 +1,28 @@
+Tải video
+
+Dùng để:
+Tải video từ liên kết, kết quả tìm kiếm, danh sách tập hoặc file Excel/CSV và quản lý kho file đã tải.
+
+Các bước:
+1. Chọn thẻ nền tảng (Trung Quốc / Quốc tế) để xem gợi ý định dạng link. Dán liên kết vào ô "Liên kết video" (mỗi dòng một liên kết, hoặc bấm "Dán"), hoặc bấm "Nhập Excel / CSV…".
+2. Nếu cần, chọn "Từ ngày", "Đến ngày" và "Sắp xếp" (Mới nhất, Cũ nhất, Phổ biến nhất). Sau khi đổi bộ lọc của danh sách đang xem, bấm "Áp dụng bộ lọc" để lấy lại thông tin và xem kết quả. Chọn "Định dạng" và, nếu cần, "Chọn thư mục tải…".
+3. Bấm "Tải xuống". Mỗi liên kết là một tác vụ, theo dõi ở khung "Tác vụ của màn này".
+4. File xong nằm trong "Kho file đã tải". Tích checkbox từng file hoặc bấm "Chọn tất cả" / "Bỏ chọn"; dùng nút sao chép đường dẫn hoặc xoá trên thanh công cụ để thao tác các file đã tích. Khi chưa tích checkbox, thao tác áp dụng cho dòng đang chọn.
+5. Chuột phải vào một file để "Xem video / Mở file", "Sao chép đường dẫn" hoặc "Xoá file". Menu luôn áp dụng riêng cho file được bấm chuột phải; video mở bằng trình phát mặc định, file khác mở bằng ứng dụng tương ứng.
+
+Mẹo:
+- Chuột phải vào một dòng trong "Tác vụ của màn này" để sao chép tên / liên kết, thông báo / lỗi đầy đủ hoặc toàn bộ thông tin tác vụ.
+- "Xem thông tin" đọc tiêu đề, thời lượng, định dạng của liên kết đầu tiên mà không tải. Nếu liên kết là playlist/series/danh sách tập, app liệt kê các mục: tích chọn từng mục (hoặc "Chọn tất cả") rồi "Tải mục đã chọn" (mỗi mục một tác vụ).
+- Bộ lọc áp dụng cho mục đã lấy: tối đa 200 mục đầu của danh sách và 20 kết quả tìm kiếm đầu. Video thiếu ngày đăng không khớp khoảng ngày; mục thiếu lượt xem được xếp cuối khi chọn "Phổ biến nhất". "Tải xuống" với bộ lọc cũng chọn các mục khớp trước khi đưa vào hàng đợi.
+- Thẻ nền tảng chỉ là gợi ý; tải vẫn qua yt-dlp theo link. Ô "Tìm theo từ khoá" chỉ hiện với YouTube và Bilibili (20 kết quả đầu, có thumbnail); chọn kết quả rồi "Tải mục đã chọn".
+- Excel/CSV đọc .xlsx/.csv/.txt (không hỗ trợ .xls: lưu lại thành .xlsx). "Lưu Excel mẫu…" tạo file mẫu.
+- Định dạng: Best, 4K, 1080p, 720p, 480p, chỉ âm thanh (MP3 320k), video không tiếng.
+- "Không watermark (khi nguồn hỗ trợ)" áp dụng cho mọi nền tảng: bỏ định dạng được nguồn đánh dấu có watermark, giữ lựa chọn chất lượng. TikTok ở chất lượng Best có thêm nguồn sạch dự phòng. Không xoá logo đã gắn vào hình; nguồn không cung cấp thông tin watermark vẫn có thể chứa logo. Chỉ âm thanh không cần bộ lọc này.
+- Tối đa 3 tải chạy song song.
+
+Lưu ý / lỗi thường gặp:
+- Nội dung cần đăng nhập: nhập cookie ở Cài đặt > Nền tảng. Proxy/VPN lấy từ Cài đặt > Mạng.
+- "Xoá file đã chọn khỏi ổ đĩa" chỉ xoá được trong thư mục tải hoặc thư mục xuất.
+- Xoá một hoặc nhiều file đều cần xác nhận và không thể hoàn tác. File xoá lỗi vẫn nằm trong danh sách để thử lại. Sao chép nhiều đường dẫn sẽ đặt mỗi đường dẫn trên một dòng.
+- Hongguo, ReelShort, Plex: thẻ chỉ để hiển thị, đang phát triển, chưa tải được.
+- Kuaishou: yt-dlp có thể chưa hỗ trợ đủ; Mango TV chỉ tải được nội dung xem miễn phí. App không vượt đăng nhập, trả phí hay DRM.

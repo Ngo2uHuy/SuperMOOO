@@ -1,0 +1,17 @@
+<UserControl x:Class="SuperMOOO.App.Controls.LlmPicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <StackPanel Margin="0,0,0,12">
+    <c:Field Header="Nhà cung cấp AI">
+      <ComboBox ItemsSource="{Binding Providers}" DisplayMemberPath="Name" SelectedValuePath="Id" SelectedValue="{Binding ProviderId}" />
+    </c:Field>
+    <c:Field Header="Model AI" Hint="Chọn hoặc nhập model. API key / máy chủ dùng từ Cài đặt; không thay đổi AI mặc định của app.">
+      <DockPanel>
+        <ui:Button DockPanel.Dock="Right" Content="Tải danh sách" Command="{Binding LoadModelsCommand}" Margin="8,0,0,0" />
+        <ComboBox ItemsSource="{Binding Models}" IsEditable="True" Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" />
+      </DockPanel>
+    </c:Field>
+  </StackPanel>
+</UserControl>

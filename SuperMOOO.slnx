@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SuperMOOO.Core/SuperMOOO.Core.csproj" />
+    <Project Path="src/SuperMOOO.Data/SuperMOOO.Data.csproj" />
+    <Project Path="src/SuperMOOO.Infrastructure/SuperMOOO.Infrastructure.csproj" />
+    <Project Path="src/SuperMOOO.Media/SuperMOOO.Media.csproj" />
+    <Project Path="src/SuperMOOO.AI/SuperMOOO.AI.csproj" />
+    <Project Path="src/SuperMOOO.Social/SuperMOOO.Social.csproj" />
+    <Project Path="src/SuperMOOO.Publishing/SuperMOOO.Publishing.csproj" />
+    <Project Path="src/SuperMOOO.Workflows/SuperMOOO.Workflows.csproj" />
+    <Project Path="src/SuperMOOO.App/SuperMOOO.App.csproj" />
+  </Folder>
+</Solution>

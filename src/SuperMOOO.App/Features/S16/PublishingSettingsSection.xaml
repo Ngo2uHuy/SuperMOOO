@@ -1,0 +1,119 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.PublishingSettingsSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel>
+    <Border DockPanel.Dock="Bottom" Padding="0,12,0,0">
+      <StackPanel Orientation="Horizontal">
+        <ui:Button Appearance="Primary" Content="Lưu cài đặt" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" />
+        <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" VerticalAlignment="Center" Margin="12,0,0,0" />
+      </StackPanel>
+    </Border>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="0,0,16,0">
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="OAuth client từng nền tảng" />
+            <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,12"
+                       Text="Client ID/Secret của app bạn tạo ở trang nhà phát triển, lưu mã hoá (DPAPI), không hiển thị lại. Kết nối tài khoản ở màn Tài khoản &amp; kênh." />
+            <c:Field Header="Nền tảng">
+              <ComboBox ItemsSource="{Binding Platforms}" SelectedItem="{Binding SelectedPlatform}" DisplayMemberPath="Label" Width="260" HorizontalAlignment="Left" />
+            </c:Field>
+            <TextBlock Style="{StaticResource Hint}" Text="{Binding ClientStatus}" Margin="0,0,0,8" />
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <c:Field Header="Client ID" Margin="0,0,8,0"><ui:TextBox Text="{Binding ClientId, UpdateSourceTrigger=PropertyChanged}" /></c:Field>
+              <c:Field Grid.Column="1" Header="Client Secret" Margin="0,0,8,0"><PasswordBox x:Name="ClientSecretBox" /></c:Field>
+              <ui:Button Grid.Column="2" Content="Lưu client" Icon="{ui:SymbolIcon Save24}" Click="OnSaveClient" VerticalAlignment="Top" Margin="0,27,0,0" />
+            </Grid>
+            <c:Field Header="Redirect URI cần khai báo ở trang nhà phát triển (Meta: dùng 127.0.0.1 nếu đổi host loopback)" Margin="0">
+              <ui:TextBox Text="{Binding RedirectUri, Mode=OneWay}" IsReadOnly="True" />
+            </c:Field>
+          </StackPanel>
+        </ui:Card>
+
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Media host S3/R2 (cho Instagram)" />
+            <TextBlock Style="{StaticResource Hint}" Text="{Binding MediaHostStatus}" TextWrapping="Wrap" Margin="0,0,0,8" />
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="2*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+              <c:Field Header="Endpoint" Margin="0,0,8,0"><ui:TextBox Text="{Binding Endpoint, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="https://tài-khoản.r2.cloudflarestorage.com" /></c:Field>
+              <c:Field Grid.Column="1" Header="Region" Margin="0,0,8,0"><ui:TextBox Text="{Binding Region, UpdateSourceTrigger=PropertyChanged}" /></c:Field>
+              <c:Field Grid.Column="2" Header="Bucket"><ui:TextBox Text="{Binding Bucket, UpdateSourceTrigger=PropertyChanged}" /></c:Field>
+            </Grid>
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+              <c:Field Header="Access key ID" Margin="0,0,8,0"><ui:TextBox Text="{Binding AccessKeyId, UpdateSourceTrigger=PropertyChanged}" /></c:Field>
+              <c:Field Grid.Column="1" Header="Secret key"><PasswordBox x:Name="HostSecretBox" /></c:Field>
+            </Grid>
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="2*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+              <c:Field Header="Tiền tố object (kết thúc bằng /)" Margin="0,0,8,0"><ui:TextBox Text="{Binding KeyPrefix, UpdateSourceTrigger=PropertyChanged}" /></c:Field>
+              <c:Field Grid.Column="1" Header="Hạn URL (giờ)" Margin="0,0,8,0"><ui:NumberBox Value="{Binding UrlHours}" Minimum="1" Maximum="24" /></c:Field>
+              <CheckBox Grid.Column="2" Content="Path-style" IsChecked="{Binding PathStyle}" VerticalAlignment="Bottom" Margin="0,0,0,12" />
+            </Grid>
+            <WrapPanel>
+              <ui:Button Content="Kiểm tra kết nối" Icon="{ui:SymbolIcon PlugConnected24}" Click="OnTestHost" Margin="0,0,8,0" />
+              <ui:Button Content="Lưu media host" Icon="{ui:SymbolIcon Save24}" Click="OnSaveHost" Margin="0,0,8,0" />
+              <ui:Button Content="Xoá cấu hình" Icon="{ui:SymbolIcon Delete24}" Command="{Binding ClearMediaHostCommand}" />
+            </WrapPanel>
+            <ItemsControl ItemsSource="{Binding TestSteps}" Margin="0,8,0,0">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate><TextBlock Text="{Binding}" Style="{StaticResource Hint}" TextWrapping="Wrap" /></DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ui:Card>
+
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="TikTok, Meta, YouTube" />
+            <ui:ToggleSwitch Content="App TikTok đã qua audit Direct Post (tắt: chỉ được đăng &quot;Chỉ mình tôi&quot;)" IsChecked="{Binding TikTokAudited}" Margin="0,0,0,8" />
+            <ui:ToggleSwitch Content="Xin quyền Direct Post (video.publish) khi kết nối TikTok" IsChecked="{Binding TikTokPublishScope}" Margin="0,0,0,8" />
+            <ui:ToggleSwitch Content="Xin quyền thống kê TikTok (video.list, user.info.stats)" IsChecked="{Binding TikTokStatsScopes}" Margin="0,0,0,8" />
+            <ui:ToggleSwitch Content="Xin quyền YouTube Analytics" IsChecked="{Binding YouTubeAnalytics}" Margin="0,0,0,8" />
+            <ui:ToggleSwitch Content="Xin quyền insights Meta (Facebook/Instagram)" IsChecked="{Binding MetaInsights}" Margin="0,0,0,8" />
+            <WrapPanel>
+              <c:Field Header="Cách đăng nhập Meta" Margin="0,0,16,0"><ComboBox ItemsSource="{Binding MetaFlows}" SelectedItem="{Binding MetaLoginFlow}" Width="160" /></c:Field>
+              <c:Field Header="Host loopback Meta"><ComboBox ItemsSource="{Binding LoopbackHosts}" SelectedItem="{Binding MetaLoopbackHost}" Width="160" /></c:Field>
+            </WrapPanel>
+            <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Text="Quyền xin thêm chỉ có hiệu lực ở lần kết nối kế tiếp: kết nối lại tài khoản." />
+          </StackPanel>
+        </ui:Card>
+
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Quota, giới hạn và băng thông" />
+            <WrapPanel>
+              <c:Field Header="Quota YouTube/ngày (units)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding YouTubeDailyQuota}" Minimum="1" Width="170" /></c:Field>
+              <c:Field Header="Chi phí mỗi lần đăng (units)" Hint="Mặc định 1600." Margin="0,0,16,0"><ui:NumberBox Value="{Binding YouTubeInsertCost}" Minimum="1" Width="170" /></c:Field>
+              <c:Field Header="Tối đa bài/ngày/kênh (0 = theo nền tảng)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding MaxPerDay}" Minimum="0" Width="170" /></c:Field>
+              <c:Field Header="Giãn cách tối thiểu (phút)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding MinGapMinutes}" Minimum="0" Width="170" /></c:Field>
+              <c:Field Header="Băng thông upload (KB/s, 0 = không giới hạn)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding BandwidthKbps}" Minimum="0" Width="170" /></c:Field>
+              <c:Field Header="Upload đồng thời (0 = mặc định)"><ui:NumberBox Value="{Binding PublishConcurrency}" Minimum="0" Maximum="8" Width="170" /></c:Field>
+            </WrapPanel>
+          </StackPanel>
+        </ui:Card>
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Đồng bộ số liệu (tab Hiệu quả) và tự dừng chiến dịch" />
+            <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,0,0,8"
+                       Text="Ngân sách = số bài tối đa được đọc số liệu mỗi ngày (UTC) cho từng nền tảng; 0 = không đồng bộ nền tảng đó. YouTube trừ chung quota API với upload nên chừa phần cho upload." />
+            <WrapPanel>
+              <c:Field Header="YouTube (bài/ngày)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding BudgetYouTube}" Minimum="0" Width="150" /></c:Field>
+              <c:Field Header="Facebook (bài/ngày)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding BudgetFacebook}" Minimum="0" Width="150" /></c:Field>
+              <c:Field Header="Instagram (bài/ngày)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding BudgetInstagram}" Minimum="0" Width="150" /></c:Field>
+              <c:Field Header="TikTok (bài/ngày)" Margin="0,0,16,0"><ui:NumberBox Value="{Binding BudgetTikTok}" Minimum="0" Width="150" /></c:Field>
+              <c:Field Header="Giữ số liệu chi tiết (ngày)" Hint="Quá hạn thì gộp thành số theo ngày."><ui:NumberBox Value="{Binding RetentionDays}" Minimum="1" Maximum="3650" Width="190" /></c:Field>
+            </WrapPanel>
+            <ui:ToggleSwitch Content="Tự dừng các chiến dịch đang đăng lên kênh có dấu hiệu bất thường (tỉ lệ lỗi cao, lượt xem sụt mạnh)" IsChecked="{Binding HealthAutoPause}" Margin="0,4,0,0" />
+          </StackPanel>
+        </ui:Card>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

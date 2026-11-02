@@ -1,0 +1,53 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.PathsToolsSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel>
+    <Border DockPanel.Dock="Bottom" Padding="0,12,0,0">
+      <StackPanel Orientation="Horizontal">
+        <ui:Button Appearance="Primary" Content="Lưu" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" />
+        <ui:Button Content="Kiểm tra lại" Icon="{ui:SymbolIcon ArrowSync24}" Command="{Binding RefreshCommand}" Margin="8,0,0,0" />
+        <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" VerticalAlignment="Center" Margin="12,0,0,0" />
+      </StackPanel>
+    </Border>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="0,0,16,0">
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Thư mục" />
+            <c:Field Header="Thư mục dữ liệu" Hint="Cố định; đổi qua Paths:DataRoot trong appsettings.json.">
+              <ui:TextBox Text="{Binding DataRoot, Mode=OneWay}" IsReadOnly="True" />
+            </c:Field>
+            <c:Field Header="Thư mục xuất mặc định" Margin="0">
+              <DockPanel>
+                <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn thư mục xuất…" Click="OnBrowseOutput" />
+                <ui:TextBox Text="{Binding OutputRoot, UpdateSourceTrigger=PropertyChanged}" c:FileDrop.IsEnabled="True" />
+              </DockPanel>
+            </c:Field>
+          </StackPanel>
+        </ui:Card>
+
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Công cụ" />
+            <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,12" Text="Để trống = tự tìm trong thư mục tools\ rồi PATH." />
+            <ItemsControl ItemsSource="{Binding Tools}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <c:Field Header="{Binding Label}" Hint="{Binding Resolved}">
+                    <DockPanel>
+                      <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon DocumentSearch24}" ToolTip="Chọn file .exe…"
+                                 Tag="{Binding}" Click="OnBrowseTool" />
+                      <ui:TextBox Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}" c:FileDrop.IsEnabled="True" />
+                    </DockPanel>
+                  </c:Field>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ui:Card>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

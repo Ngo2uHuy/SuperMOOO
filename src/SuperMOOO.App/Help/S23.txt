@@ -1,0 +1,49 @@
+Tài khoản & kênh
+
+Dùng để:
+Kết nối tài khoản YouTube/Facebook/Instagram/TikTok để đăng bài, xem kênh/trang của từng tài khoản, gán tuyến mạng (proxy/VPN) riêng để mỗi tài khoản luôn đăng từ đúng IP/quốc gia, và gắn hồ sơ thị trường (quốc gia, ngôn ngữ, giờ đăng) dùng lại cho luồng Reup (S08).
+
+Các bước:
+1. Tab "Tổng quan": tìm tài khoản theo tên hoặc lọc nền tảng; xem số bài hôm nay, lượt sắp tới, hàng đợi và nhật ký đăng từ dữ liệu đã lưu. Bấm "Nhập tài khoản" để nhập CSV/Excel với cột platform và name; file chỉ nhập tên/nền tảng, không nhập token.
+2. Bấm "Thêm tài khoản" để mở tab "Chi tiết & kết nối", chọn nền tảng, đặt tên rồi thêm. Cần nhập OAuth Client ID/Secret của nền tảng ở Cài đặt (S16) trước. Chọn tài khoản, bấm "Kết nối" và đăng nhập trong trình duyệt vừa mở (Edge với hồ sơ riêng). Xong app tự đồng bộ kênh/trang.
+3. Xem trạng thái token, giới hạn bài/ngày và khả năng từng kênh ở tab "Chi tiết & kết nối". "Cần kết nối lại" nghĩa là token hỏng hoặc bị thu hồi: bấm "Kết nối" lại. "Đồng bộ kênh" cập nhật danh sách kênh/trang.
+4. Đánh dấu nhiều tài khoản ở tab "Tổng quan" để "Tạm dừng", "Tiếp tục" hoặc chọn tuyến rồi bấm "Đổi tuyến". "Chạy tất cả" bật lại mọi tài khoản đang tạm dừng. Tạm dừng chỉ dời lần chạy tiếp theo, không ngắt bài đang upload.
+5. Tab "Tuyến mạng": bấm "Tuyến mới", chọn loại (trực tiếp, proxy, VPN Windows, WireGuard .conf, VPN bật tay), tham chiếu và quốc gia mong muốn, bấm "Lưu tuyến". "Kiểm tra IP & quốc gia" chỉ chạy khi bạn bấm.
+6. Phần "Chính sách IP của tài khoản": chọn tuyến chính, tuyến dự phòng, quốc gia bắt buộc, chế độ IP (giữ đúng quốc gia hoặc IP cố định; bấm "Ghim IP vừa kiểm" để điền IP của lần "Kiểm tra IP & quốc gia" gần nhất) cách xử lý khi tuyến không đạt và "Khi đổi quốc gia so với lần đăng trước" (Dừng chờ duyệt / Chỉ cảnh báo), rồi bấm "Lưu chính sách".
+7. "Mở trình duyệt của tài khoản" mở Edge với hồ sơ đăng nhập riêng (và proxy của tuyến) để bạn tự đăng nhập, xác minh hoặc kiểm tra kênh.
+8. Tab "Trình duyệt tài khoản": tìm tên/lọc nền tảng, đánh dấu các tài khoản rồi bấm "Mở đã chọn". "Chọn tất cả đang lọc" chọn danh sách hiện tại; "Bỏ chọn" bỏ mọi dấu chọn. Chỉ các tài khoản được đánh dấu và đang hiển thị được mở hoặc xếp lưới. Tài khoản đã có cửa sổ được theo dõi sẽ không mở lặp.
+9. Chọn số cột hoặc "Tự động", bật "Tự xếp sau khi mở" hoặc bấm "Xếp lưới đã chọn". App xếp cửa sổ trên màn hình đang thao tác, tránh thanh tác vụ. "Dừng mở" dừng các lượt còn lại, giữ cửa sổ đã mở.
+10. Chọn một dòng rồi bấm "Đưa lên trước" để thao tác trực tiếp. "Đánh dấu cần xác minh" và "Đã xác minh" lưu/bỏ dấu nhắc thủ công, không thay đổi trạng thái OAuth. CAPTCHA và xác minh khuôn mặt do bạn tự thực hiện trong Edge.
+11. Tab "Hồ sơ thị trường": bấm "Hồ sơ mới", đặt tên (vd Mỹ), quốc gia, ngôn ngữ, múi giờ, khung giờ đăng (vd 18:00-22:00), ngày được đăng, tối đa bài/ngày, hashtag, mẫu tiêu đề/mô tả, quyền riêng tư, bật dịch nếu cần, rồi bấm "Lưu hồ sơ". "Xoá" hỏi xác nhận trước khi xoá.
+12. Tab "Chi tiết & kết nối", khối "Hồ sơ thị trường": chọn hồ sơ cho tài khoản đang xem (lưu ngay khi chọn).
+13. Tab "Chi tiết & kết nối", khối "Lịch sử IP": xem 100 lần thử đăng gần nhất (giờ máy, tuyến, IP, quốc gia, kết quả); dòng màu cam là quốc gia khác lần trước. Khi IP đổi quốc gia so với lần đăng thành công trước, bài bị dời và khối này hiện nút "Chấp nhận quốc gia mới" (cũng có ở Hộp cần xử lý của S14); bấm nếu bạn chủ động đổi quốc gia, nếu không hãy sửa tuyến/VPN.
+
+Mẹo:
+- Quốc gia ở tuyến mạng, chính sách IP và hồ sơ thị trường chọn bằng dropdown có tìm kiếm theo tên/mã (ví dụ Việt Nam hoặc VN). Chọn "Không đặt quốc gia" để bỏ điều kiện; giá trị cũ ngoài danh mục vẫn được giữ.
+- "Chọn đang lọc" đánh dấu các tài khoản đang hiển thị; "Bỏ chọn" bỏ mọi dấu chọn. Dòng "Đã chọn" tính cả tài khoản đang bị bộ lọc ẩn; tạm dừng/tiếp tục/đổi tuyến áp dụng cho toàn bộ tài khoản đã đánh dấu.
+- Bảng Tổng quan có số bài hôm nay (kèm giới hạn riêng nếu đã đặt), lượt tiếp theo và tiến độ upload. Nút ▶ tiếp tục tài khoản, ↗ mở trình duyệt, ⋯ mở chi tiết. "Đăng nhập lại" kết nối OAuth cho dòng đang xem, không phải toàn bộ tài khoản đánh dấu.
+- "Tài khoản cần xử lý" đếm tài khoản chưa kết nối, có cảnh báo tuyến/IP hoặc được đánh dấu cần xác minh. "Tất cả tài khoản" cho xem hàng đợi và nhật ký chung; bỏ chọn để xem riêng dòng tài khoản đang xem.
+- Trạng thái cửa sổ tự cập nhật mỗi 15 giây khi ở tab trình duyệt; có thể bấm "Cập nhật trạng thái" ngay. App chỉ theo dõi cửa sổ mở trong phiên app hiện tại; sau khi khởi động lại app, hãy đóng các cửa sổ profile cũ rồi mở lại từ đây nếu cần xếp lưới.
+- Nhiều cửa sổ trên cùng tài khoản đều được xếp. Nếu không đủ chỗ, chọn ít tài khoản hơn hoặc đổi số cột.
+- Không có tuyến riêng thì Edge dùng mạng hệ thống. Trình duyệt không tự bật VPN và không tự kiểm IP/quốc gia; bật đúng VPN trước khi mở, không mở đồng thời tài khoản yêu cầu VPN khác nhau.
+- Trước mỗi lần đăng, app bật tuyến, kiểm IP rồi mới gửi. IP/quốc gia sai thì bài được dời, không đăng nhầm; kết quả IP thật được ghi vào lần thử đăng.
+- VPN Windows/WireGuard là tuyến cả máy: một lúc chỉ một tài khoản dùng, các tài khoản khác tuyến đó chờ lượt.
+- Khoá an toàn khi VPN cả máy bật: VPN cả máy đổi IP của toàn bộ máy, nên trong lúc nó bật, mọi tài khoản khác đi mạng thẳng, proxy, VPN bật tay hoặc tuyến chung của app (đăng bài, kiểm trạng thái bài, đồng bộ số liệu, làm mới token) đều chờ và được dời bài với thông báo "Đang có VPN cả máy ... bật cho tài khoản khác". Ngược lại VPN chỉ bật khi không còn lượt nào đang chạy bằng mạng thường; VPN đang chờ được ưu tiên, các lượt mới phải chờ sau nó. Crawler và yt-dlp có dùng cookie đã lưu cũng chờ (tối đa 60 giây rồi báo lỗi); tải/quét không cookie, tải model, TTS không bị chặn.
+- Nên dùng proxy riêng cho từng tài khoản thay cho VPN cả máy: proxy chạy song song, không bắt tài khoản khác chờ và không làm đổi IP của cả máy.
+- Ba cảnh báo màu cam ở danh sách tài khoản và khối trạng thái: "Chưa gắn tuyến hay quốc gia" (tài khoản không có tuyến riêng và không có hồ sơ có quốc gia, app không biết IP đúng là gì để chặn); "N tài khoản ... dùng chung IP/tuyến" (hơn 3 tài khoản cùng nền tảng chung một tuyến/mạng thẳng hoặc chung IP ở lần đăng gần nhất, dễ bị nền tảng coi là cùng chủ, chỉ cảnh báo); "IP đổi quốc gia ... so với lần đăng trước" (mặc định dời bài chờ bạn chấp nhận; khác IP nhưng cùng quốc gia chỉ ghi chú vào lần thử đăng). Lần đăng đầu tiên chưa có lịch sử nên không bị chặn; tài khoản chưa kiểm IP (mạng thẳng, không chính sách/hồ sơ) không so được.
+- Chế độ "Hỏi tôi duyệt tuyến dự phòng" tạo mục trong hộp "Cần xử lý" và nút "Duyệt dùng tuyến dự phòng" ở đây; "Tự dùng dự phòng nếu cùng quốc gia" tự chuyển khi quốc gia khớp.
+- Tra quốc gia của IP dùng dịch vụ ngoài (ip-api.com), chỉ gửi địa chỉ IP.
+- Tài khoản gắn hồ sơ có quốc gia: trước mỗi lần đăng app luôn kiểm IP ra ngoài phải thuộc quốc gia đó, kể cả khi tài khoản không có tuyến riêng; sai hoặc không tra được quốc gia thì bài được dời. Chính sách IP/tuyến đã đặt quốc gia riêng thì dùng quốc gia đó, khối hồ sơ hiện cảnh báo màu cam.
+- "Kiểm tra IP & quốc gia" áp cùng quy tắc với tài khoản đang chọn để bạn thử trước khi đăng.
+- Chống lộ IP khi VPN rớt giữa lúc đăng (VPN Windows, WireGuard, VPN bật tay): trong lúc tải lên, app canh VPN Windows/WireGuard mỗi 2 giây, rớt thì dừng tải lên ngay và dời bài; ngay trước bước đăng cuối app kiểm lại IP/quốc gia, sai thì không đăng và dời bài.
+- Kill-switch: WireGuard chỉ chặn mạng khi VPN rớt nếu file .conf có AllowedIPs = 0.0.0.0/0 (và ::/0 khi có địa chỉ IPv6). Thiếu thì dưới ô "Tham chiếu" hiện cảnh báo màu cam; vẫn lưu được nhưng nên sửa file .conf. VPN Windows/VPN bật tay: bật Kill Switch trong ứng dụng VPN.
+
+Lưu ý / lỗi thường gặp:
+- Đổi tuyến/proxy khi profile đang mở: đóng các cửa sổ của tài khoản rồi mở lại để Edge áp dụng tuyến mới.
+- Trong lúc app bật VPN cả máy, đừng dùng Facebook/TikTok/YouTube cá nhân trên máy này (trình duyệt riêng, app điện thoại giả lập…): chúng cũng ra IP của VPN và bị thấy "nhảy quốc gia". Nút mở trình duyệt tài khoản bị chặn khi VPN cả máy đang bật cho tài khoản khác, nhưng cửa sổ đã mở từ trước thì app không chặn được.
+- Bài bị dời liên tục với lý do "Đang có VPN cả máy ... bật": một tài khoản VPN cả máy đang đăng lâu; chờ nó xong hoặc chuyển tài khoản đó sang proxy.
+- Edge không hỗ trợ SOCKS5 có mật khẩu: nút mở trình duyệt sẽ báo lỗi, dùng proxy HTTP/HTTPS hoặc SOCKS5 không mật khẩu. Proxy HTTP có mật khẩu thì Edge hỏi đăng nhập proxy.
+- Tuyến VPN bật tay: app không tự bật VPN, hãy bật đúng quốc gia trước khi đăng. App không canh được VPN này trong lúc tải lên, chỉ kiểm lại IP trước bước đăng cuối; nếu VPN cùng quốc gia với mạng thật thì kiểm lại không phân biệt được, hãy đặt chế độ IP cố định.
+- Cảnh báo "VPN này không chặn mạng khi rớt": file .conf thiếu AllowedIPs = 0.0.0.0/0 nên khi VPN rớt Windows đi thẳng bằng IP thật. "Không đọc được file WireGuard": kiểm lại đường dẫn/quyền đọc file .conf.
+- Không có Microsoft Edge trên máy thì nút mở trình duyệt không dùng được; đăng nhập OAuth sẽ mở trình duyệt mặc định.
+- Xoá hồ sơ thị trường: tài khoản đang gắn hồ sơ thành không gắn; kênh trong luồng Reup chọn riêng hồ sơ đó dùng cài đặt chung của luồng.

@@ -1,0 +1,10 @@
+{
+  "id": "avatar_prepare",
+  "title": "Dò mặt avatar",
+  "steps": [
+    {
+      "id": "prepare",
+      "kind": "lipsync_prepare"
+    }
+  ]
+}

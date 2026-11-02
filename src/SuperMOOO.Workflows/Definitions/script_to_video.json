@@ -1,0 +1,49 @@
+{
+  "id": "script_to_video",
+  "title": "Kịch bản → video",
+  "steps": [
+    {
+      "id": "script",
+      "kind": "script_read"
+    },
+    {
+      "id": "tts",
+      "kind": "tts"
+    },
+    {
+      "id": "dub",
+      "kind": "assemble_dub"
+    },
+    {
+      "id": "slides",
+      "kind": "slideshow",
+      "when": "slideshow"
+    },
+    {
+      "id": "background",
+      "kind": "background_video",
+      "when": "background"
+    },
+    {
+      "id": "subs",
+      "kind": "export_subtitles",
+      "when": "burn",
+      "options": {
+        "srt": true,
+        "vtt": false,
+        "useTranslation": false,
+        "language": "script"
+      }
+    },
+    {
+      "id": "burn",
+      "kind": "burn_subtitles",
+      "when": "burn"
+    },
+    {
+      "id": "deliver",
+      "kind": "deliver",
+      "when": "deliver"
+    }
+  ]
+}

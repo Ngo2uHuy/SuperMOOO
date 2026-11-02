@@ -1,0 +1,36 @@
+{
+  "id": "whiteboard",
+  "title": "Video vẽ tay AI",
+  "steps": [
+    {
+      "id": "script",
+      "kind": "topic_script"
+    },
+    {
+      "id": "images",
+      "kind": "scene_images"
+    },
+    {
+      "id": "voice",
+      "kind": "scene_tts"
+    },
+    {
+      "id": "render",
+      "kind": "whiteboard_render"
+    },
+    {
+      "id": "finalize",
+      "kind": "whiteboard_finalize"
+    },
+    {
+      "id": "introOutro",
+      "kind": "intro_outro",
+      "when": "introOutro"
+    },
+    {
+      "id": "deliver",
+      "kind": "deliver",
+      "when": "deliver"
+    }
+  ]
+}

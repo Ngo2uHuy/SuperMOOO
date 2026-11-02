@@ -1,0 +1,233 @@
+<UserControl x:Class="SuperMOOO.App.Features.S20.LivestreamView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Livestream bán hàng"
+                    Description="Trợ lý livestream bán hàng: trả lời câu hỏi theo FAQ và phát hình, tiếng lên OBS." />
+    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Hint}" Text="{Binding Status}" Margin="0,8,0,0"
+               Visibility="{Binding Status, Converter={StaticResource NotEmptyToVis}}" />
+    <c:ScreenJobsPanel x:Name="ScreenJobs" DockPanel.Dock="Bottom" Margin="0,12,0,0" />
+
+    <TabControl>
+      <TabItem Header="Sản phẩm &amp; FAQ">
+        <Grid Margin="0,12,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <ui:Card Style="{StaticResource Section}" Margin="0,0,12,0">
+            <DockPanel>
+              <ui:Button DockPanel.Dock="Top" Content="Sản phẩm mới" Icon="{ui:SymbolIcon Add24}" Command="{Binding NewProductCommand}" HorizontalAlignment="Stretch" Margin="0,0,0,8" />
+              <Grid>
+                <ListBox ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" DisplayMemberPath="Name" />
+                <c:EmptyState Icon="Box24" Text="Chưa có sản phẩm. Nhập thông tin bên phải rồi bấm Lưu."
+                              Visibility="{Binding Products.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+          <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="0,0,16,0">
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Thông tin sản phẩm" />
+                  <c:Field Header="Tên sản phẩm">
+                    <ui:TextBox Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" />
+                  </c:Field>
+                  <c:Field Header="Thông tin đã xác thực" Hint="Giá, chất liệu, size, ưu đãi… Mỗi ý một dòng. Model chỉ được dùng nội dung này, không tự bịa thêm.">
+                    <ui:TextBox Text="{Binding ProductFacts, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="90" MaxLength="3000" VerticalScrollBarVisibility="Auto" />
+                  </c:Field>
+                  <DockPanel Margin="0,0,0,4">
+                    <ui:Button DockPanel.Dock="Right" Content="Gợi ý lời thoại" Icon="{ui:SymbolIcon Sparkle24}" Command="{Binding SuggestScriptCommand}" />
+                    <TextBlock Text="Lời thoại giới thiệu" VerticalAlignment="Center" />
+                  </DockPanel>
+                  <ui:TextBox Text="{Binding ProductScript, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="90" MaxLength="2500" VerticalScrollBarVisibility="Auto" Margin="0,0,0,12" />
+                  <c:Field Header="Clip dựng sẵn (tuỳ chọn)" Hint="Video giới thiệu sản phẩm đã quay/dựng sẵn.">
+                    <DockPanel>
+                      <ui:Button DockPanel.Dock="Right" Content="Chọn…" Command="{Binding PickProductClipCommand}" Margin="8,0,0,0" />
+                      <ui:TextBox Text="{Binding ProductClip, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                  </c:Field>
+                  <StackPanel Orientation="Horizontal">
+                    <ui:Button Appearance="Primary" Content="Lưu sản phẩm" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveProductCommand}" />
+                    <ui:Button Content="Xoá" Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeleteProductCommand}" Margin="8,0,0,0" />
+                    <ui:Button Content="Dựng clip" Icon="{ui:SymbolIcon PersonVoice24}" Command="{Binding BuildProductClipCommand}" Margin="8,0,0,0"
+                               ToolTip="Dựng clip khớp môi từ lời thoại bằng avatar đang chọn ở màn Avatar khớp môi (rất chậm trên CPU)" />
+                  </StackPanel>
+                </StackPanel>
+              </ui:Card>
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Câu hỏi thường gặp (FAQ)" />
+                  <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,12"
+                             Text="Khớp được cả khi khách gõ không dấu hoặc viết tắt (ko, bn, ship, sp…). Chọn sản phẩm bên trái trước khi thêm FAQ." />
+                  <Grid MinHeight="110" Margin="0,0,0,12">
+                    <ListBox ItemsSource="{Binding Faqs}" SelectedItem="{Binding SelectedFaq}" DisplayMemberPath="Question" MaxHeight="200" />
+                    <c:EmptyState Icon="QuestionCircle24" Text="Sản phẩm này chưa có FAQ."
+                                  Visibility="{Binding Faqs.Count, Converter={StaticResource EmptyToVis}}" />
+                  </Grid>
+                  <c:Field Header="Câu hỏi">
+                    <ui:TextBox Text="{Binding FaqQuestion, UpdateSourceTrigger=PropertyChanged}" MaxLength="300" />
+                  </c:Field>
+                  <c:Field Header="Câu trả lời">
+                    <ui:TextBox Text="{Binding FaqAnswer, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" MaxLength="600" />
+                  </c:Field>
+                  <c:Field Header="Clip trả lời dựng sẵn (tuỳ chọn)" Hint="Có clip thì phát clip này thay vì đọc giọng.">
+                    <DockPanel>
+                      <ui:Button DockPanel.Dock="Right" Content="Chọn…" Command="{Binding PickFaqClipCommand}" Margin="8,0,0,0" />
+                      <ui:TextBox Text="{Binding FaqClip, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                  </c:Field>
+                  <c:Field Header="Nhập / xuất hàng loạt" Hint="Mỗi dòng một FAQ dạng: câu hỏi | câu trả lời (tối đa 100 FAQ mỗi sản phẩm).">
+                    <StackPanel>
+                      <ui:TextBox Text="{Binding FaqBulkText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="80" MaxHeight="200" VerticalScrollBarVisibility="Auto" />
+                      <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <ui:Button Content="Nhập các dòng" Icon="{ui:SymbolIcon ArrowImport24}" Command="{Binding ImportFaqsCommand}" />
+                        <ui:Button Content="Xuất ra ô" Icon="{ui:SymbolIcon ArrowExport24}" Command="{Binding ExportFaqsCommand}" Margin="8,0,0,0" />
+                        <ui:Button Content="Thêm FAQ mẫu" Icon="{ui:SymbolIcon Add24}" Command="{Binding AddSampleFaqsCommand}" Margin="8,0,0,0" />
+                      </StackPanel>
+                    </StackPanel>
+                  </c:Field>
+                  <StackPanel Orientation="Horizontal">
+                    <ui:Button Appearance="Primary" Content="Lưu FAQ" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveFaqCommand}" />
+                    <ui:Button Content="FAQ mới" Icon="{ui:SymbolIcon Add24}" Command="{Binding NewFaqCommand}" Margin="8,0,0,0" />
+                    <ui:Button Content="Xoá" Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeleteFaqCommand}" Margin="8,0,0,0" />
+                    <ui:Button Content="Dựng clip" Icon="{ui:SymbolIcon PersonVoice24}" Command="{Binding BuildFaqClipCommand}" Margin="8,0,0,0"
+                               ToolTip="Dựng clip khớp môi từ câu trả lời bằng avatar đang chọn ở màn Avatar khớp môi (rất chậm trên CPU)" />
+                  </StackPanel>
+                </StackPanel>
+              </ui:Card>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Hỏi đáp thử">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel Margin="0,12,16,0">
+            <ui:Card Style="{StaticResource Section}">
+              <StackPanel>
+                <TextBlock Style="{StaticResource CardTitle}" Text="Thử hỏi như khách" />
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <c:Field Header="Sản phẩm" Margin="0,0,8,12">
+                    <ComboBox ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" DisplayMemberPath="Name" />
+                  </c:Field>
+                  <c:Field Grid.Column="1" Header="Nguồn trả lời" Margin="0,0,0,12">
+                    <ComboBox ItemsSource="{Binding AnswerSources}" DisplayMemberPath="Label" SelectedValuePath="Id" SelectedValue="{Binding SelectedSource}" />
+                  </c:Field>
+                </Grid>
+                <TextBlock Style="{StaticResource Hint}" Margin="0,-4,0,12" TextWrapping="Wrap"
+                           Text="Model local trả lời cả lời chào như &quot;hi e&quot;. RAG tìm tối đa 5 đoạn liên quan từ thông tin và FAQ của sản phẩm. Chỉ khi chọn nguồn đám mây, bình luận và các đoạn này mới được gửi ra ngoài. Model và key đặt ở Cài đặt → Livestream (LLM)." />
+                <c:Field Header="Bình luận của khách">
+                  <ui:TextBox Text="{Binding Question, UpdateSourceTrigger=PropertyChanged}" MaxLength="300" PlaceholderText="vd: shop ơi giá bn vậy" />
+                </c:Field>
+                <WrapPanel Margin="0,0,0,12">
+                  <CheckBox Content="Đọc thành tiếng" IsChecked="{Binding SpeakAnswers}" Margin="0,0,16,0" VerticalAlignment="Center" />
+                  <TextBlock Text="Giọng:" VerticalAlignment="Center" Margin="0,0,8,0" />
+                  <ComboBox ItemsSource="{Binding VoiceOptions}" DisplayMemberPath="DisplayName" SelectedValuePath="Id" SelectedValue="{Binding VoiceId}" MinWidth="220" Margin="0,0,16,0" />
+                  <CheckBox Content="Tự đưa câu trả lời lên OBS khi máy chủ phát đang bật" IsChecked="{Binding AutoBroadcast}" VerticalAlignment="Center" />
+                  <CheckBox Content="Kèm khẩu hình (MuseTalk, rất chậm trên CPU: vài phút mỗi câu)" IsChecked="{Binding LipSyncAnswer}" VerticalAlignment="Center" Margin="16,0,0,0"
+                            ToolTip="Cần cài MuseTalk (Cài đặt → Avatar khớp môi) và chọn avatar ở màn Avatar khớp môi. Clip dựng nền, xong tự thay giọng đọc." />
+                </WrapPanel>
+                <ui:Button Appearance="Primary" Content="Trả lời" Icon="{ui:SymbolIcon Chat24}" Command="{Binding AskCommand}" />
+              </StackPanel>
+            </ui:Card>
+            <ui:Card Style="{StaticResource Section}" Visibility="{Binding AnswerText, Converter={StaticResource NotEmptyToVis}}">
+              <StackPanel>
+                <TextBlock Style="{StaticResource CardTitle}" Text="Câu trả lời" />
+                <TextBox Text="{Binding AnswerText, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" />
+                <TextBlock Style="{StaticResource Hint}" Text="{Binding AnswerNote}" TextWrapping="Wrap" Margin="0,8,0,8" />
+                <StackPanel Orientation="Horizontal">
+                  <ui:Button Content="Nghe lại" Icon="{ui:SymbolIcon Speaker224}" Command="{Binding PlayAudioCommand}"
+                             Visibility="{Binding AnswerAudio, Converter={StaticResource NotEmptyToVis}}" />
+                  <ui:Button Content="Đưa lên OBS" Icon="{ui:SymbolIcon Video24}" Command="{Binding SendToObsCommand}" Margin="8,0,0,0" />
+                </StackPanel>
+                <Expander Header="Ngữ cảnh đã truy xuất (RAG)" Margin="0,12,0,0" Visibility="{Binding ContextText, Converter={StaticResource NotEmptyToVis}}">
+                  <TextBox Text="{Binding ContextText, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap" BorderThickness="0" Background="Transparent" />
+                </Expander>
+              </StackPanel>
+            </ui:Card>
+            <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap"
+                       Text="Kiểm tra câu trả lời AI và nguồn trước khi dùng thật. App nhận bình luận nhập tay, chưa tự đọc hay đăng bình luận trên mạng xã hội." />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <TabItem Header="Phát OBS">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <Grid Margin="0,12,16,0">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="0,0,12,0">
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Thiết lập đầu ra" />
+                  <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,12" Text="Khung hình được lưu riêng cho từng nền tảng." />
+                  <c:Field Header="Nền tảng">
+                    <ComboBox ItemsSource="{Binding Platforms}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedPlatform}" />
+                  </c:Field>
+                  <c:Field Header="Khung hình">
+                    <ComboBox ItemsSource="{Binding Layouts}" DisplayMemberPath="Label" SelectedItem="{Binding SelectedLayout}" />
+                  </c:Field>
+                  <c:Field Header="Cách hiển thị video" Hint="{Binding FramingNote}">
+                    <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding Fits}" SelectedItem="{Binding SelectedFit}" />
+                  </c:Field>
+                  <c:Field Header="Video nền lặp" Hint="Phát lặp liên tục; câu trả lời đọc giọng lên trên nền này.">
+                    <DockPanel>
+                      <ui:Button DockPanel.Dock="Right" Content="Chọn…" Command="{Binding PickLoopVideoCommand}" Margin="8,0,0,0" />
+                      <ui:TextBox Text="{Binding LoopVideo, UpdateSourceTrigger=LostFocus}" />
+                    </DockPanel>
+                  </c:Field>
+                </StackPanel>
+              </ui:Card>
+              <ui:Card Style="{StaticResource Section}">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Máy chủ phát" />
+                  <c:Field Header="Cổng" Hint="Mặc định 18120; không dùng 8765 và 18089–18091.">
+                    <ui:TextBox Text="{Binding Port}" IsEnabled="{Binding PortEditable}" />
+                  </c:Field>
+                  <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <ui:Button Appearance="Primary" Content="Bật / tắt máy chủ phát" Icon="{ui:SymbolIcon PlugConnected24}" Command="{Binding ToggleServerCommand}" />
+                  </StackPanel>
+                  <TextBlock Style="{StaticResource Hint}" Text="{Binding ServerStatus}" Margin="0,0,0,12" />
+                  <c:Field Header="URL cho OBS Browser Source">
+                    <ui:TextBox Text="{Binding BroadcastUrl, Mode=OneWay}" IsReadOnly="True" />
+                  </c:Field>
+                  <StackPanel Orientation="Horizontal">
+                    <ui:Button Content="Sao chép URL" Icon="{ui:SymbolIcon Copy24}" Command="{Binding CopyUrlCommand}" />
+                    <ui:Button Content="Mở trang phát" Icon="{ui:SymbolIcon Open24}" Command="{Binding OpenBroadcastCommand}" Margin="8,0,0,0" />
+                  </StackPanel>
+                </StackPanel>
+              </ui:Card>
+            </StackPanel>
+            <ui:Card Grid.Column="1" Style="{StaticResource Section}" VerticalAlignment="Top">
+              <StackPanel>
+                <TextBlock Style="{StaticResource CardTitle}" Text="{Binding GuideTitle}" />
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,6" Text="1. Bật máy chủ phát, thêm Browser Source trong OBS và dán URL." />
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,6">
+                  <Run Text="2. Đặt kích thước Browser Source và canvas OBS thành " /><Run FontWeight="SemiBold" Text="{Binding ObsDimensions, Mode=OneWay}" /><Run Text="." />
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,6" Text="3. Bật Control audio via OBS và kiểm tra mixer. Nếu video chưa tự phát, mở Interact trong OBS và bấm nút phát." />
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,6" Text="4. Thêm hình sản phẩm, giá và banner trong scene OBS." />
+                <TextBlock TextWrapping="Wrap" Margin="0,0,0,12" Text="{Binding SelectedPlatform.Instructions}" />
+                <StackPanel Orientation="Horizontal">
+                  <ui:Button Content="{Binding StudioLabel}" Icon="{ui:SymbolIcon Open24}" Command="{Binding OpenStudioCommand}" />
+                  <ui:Button Content="Hướng dẫn chính thức" Icon="{ui:SymbolIcon Info24}" Command="{Binding OpenHelpCommand}" Margin="8,0,0,0" />
+                </StackPanel>
+                <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,12,0,0"
+                           Text="App cung cấp hình và tiếng cho bộ phát. Phát đồng thời nhiều nền tảng cần multistream riêng ở bộ phát hoặc dịch vụ bạn dùng. Chưa tích hợp đọc bình luận tự động." />
+              </StackPanel>
+            </ui:Card>
+          </Grid>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</UserControl>

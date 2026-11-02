@@ -1,0 +1,280 @@
+syntax = "proto3";
+
+package aivs.worker.v1;
+
+option csharp_namespace = "SuperMOOO.AI.Worker.V1";
+
+// Kết nối: worker bind 127.0.0.1:<port ngẫu nhiên>, in "AIVS_WORKER_READY port=<p>" ra stdout.
+// Mọi RPC bắt buộc metadata "x-aivs-token" = biến môi trường AIVS_WORKER_TOKEN do C# cấp khi spawn.
+// File: chỉ truyền đường dẫn tuyệt đối; audio vào luôn là WAV PCM do C# chuẩn bị bằng ffmpeg.
+// Lỗi: gRPC status INVALID_ARGUMENT, NOT_FOUND, FAILED_PRECONDITION (thiếu model/package), CANCELLED,
+//      RESOURCE_EXHAUSTED, UNIMPLEMENTED (module tuỳ chọn chưa cài), INTERNAL; message tiếng Việt.
+// Huỷ: client huỷ call; server kiểm tra context.is_active() giữa các segment/khối.
+
+service WorkerControl {
+  rpc GetCapabilities(GetCapabilitiesRequest) returns (Capabilities);
+  rpc UnloadModels(UnloadModelsRequest) returns (UnloadModelsResponse);
+  rpc Shutdown(ShutdownRequest) returns (ShutdownResponse);
+}
+
+service Asr {
+  // Luồng: Progress/Segment xen kẽ, kết thúc bằng đúng 1 Completed.
+  rpc Transcribe(TranscribeRequest) returns (stream TranscribeEvent);
+}
+
+service AudioTools {
+  rpc DetectSpeech(DetectSpeechRequest) returns (DetectSpeechResponse);
+  rpc Denoise(DenoiseRequest) returns (stream TaskEvent);
+  // Embedding người nói 192 chiều cho clone VieNeu v3 Turbo (speaker_encoder.onnx của model).
+  rpc SpeakerEmbedding(SpeakerEmbeddingRequest) returns (SpeakerEmbeddingResponse);
+  // Tách giọng MDX-Net (ONNX): ghi nền không lời (nhạc + hiệu ứng), WAV 44.1 kHz stereo. Luồng Progress..., kết thúc bằng completed.
+  rpc SeparateVocals(SeparateVocalsRequest) returns (stream TaskEvent);
+}
+
+// Tuỳ chọn (RVC). Chưa cài package/model → UNIMPLEMENTED.
+service VoiceConversion {
+  rpc ListModels(ListVoiceModelsRequest) returns (ListVoiceModelsResponse);
+  rpc Convert(VoiceConvertRequest) returns (stream TaskEvent);
+}
+
+// Phụ đề cứng trong video (PP-OCRv4 det + MI-GAN, ONNX CPU). Worker tự đọc khung qua ffmpeg_path; C# truyền kích thước/fps/thời lượng đã probe.
+service VideoText {
+  // Lấy mẫu khung, tìm dải chữ lặp lại ở cùng vị trí (loại logo/chữ cố định).
+  rpc LocateSubtitles(LocateSubtitlesRequest) returns (LocateSubtitlesResponse);
+  // Dò lúc có chữ trong vùng. Luồng: Progress..., kết thúc bằng đúng 1 result.
+  rpc TextTimeline(TextTimelineRequest) returns (stream TextTimelineEvent);
+  // Xoá chữ trong vùng → video "patch" (cửa sổ quanh vùng, cùng fps nguồn) để overlay tại (x, y). Kết thúc bằng đúng 1 completed.
+  rpc InpaintSubtitles(InpaintSubtitlesRequest) returns (stream InpaintEvent);
+}
+
+message GetCapabilitiesRequest {}
+
+message ModuleStatus {
+  bool available = 1;
+  string reason = 2;            // lý do không dùng được (tiếng Việt)
+}
+
+message ModelInfo {
+  string name = 1;              // "turbo", "denoiser"
+  string path = 2;
+  bool installed = 3;
+  bool loaded = 4;
+}
+
+message Capabilities {
+  string worker_version = 1;
+  string python_version = 2;
+  ModuleStatus asr = 3;
+  ModuleStatus vad = 4;
+  ModuleStatus denoise = 5;
+  ModuleStatus voice_conversion = 6;
+  repeated ModelInfo models = 7;
+}
+
+message UnloadModelsRequest { repeated string modules = 1; }   // rỗng = tất cả
+message UnloadModelsResponse { repeated string unloaded = 1; }
+message ShutdownRequest { int32 grace_ms = 1; }
+message ShutdownResponse {}
+
+message Progress {
+  double fraction = 1;          // 0..1; -1 = không xác định
+  string message = 2;
+}
+
+message TranscribeRequest {
+  string audio_path = 1;        // WAV PCM 16 kHz mono
+  string model = 2;             // "turbo" hoặc đường dẫn thư mục CTranslate2
+  string language = 3;          // "" = tự nhận; ISO 639-1
+  string task = 4;              // "transcribe" | "translate"
+  bool word_timestamps = 5;
+  bool vad_filter = 6;
+  int32 beam_size = 7;          // 0 = mặc định 5
+  string initial_prompt = 8;
+  string device = 9;            // "" = "cpu"
+  string compute_type = 10;     // "" = "int8"
+  string models_dir = 11;
+}
+
+message Word {
+  double start = 1;
+  double end = 2;
+  string text = 3;
+  double probability = 4;
+}
+
+message Segment {
+  int32 index = 1;
+  double start = 2;
+  double end = 3;
+  string text = 4;
+  double avg_logprob = 5;
+  double no_speech_prob = 6;
+  repeated Word words = 7;
+}
+
+message TranscribeCompleted {
+  string language = 1;
+  double language_probability = 2;
+  double duration = 3;
+  int32 segment_count = 4;
+}
+
+message TranscribeEvent {
+  oneof event {
+    Progress progress = 1;
+    Segment segment = 2;
+    TranscribeCompleted completed = 3;
+  }
+}
+
+message TimeRange {
+  double start = 1;
+  double end = 2;
+}
+
+message DetectSpeechRequest {
+  string audio_path = 1;        // WAV PCM 16 kHz mono
+  double threshold = 2;         // 0 = mặc định 0.5
+  int32 min_speech_ms = 3;
+  int32 min_silence_ms = 4;
+  int32 speech_pad_ms = 5;
+}
+
+message DetectSpeechResponse {
+  repeated TimeRange regions = 1;
+  double duration = 2;
+}
+
+message DenoiseRequest {
+  string input_path = 1;        // WAV PCM 44.1 kHz
+  string output_path = 2;
+  string model_path = 3;        // denoiser.onnx
+  double strength = 4;          // 0 = mặc định 1.0
+}
+
+message SeparateVocalsRequest {
+  string input_path = 1;        // WAV PCM 44.1 kHz mono/stereo
+  string output_path = 2;       // nền không lời
+  string model_path = 3;        // models\separation\<tên model UVR>.onnx
+  int32 threads = 4;            // 0 = nửa số luồng CPU
+}
+
+message SpeakerEmbeddingRequest {
+  string input_path = 1;        // WAV bất kỳ tần số; chỉ dùng 8 s đầu như SDK VieNeu
+  string model_path = 2;        // speaker_encoder.onnx
+}
+
+message SpeakerEmbeddingResponse { repeated float embedding = 1; }
+
+message TaskCompleted {
+  string output_path = 1;
+  double duration = 2;
+}
+
+message TaskEvent {
+  oneof event {
+    Progress progress = 1;
+    TaskCompleted completed = 2;
+  }
+}
+
+message ListVoiceModelsRequest { string models_dir = 1; }
+
+message VoiceModel {
+  string name = 1;
+  string model_path = 2;        // .pth
+  string index_path = 3;        // .index (có thể rỗng)
+}
+
+message ListVoiceModelsResponse { repeated VoiceModel models = 1; }
+
+message VoiceConvertRequest {
+  string input_path = 1;        // WAV PCM
+  string output_path = 2;
+  string model_path = 3;
+  string index_path = 4;
+  int32 pitch_semitones = 5;
+  string f0_method = 6;         // "rmvpe" | "harvest" | "pm"
+  double index_rate = 7;
+  string device = 8;
+}
+
+message PercentRect {          // % khung hình (0–100)
+  double x = 1;
+  double y = 2;
+  double w = 3;
+  double h = 4;
+}
+
+message LocateSubtitlesRequest {
+  string video_path = 1;
+  string ffmpeg_path = 2;
+  string det_model_path = 3;    // text_det.onnx
+  int32 width = 4;
+  int32 height = 5;
+  double duration = 6;
+  int32 sample_count = 7;       // 0 = 48 khung
+}
+
+message LocateSubtitlesResponse {
+  bool found = 1;
+  PercentRect box = 2;
+  double confidence = 3;        // 0..1; < 0.5 nên để người dùng kiểm tra lại
+  int32 frames_with_text = 4;
+  int32 frames_sampled = 5;
+}
+
+message TextTimelineRequest {
+  string video_path = 1;
+  string ffmpeg_path = 2;
+  string det_model_path = 3;
+  int32 width = 4;
+  int32 height = 5;
+  double duration = 6;
+  PercentRect box = 7;
+  double step = 8;              // giây giữa hai mẫu; 0 = 0.25
+}
+
+message TextTimelineResult {
+  repeated TimeRange segments = 1;   // đã gộp khe ngắn + đệm 0.15 s hai đầu
+  double duration = 2;
+}
+
+message TextTimelineEvent {
+  oneof event {
+    Progress progress = 1;
+    TextTimelineResult result = 2;
+  }
+}
+
+message InpaintSubtitlesRequest {
+  string video_path = 1;
+  string ffmpeg_path = 2;
+  string det_model_path = 3;
+  string inpaint_model_path = 4;     // migan_pipeline_v2.onnx
+  int32 width = 5;
+  int32 height = 6;
+  double duration = 7;
+  double fps = 8;
+  PercentRect box = 9;
+  repeated TimeRange segments = 10;  // chỉ xử lý trong các đoạn; rỗng = cả video
+  string output_path = 11;           // .mp4
+  int32 keyframe_every = 12;         // 0/1 = vẽ lại mọi khung đổi nền; N = dùng lại phần đã vẽ cho N-1 khung kế (nhanh hơn)
+}
+
+message InpaintCompleted {
+  string output_path = 1;
+  int32 x = 2;                  // vị trí patch trên khung nguồn (pixel)
+  int32 y = 3;
+  int32 width = 4;
+  int32 height = 5;
+  int32 frames = 6;
+  int32 inpainted = 7;          // số khung chạy model (còn lại dùng lại)
+}
+
+message InpaintEvent {
+  oneof event {
+    Progress progress = 1;
+    InpaintCompleted completed = 2;
+  }
+}

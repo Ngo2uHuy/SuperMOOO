@@ -1,0 +1,11 @@
+global using System.Globalization;
+global using System.Text.Json;
+global using System.Text.Json.Nodes;
+global using SuperMOOO.Core;
+global using SuperMOOO.Core.Abstractions;
+global using SuperMOOO.Core.Conventions;
+global using SuperMOOO.Core.Jobs;
+global using SuperMOOO.Core.Models;
+global using SuperMOOO.Core.Persistence;
+global using SuperMOOO.Core.Pipelines;
+global using Microsoft.Extensions.DependencyInjection;

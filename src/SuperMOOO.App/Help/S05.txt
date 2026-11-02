@@ -1,0 +1,18 @@
+Phòng thu giọng
+
+Dùng để:
+Đọc văn bản thành giọng nói, clone giọng và xử lý audio.
+
+Các bước:
+1. Chọn "Model", ngôn ngữ và giọng. Bấm "Làm mới danh sách giọng" nếu thiếu giọng; "Nghe thử giọng đang chọn" trước khi tạo.
+2. Chỉnh "Tốc độ", "Cao độ", "Hiệu ứng giọng" và "Định dạng" file.
+3. Nhập hoặc dán văn bản (mỗi đoạn xuống dòng đọc nối tiếp), hoặc bấm "Câu mẫu" theo ngôn ngữ.
+4. Bấm "Tạo giọng & nghe thử". Dùng "Lưu audio…" để lưu ra nơi khác, "Mở thư mục audio" để mở kết quả.
+
+Mẹo:
+- "Hàng loạt (thư mục .txt)": mỗi file .txt là một tác vụ, theo dõi ở khung "Tác vụ của màn này".
+- "Clone giọng…": audio mẫu 3–30 giây, tiếng rõ, nhập đúng lời trong mẫu. Giọng clone dùng được ở mọi màn có chọn giọng.
+- "TTS C++ local…": cấu hình, khởi động và nạp model VieNeu/OmniVoice chạy trên máy.
+- "Xử lý audio AI": chọn file audio (kéo thả được) rồi "Khử nhiễu", "Tìm lời nói (VAD)" hoặc "Cắt khoảng lặng".
+- "Chuyển giọng RVC" chỉ hiện khi AI worker hỗ trợ; "Nhập model…" .pth trước khi dùng.
+- "Lịch sử giọng / audio" lưu các file đã tạo, chọn một mục rồi "Nghe mục đã chọn".

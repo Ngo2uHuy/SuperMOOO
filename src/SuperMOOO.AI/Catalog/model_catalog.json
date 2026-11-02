@@ -1,0 +1,179 @@
+{
+ "checked": "2026-10-21",
+ "presets": [
+  {
+   "task": "text",
+   "label": "Gemini 3.8 Flash · mặc định",
+   "provider": "gemini",
+   "model": "gemini-3.8-flash",
+   "price": "Xem bảng giá hiện hành tại Google AI; model có thinking",
+   "source": "https://ai.google.dev/gemini-api/docs/pricing"
+  },
+  {
+   "task": "text",
+   "label": "Gemini Flash-Lite · tiết kiệm",
+   "provider": "gemini",
+   "model": "gemini-3.1-flash-lite",
+   "price": "$0.25 input / $1.50 output mỗi 1M token; có free tier theo hạn mức",
+   "source": "https://ai.google.dev/gemini-api/docs/pricing"
+  },
+  {
+   "task": "text",
+   "label": "Groq GPT-OSS 20B · nhanh, rẻ",
+   "provider": "groq",
+   "model": "openai/gpt-oss-20b",
+   "price": "$0.075 input / $0.30 output mỗi 1M token",
+   "source": "https://console.groq.com/docs/models"
+  },
+  {
+   "task": "text",
+   "label": "OpenAI GPT-4.1 mini",
+   "provider": "openai",
+   "model": "gpt-4.1-mini",
+   "price": "$0.40 input / $1.60 output mỗi 1M token",
+   "source": "https://developers.openai.com/api/docs/models/gpt-4.1-mini"
+  },
+  {
+   "task": "text",
+   "label": "OpenAI GPT-6 Luna · tiết kiệm",
+   "provider": "openai",
+   "model": "gpt-6-luna",
+   "price": "$0.10 input / $0.50 output mỗi 1M token (short context Standard)",
+   "source": "https://developers.openai.com/api/docs/models/gpt-6-luna"
+  },
+  {
+   "task": "text",
+   "label": "DeepSeek Flash · API trực tiếp",
+   "provider": "deepseek",
+   "model": "deepseek-flash",
+   "price": "Input cache miss $0.15/$0.30; output $0.60/$1.20 mỗi 1M token (off-peak/peak)",
+   "source": "https://api-docs.deepseek.com/quick_start/pricing/"
+  },
+  {
+   "task": "text",
+   "label": "DeepSeek Flash · OpenRouter",
+   "provider": "openrouter",
+   "model": "deepseek/deepseek-v4.1-flash",
+   "price": "Từ $0.0395 input / $1.20 output mỗi 1M token; tùy provider",
+   "source": "https://openrouter.ai/deepseek/deepseek-v4.1-flash",
+   "popularity": "Hạng 2 theo token tuần trên OpenRouter, dữ liệu đến 05/10/2026",
+   "popularity_source": "https://openrouter.ai/rankings?view=week"
+  },
+  {
+   "task": "text",
+   "label": "GLM Flash · OpenRouter",
+   "provider": "openrouter",
+   "model": "z-ai/glm-5.3-flash",
+   "price": "Từ $0.0244 input / $0.50 output mỗi 1M token; tùy provider",
+   "source": "https://openrouter.ai/z-ai/glm-5.3-flash",
+   "popularity": "Hạng 3 theo token tuần trên OpenRouter, dữ liệu đến 05/10/2026",
+   "popularity_source": "https://openrouter.ai/rankings?view=week"
+  },
+  {
+   "task": "text",
+   "label": "MiMo Flash · OpenRouter",
+   "provider": "openrouter",
+   "model": "xiaomi/mimo-v2.6-flash",
+   "price": "Từ $0.10 input / $0.28 output mỗi 1M token; tùy provider",
+   "source": "https://openrouter.ai/xiaomi/mimo-v2.6-flash",
+   "popularity": "Hạng 4 theo token tuần trên OpenRouter, dữ liệu đến 05/10/2026",
+   "popularity_source": "https://openrouter.ai/rankings?view=week"
+  },
+  {
+   "task": "text",
+   "label": "OpenRouter · tự chọn model",
+   "provider": "openrouter",
+   "model": "openrouter/auto",
+   "price": "Theo model/provider; xem giá trước khi gửi",
+   "source": "https://openrouter.ai/openrouter/auto/api"
+  },
+  {
+   "task": "text",
+   "label": "HF Qwen · Inference Providers",
+   "provider": "hf",
+   "model": "Qwen/Qwen3.5-35B-A3B",
+   "price": "Theo provider HF và số dư tài khoản",
+   "source": "https://huggingface.co/docs/inference-providers/pricing"
+  },
+  {
+   "task": "asr",
+   "label": "Whisper Turbo · local",
+   "provider": "local.whisper",
+   "model": "turbo",
+   "price": "Chạy trên máy; cần model đã cài",
+   "source": "https://github.com/SYSTRAN/faster-whisper"
+  },
+  {
+   "task": "asr",
+   "label": "Groq Whisper Turbo · tiết kiệm",
+   "provider": "groq",
+   "model": "whisper-large-v3-turbo",
+   "price": "$0.04 / giờ audio; tối thiểu 10 giây mỗi request",
+   "source": "https://console.groq.com/docs/speech-to-text"
+  },
+  {
+   "task": "asr",
+   "label": "Groq Whisper v3 · độ chính xác",
+   "provider": "groq",
+   "model": "whisper-large-v3",
+   "price": "$0.111 / giờ audio",
+   "source": "https://console.groq.com/docs/models"
+  },
+  {
+   "task": "asr",
+   "label": "OpenAI Whisper · phụ đề có timestamp",
+   "provider": "openai",
+   "model": "whisper-1",
+   "price": "Xem giá ASR hiện hành tại provider",
+   "source": "https://developers.openai.com/api/docs/guides/speech-to-text"
+  },
+  {
+   "task": "tts",
+   "label": "VieNeu · local tiếng Việt",
+   "provider": "native.vieneu",
+   "model": "vieneu-v3-turbo-q8_0",
+   "price": "Chạy trên máy",
+   "source": "https://github.com/pnnbao97/VieNeu-TTS"
+  },
+  {
+   "task": "tts",
+   "label": "OmniVoice · local & clone",
+   "provider": "native.omnivoice",
+   "model": "omnivoice-q8_0",
+   "price": "Chạy trên máy",
+   "source": "https://github.com/k2-fsa/OmniVoice"
+  },
+  {
+   "task": "tts",
+   "label": "OpenAI · giọng cloud",
+   "provider": "openai",
+   "model": "gpt-4o-mini-tts",
+   "price": "Theo token text/audio; xem bảng giá provider",
+   "source": "https://developers.openai.com/api/docs/guides/text-to-speech"
+  },
+  {
+   "task": "tts",
+   "label": "Gemini Flash-Lite TTS · tiết kiệm",
+   "provider": "gemini",
+   "model": "gemini-3.8-flash-lite-tts",
+   "price": "$0.50 text / $6 audio mỗi 1M token đến 31/12/2026",
+   "source": "https://ai.google.dev/gemini-api/docs/pricing"
+  },
+  {
+   "task": "tts",
+   "label": "ElevenLabs Flash · đa ngôn ngữ",
+   "provider": "elevenlabs",
+   "model": "eleven_flash_v2_5",
+   "price": "$0.04 / 1.000 ký tự theo bảng API; hạn mức/gói tài khoản áp dụng",
+   "source": "https://elevenlabs.io/pricing/api"
+  },
+  {
+   "task": "tts",
+   "label": "ElevenLabs v3 · biểu cảm",
+   "provider": "elevenlabs",
+   "model": "eleven_v3",
+   "price": "$0.08 / 1.000 ký tự theo bảng API; hạn mức/gói tài khoản áp dụng",
+   "source": "https://elevenlabs.io/pricing/api"
+  }
+ ]
+}

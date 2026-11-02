@@ -1,0 +1,24 @@
+Kho thành phẩm
+
+Dùng để:
+Giữ danh sách video đã làm xong để đăng: video từ các pipeline của app (Talkshow, video vẽ tay, avatar, reup...), từ thư mục theo dõi (VideoC...) và file bạn tự thêm. App chống trùng bằng sha256, không chép file vào kho (chỉ ghi đường dẫn), nên đừng xoá hay đổi tên file khi còn bài chờ đăng.
+
+Các bước:
+1. Tab "Kho video": bấm "Thêm file…" hoặc "Thêm thư mục…" để nhập video, hoặc "Nhập CSV/Excel…" (cột path bắt buộc; thêm title, caption, tags, language, ai, reup nếu cần). Video làm xong ở S03/S18/S19/S06/S08... tự vào kho kèm tiêu đề, caption, nhãn.
+2. Lọc theo nguồn, trạng thái hoặc gõ từ khoá rồi chọn một dòng. Danh sách chia trang 50 video, ảnh nhỏ chỉ lấy khi dòng hiện ra.
+3. Phần "Thông tin video đang chọn": sửa tiêu đề, caption, nhãn, ngôn ngữ; đánh dấu "Nội dung AI", "Reup", "Lưu trữ" rồi bấm "Lưu".
+4. Cột phải cho biết video đã đăng ở kênh nào, trạng thái gì. "Kiểm tra trùng/rủi ro" so với các video khác trong kho (trùng video, gần trùng khung hình, caption gần trùng) và nhắc khai báo AI/reup.
+5. Bấm "Soạn bài" để sang Đăng bài & lịch đăng (S14): S14 tự mở tab "Soạn bài" với đúng video này. Muốn đăng tự động theo lịch thì dùng Chiến dịch đăng tự động (S22), chiến dịch lấy video từ kho theo quy tắc.
+6. Tab "Thư mục theo dõi": chọn thư mục, cách đọc (file rời, manifest.json v1, meta.json của VideoC), loại nguồn rồi bấm "Thêm và theo dõi". App quét mỗi phút; "Quét ngay" quét lập tức, "Bật/tắt theo dõi" tạm dừng nguồn.
+
+Mẹo:
+- Ngôn ngữ của video chọn từ danh sách có tìm kiếm; chọn "Không đặt / theo mặc định" để để trống. Mã ngôn ngữ đã lưu ngoài danh sách không bị xoá.
+- Thư mục có manifest.json (schema v1) được ưu tiên: lấy sẵn tiêu đề, caption, nhãn, cờ reup và kiểm checksum.
+- File đang được ghi (mới sửa trong vài giây hoặc còn bị khoá) sẽ được nhập ở lượt quét sau, không bị nhập dở.
+- Video AI/reup nên giữ đúng cờ: S14 dùng cờ này để nhắc khai báo AI và cảnh báo bản quyền.
+- Tạm dừng tự động (khay hệ thống) cũng tạm dừng quét thư mục theo dõi; thêm tay vẫn chạy.
+
+Lưu ý / lỗi thường gặp:
+- "Không nhập được video vào kho" xuất hiện ở hộp Cần xử lý của S14: xem chi tiết đường dẫn và lý do (checksum không khớp manifest, định dạng không hỗ trợ...).
+- Trùng/gần trùng chỉ so được khung hình khi có ffmpeg và đọc được thời lượng; không thì chỉ so sha256.
+- Xoá nguồn theo dõi không xoá video đã nhập và không xoá file trên đĩa.

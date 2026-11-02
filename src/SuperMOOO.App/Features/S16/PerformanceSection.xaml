@@ -1,0 +1,34 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.PerformanceSection"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+ xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+ <ScrollViewer VerticalScrollBarVisibility="Auto">
+  <StackPanel Margin="0,0,12,0">
+   <ui:Card Style="{StaticResource Section}">
+    <StackPanel>
+     <TextBlock Text="Hiệu năng theo cấu hình máy" Style="{StaticResource CardTitle}"/>
+     <TextBlock Text="{Binding Hardware}" TextWrapping="Wrap" Margin="0,0,0,16"/>
+     <ui:ToggleSwitch Content="Tự động cấu hình theo máy đang sử dụng" IsChecked="{Binding Automatic}"/>
+     <TextBlock Text="Tự tính số luồng và mức song song theo CPU, RAM; thử encoder phần cứng trước khi sử dụng. Khi chuyển sang máy khác, cấu hình được tính lại." TextWrapping="Wrap" Style="{StaticResource Hint}" Margin="0,8,0,12"/>
+     <TextBlock Text="{Binding PlanText}" TextWrapping="Wrap"/>
+     <TextBlock Text="{Binding LoadText}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+     <TextBlock Text="{Binding EncoderStatus}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+    </StackPanel>
+   </ui:Card>
+   <ui:Card Style="{StaticResource Section}">
+    <StackPanel IsEnabled="{Binding Manual}">
+     <TextBlock Text="Cấu hình thủ công" Style="{StaticResource CardTitle}"/>
+     <c:Field Header="Số tiến trình media đồng thời"><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding MediaParallel}" Width="32"/><Slider Minimum="1" Maximum="4" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding MediaParallel}"/></DockPanel></c:Field>
+     <c:Field Header="Luồng CPU cho mỗi tiến trình media"><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding MediaThreads}" Width="32"/><Slider Minimum="1" Maximum="{Binding MaxThreads}" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding MediaThreads}"/></DockPanel></c:Field>
+     <c:Field Header="Luồng CPU cho AI worker"><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding AiThreads}" Width="32"/><Slider Minimum="1" Maximum="{Binding MaxThreads}" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding AiThreads}"/></DockPanel></c:Field>
+     <c:Field Header="RAM dự phòng (GB)"><DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding ReservedMemoryGb}" Width="32"/><Slider Minimum="1" Maximum="{Binding MaxReservedMemory}" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding ReservedMemoryGb}"/></DockPanel></c:Field>
+     <c:Field Header="Encoder Timeline / Review" Hint="auto: tự chọn; QSV: Intel; NVENC: NVIDIA; x264: CPU. Không khả dụng thì dùng x264."><ComboBox ItemsSource="{Binding Encoders}" SelectedItem="{Binding Encoder}"/></c:Field>
+    </StackPanel>
+   </ui:Card>
+   <TextBlock Text="RAM dự phòng giúp giảm số tiến trình chạy cùng lúc khi thiếu bộ nhớ; đây không phải giới hạn RAM cứng. Thiết lập encoder riêng của Reup vẫn được giữ. Luồng TTS local tự điều chỉnh khi bật tự động; ở chế độ thủ công, chỉnh tại TTS local." TextWrapping="Wrap" Style="{StaticResource Hint}" Margin="0,0,0,12"/>
+   <WrapPanel><ui:Button Content="Lưu cấu hình" Appearance="Primary" Command="{Binding SaveCommand}"/><ui:Button Content="Tự cấu hình lại" Command="{Binding AutoConfigureCommand}"/><ui:Button Content="Kiểm tra phần cứng" Command="{Binding RefreshCommand}"/></WrapPanel>
+   <TextBlock Text="{Binding Status}" TextWrapping="Wrap" Margin="0,12,0,0"/>
+  </StackPanel>
+ </ScrollViewer>
+</UserControl>

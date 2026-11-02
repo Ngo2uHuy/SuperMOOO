@@ -1,0 +1,27 @@
+{
+  "id": "voice",
+  "title": "Phòng thu giọng",
+  "steps": [
+    {
+      "id": "script",
+      "kind": "script_read"
+    },
+    {
+      "id": "tts",
+      "kind": "tts"
+    },
+    {
+      "id": "dub",
+      "kind": "assemble_dub"
+    },
+    {
+      "id": "effect",
+      "kind": "voice_effect",
+      "when": "voiceEffect"
+    },
+    {
+      "id": "export",
+      "kind": "export_audio"
+    }
+  ]
+}

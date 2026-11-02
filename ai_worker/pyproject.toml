@@ -1,0 +1,23 @@
+[project]
+name = "aivs-worker"
+version = "0.1.0"
+description = "AI worker (ASR, VAD, denoise, tách giọng, RVC tuỳ chọn) cho SuperMOOO, giao tiếp qua gRPC"
+requires-python = ">=3.14"
+dependencies = [
+    "grpcio",
+    "protobuf",
+    "faster-whisper",
+    "onnxruntime",
+    "numpy",
+    "soundfile",
+    "soxr",
+    "kaldi-native-fbank",
+    "torch",
+]
+
+[project.optional-dependencies]
+rvc = ["rvc-python"]
+dev = ["grpcio-tools"]
+
+[tool.setuptools.packages.find]
+include = ["aivs_worker*"]

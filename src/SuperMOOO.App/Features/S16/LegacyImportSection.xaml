@@ -1,0 +1,37 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.LegacyImportSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel>
+    <ui:Card DockPanel.Dock="Top" Style="{StaticResource Section}">
+      <StackPanel>
+        <TextBlock Style="{StaticResource CardTitle}" Text="Nguồn dữ liệu cũ" />
+        <c:Field Header="Thư mục Craw" Hint="Chứa streamgrabber.db, api_keys.json… Kéo-thả thư mục vào ô được.">
+          <DockPanel>
+            <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn thư mục Craw…"
+                       Command="{Binding BrowseCrawCommand}" />
+            <ui:TextBox Text="{Binding CrawFolder, UpdateSourceTrigger=PropertyChanged}" c:FileDrop.IsEnabled="True" />
+          </DockPanel>
+        </c:Field>
+        <c:Field Header="Thư mục bản cũ (tuỳ chọn)" Hint="Nguồn dự phòng cho api_keys.json.">
+          <DockPanel>
+            <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn thư mục bản cũ…"
+                       Command="{Binding BrowseOldCommand}" />
+            <ui:TextBox Text="{Binding OldAppFolder, UpdateSourceTrigger=PropertyChanged}" c:FileDrop.IsEnabled="True" />
+          </DockPanel>
+        </c:Field>
+        <ui:Button Appearance="Primary" Content="Nhập dữ liệu" Icon="{ui:SymbolIcon ArrowImport24}" Command="{Binding ImportCommand}" HorizontalAlignment="Left" />
+        <TextBlock Style="{StaticResource Hint}" Margin="0,8,0,0"
+                   Text="Dữ liệu được đọc từ bản sao tạm của DB; job và dự án đang dở không được chuyển, chỉ file output được thêm vào Kho file." />
+      </StackPanel>
+    </ui:Card>
+    <ui:Card Style="{StaticResource FillSection}" Margin="0">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource CardTitle}" Text="Báo cáo nhập" />
+        <ui:TextBox Text="{Binding ReportText, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                    VerticalContentAlignment="Top" PlaceholderText="Báo cáo sẽ hiện ở đây sau khi nhập." />
+      </DockPanel>
+    </ui:Card>
+  </DockPanel>
+</UserControl>

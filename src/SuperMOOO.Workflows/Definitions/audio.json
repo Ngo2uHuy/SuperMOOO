@@ -1,0 +1,43 @@
+{
+  "id": "audio",
+  "title": "Xử lý âm thanh",
+  "steps": [
+    {
+      "id": "download",
+      "kind": "download",
+      "when": "download"
+    },
+    {
+      "id": "audio",
+      "kind": "extract_audio",
+      "options": {
+        "sampleRate": 44100,
+        "mono": false
+      }
+    },
+    {
+      "id": "denoise",
+      "kind": "denoise",
+      "when": "denoise"
+    },
+    {
+      "id": "vad",
+      "kind": "vad",
+      "when": "vad"
+    },
+    {
+      "id": "trim",
+      "kind": "trim_silence",
+      "when": "trim"
+    },
+    {
+      "id": "export",
+      "kind": "export_audio",
+      "when": "export",
+      "options": {
+        "source": "audio",
+        "operation": "audio"
+      }
+    }
+  ]
+}

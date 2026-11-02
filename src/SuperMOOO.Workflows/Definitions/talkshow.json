@@ -1,0 +1,10 @@
+{
+  "id": "talkshow",
+  "title": "Talkshow",
+  "steps": [
+    {
+      "id": "stage",
+      "kind": "talkshow_stage"
+    }
+  ]
+}

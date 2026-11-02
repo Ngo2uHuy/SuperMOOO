@@ -1,0 +1,20 @@
+Video YouTube & Talkshow
+
+Dùng để:
+Biến kịch bản thành video có giọng đọc (tab "Video YouTube") hoặc cuộc trò chuyện MC - khách mời trên nền màn xanh (tab "Talkshow").
+
+Các bước (Video YouTube):
+1. Bấm "Chọn thư mục" chứa kịch bản (.txt, .docx) rồi tick các kịch bản cần dựng, hoặc dán nội dung vào ô "Hoặc dán kịch bản".
+2. Chọn slide nền (thư mục hoặc từng ảnh/clip), giọng đọc, intro/outro nếu cần. Bấm "Nghe thử" để thử giọng.
+3. Bấm "Dựng video YouTube", rồi "Mở video" khi xong.
+
+Các bước (Talkshow):
+1. Chọn nhà cung cấp ở "AI viết kịch bản" và model, rồi bấm "AI viết kịch bản"; API key / địa chỉ máy chủ lấy từ Cài đặt. Lựa chọn này chỉ áp dụng cho Talkshow, không đổi AI mặc định của app. Hoặc bấm "Nạp kịch bản mẫu" để dùng ngay.
+2. Sửa lời thoại; mỗi đoạn bắt đầu bằng MC: hoặc KHÁCH:.
+3. Bấm "Xem trước sân khấu" để kiểm tra màn xanh, rồi xuất video và "Mở video".
+
+Mẹo:
+- Bấm "Tải danh sách" để lấy model của nhà cung cấp đã chọn; ô Model AI cho chọn hoặc nhập tên. Chuyển nhà cung cấp sẽ đổi về model cấu hình/mặc định tương ứng.
+- Mỗi kịch bản ra một video; nhiều kịch bản sẽ vào hàng đợi ở khung "Tác vụ của màn này".
+- Không chọn slide thì dùng nền tối mặc định; không chọn ảnh sân khấu thì dùng bộ mẫu đi kèm.
+- Giọng đọc giống nhau được dùng lại, dựng lần hai nhanh hơn.

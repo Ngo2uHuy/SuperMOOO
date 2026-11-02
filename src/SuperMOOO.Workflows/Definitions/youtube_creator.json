@@ -1,0 +1,27 @@
+{
+  "id": "youtube_creator",
+  "title": "Video YouTube từ kịch bản",
+  "steps": [
+    {
+      "id": "script",
+      "kind": "script_read"
+    },
+    {
+      "id": "tts",
+      "kind": "tts"
+    },
+    {
+      "id": "dub",
+      "kind": "assemble_dub"
+    },
+    {
+      "id": "slides",
+      "kind": "slideshow"
+    },
+    {
+      "id": "introOutro",
+      "kind": "intro_outro",
+      "when": "introOutro"
+    }
+  ]
+}

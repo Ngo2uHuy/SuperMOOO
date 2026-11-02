@@ -1,0 +1,28 @@
+Crawler
+
+Dùng để:
+Quét kênh, tìm kiếm và lấy bình luận từ nhiều nền tảng.
+
+Các bước:
+1. Chọn một thao tác ở ô phía trên.
+2. Điền form (dán liên kết kênh/trang, nền tảng tự nhận).
+3. Bấm Chạy.
+4. Xem kết quả ở bảng: lọc, xuất Excel/CSV hoặc "Đưa vào tải".
+
+Mẹo:
+- Chuột phải vào một dòng trong "Tác vụ của màn này" để sao chép tên / liên kết, thông báo / lỗi đầy đủ hoặc toàn bộ thông tin tác vụ.
+- Quét kênh, tìm kiếm và khám phá có Từ ngày / Đến ngày (yyyy-MM-dd, tính cả hai ngày); để trống một đầu để không giới hạn đầu đó. Mục thiếu ngày đăng bị loại khi lọc ngày.
+- Sắp xếp: Mặc định, Mới nhất, Cũ nhất, Phổ biến (lượt xem). Lọc và sắp xếp trong số mục nguồn trả về theo Số mục tối đa, không bảo đảm bao phủ toàn bộ kênh; mục thiếu chỉ số xếp cuối.
+- Có quét riêng cho YouTube, TikTok, Facebook, Instagram, Douyin, Xiaohongshu, Weibo, Bilibili, Kuaishou.
+- YouTube dùng Data API khi đã lưu key/token và còn hạn mức, nếu không tự chuyển sang yt-dlp.
+- "Chuyên mục / chủ đề" của thao tác khám phá là danh sách chọn có ô tìm (gõ không dấu cũng được), đổi theo nền tảng; có cho TikTok, Douyin, Bilibili, Xiaohongshu, nền tảng khác không có chuyên mục.
+- "Khám phá" / "Quét kênh và lưu thư viện": kết quả ghi vào Thư viện (S12).
+- Quét bình luận tự chấm cảm xúc và tách khách tiềm năng (SĐT, email, hỏi mua); chiến dịch lưu ở S12 > Chiến dịch.
+
+Lưu ý / lỗi thường gặp:
+- Weibo cần cookie đăng nhập (Cài đặt > Nền tảng).
+- TikTok khám phá/hashtag lấy qua nguồn tikwm: "Tất cả" là feed đề xuất theo vùng của máy, chuyên mục đi qua các hashtag phổ biến; tikwm thỉnh thoảng lỗi tạm, chạy lại sau ít phút.
+- Xiaohongshu (khám phá, chuyên mục, hồ sơ) thường chuyển khách sang trang đăng nhập: lưu cookie xiaohongshu.com ở Cài đặt > Nền tảng > Xiaohongshu.
+- Instagram hồ sơ cần cookie Instagram; Bilibili bình luận khi chưa lưu cookie/SESSDATA chỉ lấy được vài bình luận đầu.
+- Douyin chỉ có bảng nổi bật (chuyên mục/tìm kiếm = lọc trong bảng nổi bật); trang kênh và tìm kiếm toàn Douyin chưa hỗ trợ. Facebook chỉ đọc được liên kết video/reel cụ thể, không đọc trang.
+- YouTube trong "Khám phá nội dung" chỉ có chế độ search (cần từ khoá).

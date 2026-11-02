@@ -1,0 +1,25 @@
+Reup Studio
+
+Dùng để:
+Biến đổi video (khung hình, hiệu ứng, logo, giọng đọc, phụ đề) rồi xuất.
+
+Các bước:
+1. Thêm video nguồn: file hoặc cả thư mục (kéo thả được).
+2. Chọn preset và bấm "Áp preset" (thay toàn bộ thiết lập), rồi chỉnh tỉ lệ khung, cách lấp (nền mờ 2 bên), lật gương, zoom, tốc độ, màu, đoạn cắt.
+3. Logo, intro/outro: chọn file, vị trí, độ mờ.
+4. Âm thanh & giọng: tắt/giảm tiếng gốc, ducking, khử nhiễu, nhạc nền, ghép giọng có sẵn.
+5. Phụ đề: sửa từng câu, chọn kiểu, font, màu, viền, vị trí.
+6. Chọn thư mục xuất và thiết lập nâng cao, rồi "Xuất video" (một video) hoặc "Xuất hàng loạt" (đưa vào hàng đợi).
+
+Mẹo:
+- Font phụ đề chọn từ danh sách font đã cài trên máy, có ô tìm trong dropdown. Giá trị font cũ ngoài danh sách vẫn được giữ.
+- Để trống ô "Đến" của đoạn cắt là cắt đến hết video.
+- "Tạo giọng từ kịch bản" đọc từng câu và tự sinh phụ đề khớp thời lượng thật.
+- Bật "Ép cứng phụ đề" để in chữ vào hình.
+- Mẫu tên file: {name} = tên nguồn, {preset} = preset, {date} = yyyyMMdd.
+- Xem trước: "Chụp khung" xem một khung hình, "Xem đoạn 6 s" xem thử tại mốc đã chọn.
+- "Tách giọng gốc": lúc xuất, AI bỏ lời gốc, giữ nhạc + hiệu ứng làm tiếng gốc; ducking chỉ hạ nhẹ ~5 dB. "Chất lượng cao (RoFormer)" sạch lời hơn nhưng chậm (~4–5× thời lượng video trên CPU, RAM ~2,1 GB); "Nhanh (MDX Voc_FT)" ~0,6×, RAM ~1,3 GB. Kết quả lưu cache nên xuất lại cùng video không tách lại. Xem trước vẫn dùng tiếng gốc đầy đủ.
+- Theo dõi hàng đợi ở khung "Tác vụ của màn này" (S15 xem được mọi tác vụ).
+
+Lưu ý / lỗi thường gặp:
+- "Tách giọng gốc" cần AI worker và model tách giọng (Cài đặt → AI worker → "Tải model"); RoFormer cần thêm PyTorch trong worker. Thiếu RoFormer thì dùng MDX, thiếu cả hai hoặc lỗi thì xuất với tiếng gốc đầy đủ và ghi cảnh báo.

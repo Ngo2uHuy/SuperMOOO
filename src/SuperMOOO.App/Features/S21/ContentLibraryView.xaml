@@ -1,0 +1,187 @@
+<UserControl x:Class="SuperMOOO.App.Features.S21.ContentLibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Kho thành phẩm"
+                    Description="Video đã làm xong để đăng: từ pipeline của app, thư mục theo dõi hoặc file bạn thêm. Chống trùng, sửa tiêu đề/caption/nhãn và chuyển sang Soạn bài." />
+    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Hint}" Text="{Binding Status}" Margin="0,8,0,0"
+               Visibility="{Binding Status, Converter={StaticResource NotEmptyToVis}}" TextWrapping="Wrap" />
+
+    <TabControl>
+      <TabItem Header="Kho video">
+        <DockPanel Margin="0,12,0,0">
+          <ui:Card DockPanel.Dock="Top" Style="{StaticResource Section}">
+            <WrapPanel>
+              <ui:TextBox Text="{Binding Search, UpdateSourceTrigger=LostFocus}" Width="260" Margin="0,0,8,0"
+                          PlaceholderText="Tìm theo tiêu đề, caption, nhãn" Icon="{ui:SymbolIcon Search24}" />
+              <ComboBox ItemsSource="{Binding SourceOptions}" SelectedItem="{Binding SourceFilter}" DisplayMemberPath="Name" Width="180" Margin="0,0,8,0" ToolTip="Nguồn" />
+              <ComboBox ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding StatusFilter}" DisplayMemberPath="Name" Width="140" Margin="0,0,16,0" ToolTip="Trạng thái" />
+              <ui:Button Content="Thêm file…" Icon="{ui:SymbolIcon DocumentAdd24}" Command="{Binding AddFileCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Thêm thư mục…" Icon="{ui:SymbolIcon FolderAdd24}" Command="{Binding AddFolderCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Nhập CSV/Excel…" Icon="{ui:SymbolIcon Table24}" Command="{Binding ImportTableCommand}" Margin="0,0,8,0"
+                         ToolTip="Cột: path (bắt buộc), title, caption, tags, language, ai, reup" />
+              <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Làm mới" Command="{Binding RefreshCommand}" />
+            </WrapPanel>
+          </ui:Card>
+
+          <ui:Card DockPanel.Dock="Bottom" Style="{StaticResource Section}" Margin="0,12,0,0" Visibility="{Binding Selected, Converter={StaticResource NotEmptyToVis}}">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <StackPanel Margin="0,0,16,0">
+                <TextBlock Style="{StaticResource CardTitle}" Text="Thông tin video đang chọn" />
+                <c:Field Header="Tiêu đề">
+                  <ui:TextBox Text="{Binding EditTitle, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" />
+                </c:Field>
+                <c:Field Header="Caption / mô tả">
+                  <ui:TextBox Text="{Binding EditCaption, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinLines="2" MaxLines="4" />
+                </c:Field>
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="120" />
+                  </Grid.ColumnDefinitions>
+                  <c:Field Header="Nhãn (cách nhau bởi dấu phẩy)" Margin="0,0,8,0">
+                    <ui:TextBox Text="{Binding EditTags, UpdateSourceTrigger=PropertyChanged}" />
+                  </c:Field>
+                  <c:Field Grid.Column="1" Header="Ngôn ngữ">
+                    <c:ValuePicker Options="{x:Static c:InputChoices.Languages}" Value="{Binding EditLanguage}" />
+                  </c:Field>
+                </Grid>
+                <WrapPanel>
+                  <CheckBox Content="Nội dung AI" IsChecked="{Binding EditAi}" Margin="0,0,16,8" />
+                  <CheckBox Content="Reup (đăng lại từ nơi khác)" IsChecked="{Binding EditReup}" Margin="0,0,16,8" />
+                  <CheckBox Content="Lưu trữ (ẩn khỏi Soạn bài)" IsChecked="{Binding EditArchived}" Margin="0,0,16,8" />
+                </WrapPanel>
+                <WrapPanel>
+                  <ui:Button Content="Lưu" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" Margin="0,0,8,0" />
+                  <ui:Button Appearance="Primary" Content="Soạn bài" Icon="{ui:SymbolIcon Send24}" Command="{Binding ComposeCommand}" Margin="0,0,8,0"
+                             ToolTip="Mở Đăng bài &amp; lịch đăng với video này" />
+                  <ui:Button Content="Kiểm tra trùng/rủi ro" Icon="{ui:SymbolIcon ShieldCheckmark24}" Command="{Binding CheckRiskCommand}" Margin="0,0,8,0" />
+                  <ui:Button Content="Mở file" Icon="{ui:SymbolIcon Open24}" Command="{Binding OpenFileCommand}" Margin="0,0,8,0" />
+                  <ui:Button Content="Mở thư mục" Icon="{ui:SymbolIcon FolderOpen24}" Command="{Binding RevealFileCommand}" />
+                </WrapPanel>
+              </StackPanel>
+              <ScrollViewer Grid.Column="1" MaxHeight="260" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Đã đăng ở đâu" />
+                  <ItemsControl ItemsSource="{Binding Posts}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,0,0,4" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                  <TextBlock Style="{StaticResource CardTitle}" Text="Cảnh báo rủi ro" Margin="0,12,0,4" />
+                  <ItemsControl ItemsSource="{Binding RiskLines}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,0,0,4" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </ScrollViewer>
+            </Grid>
+          </ui:Card>
+
+          <ui:Card Style="{StaticResource FillSection}" Margin="0">
+            <DockPanel>
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <TextBlock Style="{StaticResource Hint}" Text="{Binding Summary}" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ChevronLeft24}" ToolTip="Trang trước" Command="{Binding PrevPageCommand}" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ChevronRight24}" ToolTip="Trang sau" Command="{Binding NextPageCommand}" />
+                </StackPanel>
+              </DockPanel>
+              <Grid>
+                <DataGrid ItemsSource="{Binding Rows}" SelectedItem="{Binding Selected}" AutoGenerateColumns="False" IsReadOnly="True"
+                          SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column" RowHeight="48"
+                          EnableRowVirtualization="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                  <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="" Width="80">
+                      <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                          <Image Source="{Binding Thumbnail, Mode=OneWay}" Height="44" Stretch="Uniform" />
+                        </DataTemplate>
+                      </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title, Mode=OneWay}" Width="3*" />
+                    <DataGridTextColumn Header="Nguồn" Binding="{Binding Source, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Thời lượng / khung" Binding="{Binding Info, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Cờ" Binding="{Binding Flags, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Nhập lúc" Binding="{Binding Imported, Mode=OneWay}" Width="*" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <c:EmptyState Icon="VideoClip24" Text="Kho trống. Thêm file/thư mục, nhập CSV/Excel hoặc cấu hình thư mục theo dõi ở tab bên cạnh."
+                              Visibility="{Binding Rows.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+        </DockPanel>
+      </TabItem>
+
+      <TabItem Header="Thư mục theo dõi">
+        <Grid Margin="0,12,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <ui:Card Style="{StaticResource Section}" Margin="0,0,12,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+              <StackPanel>
+                <TextBlock Style="{StaticResource CardTitle}" Text="Thêm thư mục theo dõi" />
+                <c:Field Header="Thư mục">
+                  <DockPanel>
+                    <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" Command="{Binding BrowseWatchCommand}" ToolTip="Chọn thư mục" />
+                    <ui:TextBox Text="{Binding WatchPath, UpdateSourceTrigger=PropertyChanged}" />
+                  </DockPanel>
+                </c:Field>
+                <c:Field Header="Tên nguồn">
+                  <ui:TextBox Text="{Binding WatchName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" />
+                </c:Field>
+                <c:Field Header="Cách đọc">
+                  <ComboBox ItemsSource="{Binding ModeOptions}" SelectedItem="{Binding WatchMode}" DisplayMemberPath="Name" />
+                </c:Field>
+                <c:Field Header="Loại nguồn">
+                  <ComboBox ItemsSource="{Binding KindOptions}" SelectedItem="{Binding WatchKind}" DisplayMemberPath="Name" />
+                </c:Field>
+                <CheckBox Content="Gồm cả thư mục con" IsChecked="{Binding WatchRecursive}" Margin="0,0,0,8" />
+                <ui:Button Appearance="Primary" Content="Thêm và theo dõi" Icon="{ui:SymbolIcon Add24}" Command="{Binding AddWatchCommand}" HorizontalAlignment="Stretch" />
+                <TextBlock Style="{StaticResource Hint}" TextWrapping="Wrap" Margin="0,12,0,0"
+                           Text="App quét mỗi phút, chỉ nhập file đã ngừng ghi vài giây. Ưu tiên manifest.json (schema v1) nếu có." />
+              </StackPanel>
+            </ScrollViewer>
+          </ui:Card>
+
+          <ui:Card Grid.Column="1" Style="{StaticResource FillSection}" Margin="0">
+            <DockPanel>
+              <WrapPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                <ui:Button Content="Bật/tắt theo dõi" Icon="{ui:SymbolIcon Eye24}" Command="{Binding ToggleWatchCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Quét ngay" Icon="{ui:SymbolIcon ArrowSync24}" Command="{Binding SweepWatchCommand}" Margin="0,0,8,0" />
+                <ui:Button Content="Xoá nguồn" Icon="{ui:SymbolIcon Delete24}" Command="{Binding RemoveWatchCommand}" />
+              </WrapPanel>
+              <Grid>
+                <DataGrid ItemsSource="{Binding Watches}" SelectedItem="{Binding SelectedWatch}" AutoGenerateColumns="False" IsReadOnly="True"
+                          SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Tên" Binding="{Binding Name, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Thư mục" Binding="{Binding Path, Mode=OneWay}" Width="3*" />
+                    <DataGridTextColumn Header="Cách đọc" Binding="{Binding Mode, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Trạng thái" Binding="{Binding State, Mode=OneWay}" Width="*" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <c:EmptyState Icon="Folder24" Text="Chưa theo dõi thư mục nào."
+                              Visibility="{Binding Watches.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+        </Grid>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</UserControl>

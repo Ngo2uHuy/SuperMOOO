@@ -1,0 +1,106 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.ModelAiSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls">
+  <DockPanel>
+    <Border DockPanel.Dock="Bottom" Padding="0,12,0,0">
+      <StackPanel Orientation="Horizontal">
+        <ui:Button Appearance="Primary" Content="Lưu" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" />
+        <TextBlock Style="{StaticResource Hint}" Text="{Binding Status}" VerticalAlignment="Center" Margin="12,0,0,0" />
+      </StackPanel>
+    </Border>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="0,0,16,0">
+        <TextBlock Style="{StaticResource Hint}" Margin="0,0,0,12"
+                   Text="Chọn model theo từng loại tác vụ. API key nhập ở mục API key (nhiều key mỗi nhà cung cấp, tự xoay khi hết hạn mức)." />
+
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Văn bản, dịch, kịch bản" />
+            <c:Field Header="Gợi ý nhanh">
+              <ComboBox ItemsSource="{Binding TextPresets}" DisplayMemberPath="Label" SelectionChanged="OnTextPreset" />
+            </c:Field>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <c:Field Header="Nhà cung cấp" Margin="0,0,8,12">
+                <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding TextProviders}" SelectedItem="{Binding TextProvider}" />
+              </c:Field>
+              <c:Field Grid.Column="1" Header="Model">
+                <ComboBox IsEditable="True" Text="{Binding TextModel, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Models}" />
+              </c:Field>
+            </Grid>
+            <c:Field Header="URL máy chủ cục bộ" Hint="Ollama: http://127.0.0.1:11434/v1, LM Studio: http://127.0.0.1:1234/v1. Không cần API key. Bấm Lưu trước khi kiểm tra."
+                     Visibility="{Binding IsLocalProvider, Converter={StaticResource BoolToVis}}">
+              <ui:TextBox Text="{Binding LocalLlmUrl, UpdateSourceTrigger=PropertyChanged}" />
+            </c:Field>
+            <c:Field Header="Base URL OpenAI-compatible" Hint="Vd. https://api.openai.com/v1, https://api.together.xyz/v1. Key nhập ở mục API key (nhà cung cấp openai_compat) là tuỳ chọn. Bấm Lưu trước khi kiểm tra."
+                     Visibility="{Binding IsCompatProvider, Converter={StaticResource BoolToVis}}">
+              <ui:TextBox Text="{Binding OpenAiCompatUrl, UpdateSourceTrigger=PropertyChanged}" />
+            </c:Field>
+            <WrapPanel Margin="0,0,0,12">
+              <ui:Button Content="Kiểm tra key" Icon="{ui:SymbolIcon Key24}" Command="{Binding CheckKeyCommand}" Margin="0,0,8,0" />
+              <ui:Button Content="Tải danh sách model" Icon="{ui:SymbolIcon ArrowDownload24}" Command="{Binding LoadModelsCommand}" />
+            </WrapPanel>
+            <c:Field Header="Bộ dịch" Hint="auto: dùng LLM nếu có key, không thì Google miễn phí." Margin="0">
+              <ComboBox ItemsSource="{Binding Translators}" SelectedItem="{Binding Translator}" Width="220" HorizontalAlignment="Left" />
+            </c:Field>
+          </StackPanel>
+        </ui:Card>
+
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Nhận diện giọng nói (ASR)" />
+            <c:Field Header="Gợi ý nhanh">
+              <ComboBox ItemsSource="{Binding AsrPresets}" DisplayMemberPath="Label" SelectionChanged="OnAsrPreset" />
+            </c:Field>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <c:Field Header="Backend" Margin="0,0,8,0">
+                <ComboBox ItemsSource="{Binding AsrBackends}" SelectedItem="{Binding AsrBackend}" />
+              </c:Field>
+              <c:Field Grid.Column="1" Header="Model" Margin="0">
+                <ComboBox ItemsSource="{Binding AsrModelOptions}" Text="{Binding AsrModel, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" IsTextSearchEnabled="True" c:InputHints.Text="Chọn hoặc nhập model nhận diện giọng nói…" />
+              </c:Field>
+            </Grid>
+          </StackPanel>
+        </ui:Card>
+
+        <ui:Card Style="{StaticResource Section}">
+          <StackPanel>
+            <TextBlock Style="{StaticResource CardTitle}" Text="Đọc văn bản (TTS) — mặc định VieNeu local" />
+            <c:Field Header="Gợi ý nhanh">
+              <ComboBox ItemsSource="{Binding TtsPresets}" DisplayMemberPath="Label" SelectionChanged="OnTtsPreset" />
+            </c:Field>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <c:Field Header="Nhà cung cấp" Margin="0,0,8,12">
+                <ComboBox ItemsSource="{Binding TtsProviders}" SelectedItem="{Binding TtsProvider}" />
+              </c:Field>
+              <c:Field Grid.Column="1" Header="Giọng (voice id)" Hint="Ví dụ cpp_vieneu_minh_quan_pro, openai_marin, edge:vi-VN-HoaiMyNeural" Margin="0,0,8,12">
+                <ui:TextBox Text="{Binding TtsVoice, UpdateSourceTrigger=PropertyChanged}" />
+              </c:Field>
+              <c:Field Grid.Column="2" Header="Model TTS cloud" Hint="Để trống = mặc định" Margin="0,0,0,12">
+                <ComboBox ItemsSource="{Binding TtsModelOptions}" Text="{Binding TtsModel, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" IsTextSearchEnabled="True" c:InputHints.Text="Chọn model cloud hoặc để trống dùng mặc định…" />
+              </c:Field>
+            </Grid>
+            <c:Field Header="Base URL OpenAI TTS (tuỳ chọn)" Hint="Để trống = https://api.openai.com/v1. Dùng khi chọn giọng openai_*.">
+              <ui:TextBox Text="{Binding OpenAiTtsUrl, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="https://api.openai.com/v1" />
+            </c:Field>
+            <ui:ToggleSwitch Content="Bật Edge TTS (endpoint không chính thức, có thể bị chặn)" IsChecked="{Binding EdgeEnabled}" />
+          </StackPanel>
+        </ui:Card>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

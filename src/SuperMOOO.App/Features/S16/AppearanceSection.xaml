@@ -1,0 +1,19 @@
+<UserControl x:Class="SuperMOOO.App.Features.S16.AppearanceSection"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="0,0,16,0">
+      <ui:Card Style="{StaticResource Section}">
+        <StackPanel>
+          <TextBlock Style="{StaticResource CardTitle}" Text="Chế độ màu" />
+          <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,12"
+                     Text="Theo hệ thống sẽ tự đổi Sáng/Tối cùng Windows. Màu nhấn cố định xanh dương của app." />
+          <RadioButton x:Name="SystemMode" GroupName="theme" Content="Theo hệ thống" Margin="0,0,0,8" />
+          <RadioButton x:Name="LightMode" GroupName="theme" Content="Sáng" Margin="0,0,0,8" />
+          <RadioButton x:Name="DarkMode" GroupName="theme" Content="Tối" />
+        </StackPanel>
+      </ui:Card>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

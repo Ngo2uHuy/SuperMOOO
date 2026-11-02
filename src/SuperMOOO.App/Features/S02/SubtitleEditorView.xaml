@@ -1,0 +1,58 @@
+<UserControl x:Class="SuperMOOO.App.Features.S02.SubtitleEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls"
+             xmlns:local="clr-namespace:SuperMOOO.App.Features.S02">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Biên tập phụ đề"
+                    Description="Bóc phụ đề từ video, sửa thời gian và lời thoại, dịch từng câu rồi áp dụng cho dự án lồng tiếng ở S01.">
+      <ui:Button Appearance="Primary" Content="Áp dụng vào dự án lồng tiếng" Icon="{ui:SymbolIcon CheckmarkCircle24}" Command="{Binding ApplyToProjectCommand}" />
+    </c:ScreenHeader>
+
+    <c:JobStatusBar DockPanel.Dock="Bottom" Margin="0,12,0,0" />
+
+    <!-- Khung tác vụ đặt cùng hàng với hai card trên để danh sách phụ đề bên dưới được cao nhất có thể. -->
+    <Grid DockPanel.Dock="Top">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="12" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="12" />
+        <ColumnDefinition Width="1.4*" />
+      </Grid.ColumnDefinitions>
+      <c:ScreenJobsPanel x:Name="ScreenJobs" Grid.Column="4" MaxHeight="210" />
+      <ui:Card Style="{StaticResource Section}" VerticalAlignment="Stretch">
+        <StackPanel>
+          <TextBlock Style="{StaticResource CardTitle}" Text="Video nguồn" />
+          <DockPanel>
+            <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn video…"
+                       Command="{Binding BrowseSourceCommand}" />
+            <ui:TextBox Text="{Binding SourceVideo, UpdateSourceTrigger=PropertyChanged}" c:FileDrop.IsEnabled="True"
+                        PlaceholderText="Chọn hoặc kéo-thả video vào đây" />
+          </DockPanel>
+          <ui:Button Content="Bóc phụ đề (ASR)" Icon="{ui:SymbolIcon MicSparkle24}" Command="{Binding TranscribeCommand}"
+                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,12,0,0" />
+          <ui:Button Content="Mở phụ đề đã lưu" Icon="{ui:SymbolIcon FolderOpen24}" Command="{Binding LoadSavedCommand}"
+                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,8,0,0" />
+        </StackPanel>
+      </ui:Card>
+      <ui:Card Grid.Column="2" Style="{StaticResource Section}" VerticalAlignment="Stretch">
+        <StackPanel>
+          <TextBlock Style="{StaticResource CardTitle}" Text="Dịch &amp; nghe thử" />
+          <DockPanel>
+            <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Stop24}" ToolTip="Dừng phát" Command="{Binding StopAudioCommand}" />
+            <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Speaker224}" ToolTip="Nghe thử câu đang chọn" Command="{Binding PreviewLineCommand}" />
+            <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding TargetLanguage}" DisplayMemberPath="Display" ToolTip="Ngôn ngữ dịch và giọng nghe thử" />
+          </DockPanel>
+          <ui:Button Content="Dịch câu này" Icon="{ui:SymbolIcon Translate24}" Command="{Binding TranslateLineCommand}"
+                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,12,0,0" />
+          <ui:Button Content="Dịch cả file" Icon="{ui:SymbolIcon TextBulletListSquare24}" Command="{Binding TranslateAllCommand}"
+                     HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="0,8,0,0" />
+        </StackPanel>
+      </ui:Card>
+    </Grid>
+
+    <local:SubtitleListPanel />
+  </DockPanel>
+</UserControl>

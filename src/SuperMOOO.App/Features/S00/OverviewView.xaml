@@ -1,0 +1,223 @@
+<UserControl x:Class="SuperMOOO.App.Features.S00.OverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls"
+             xmlns:jobs="clr-namespace:SuperMOOO.Core.Jobs;assembly=SuperMOOO.Core">
+  <UserControl.Resources>
+    <!-- Ô số liệu bấm được: mở màn Tác vụ (CommandParameter đặt ở chỗ dùng). -->
+    <Style x:Key="Kpi" TargetType="ui:CardAction" BasedOn="{StaticResource {x:Type ui:CardAction}}">
+      <Setter Property="Margin" Value="0,0,14,14" />
+      <Setter Property="Padding" Value="20,16" />
+      <Setter Property="IsChevronVisible" Value="False" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Command" Value="NavigationCommands.GoToPage" />
+      <Setter Property="CommandParameter" Value="S15" />
+    </Style>
+    <Style x:Key="KpiLabel" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="13" />
+      <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+    </Style>
+    <Style x:Key="KpiValue" TargetType="TextBlock">
+      <Setter Property="FontSize" Value="30" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Margin" Value="0,6,0,0" />
+    </Style>
+    <Style x:Key="Divider" TargetType="Border">
+      <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
+      <Setter Property="BorderThickness" Value="0,0,0,1" />
+    </Style>
+  </UserControl.Resources>
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <DockPanel Margin="{StaticResource PagePadding}">
+      <c:ScreenHeader DockPanel.Dock="Top" Title="Tổng quan"
+                      Description="Tình trạng tác vụ và sức khoẻ máy; bấm vào ô số liệu để xem chi tiết.">
+        <ui:Button Content="Làm mới" Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding RefreshCommand}" />
+      </c:ScreenHeader>
+
+      <UniformGrid DockPanel.Dock="Top" Columns="5" Margin="0,0,-14,0">
+        <ui:CardAction Style="{StaticResource Kpi}" ToolTip="Mở màn Tác vụ">
+          <StackPanel>
+            <TextBlock Text="Đang chạy" Style="{StaticResource KpiLabel}" />
+            <TextBlock Text="{Binding Running}" Style="{StaticResource KpiValue}" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+          </StackPanel>
+        </ui:CardAction>
+        <ui:CardAction Style="{StaticResource Kpi}" ToolTip="Mở màn Tác vụ">
+          <StackPanel>
+            <TextBlock Text="Đang chờ" Style="{StaticResource KpiLabel}" />
+            <TextBlock Text="{Binding Queued}" Style="{StaticResource KpiValue}" />
+          </StackPanel>
+        </ui:CardAction>
+        <ui:CardAction Style="{StaticResource Kpi}" ToolTip="Mở màn Tác vụ">
+          <StackPanel>
+            <TextBlock Text="Xong hôm nay" Style="{StaticResource KpiLabel}" />
+            <TextBlock Text="{Binding SucceededToday}" Style="{StaticResource KpiValue}" Foreground="{DynamicResource SystemFillColorSuccessBrush}" />
+          </StackPanel>
+        </ui:CardAction>
+        <ui:CardAction Style="{StaticResource Kpi}" ToolTip="Mở màn Tác vụ">
+          <StackPanel>
+            <TextBlock Text="Lỗi hôm nay" Style="{StaticResource KpiLabel}" />
+            <TextBlock Text="{Binding FailedToday}" Style="{StaticResource KpiValue}" Foreground="{DynamicResource SystemFillColorCriticalBrush}" />
+          </StackPanel>
+        </ui:CardAction>
+        <ui:CardAction Style="{StaticResource Kpi}" CommandParameter="S14" ToolTip="Mở Đăng bài &amp; lịch đăng để xử lý">
+          <StackPanel>
+            <TextBlock Text="Cần xử lý" Style="{StaticResource KpiLabel}" />
+            <TextBlock Text="{Binding OpenActions}" Style="{StaticResource KpiValue}" Foreground="{DynamicResource SystemFillColorCautionBrush}" />
+          </StackPanel>
+        </ui:CardAction>
+      </UniformGrid>
+
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="2*" />
+          <ColumnDefinition Width="14" />
+          <ColumnDefinition Width="*" MinWidth="340" />
+        </Grid.ColumnDefinitions>
+
+        <ui:Card Style="{StaticResource FillSection}" Margin="0">
+          <DockPanel>
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+              <ui:Button DockPanel.Dock="Right" Appearance="Transparent" Content="Xem tất cả" Padding="8,4"
+                         Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                         Command="NavigationCommands.GoToPage" CommandParameter="S15" />
+              <TextBlock Text="Tác vụ gần đây" Style="{StaticResource CardTitle}" Margin="0" VerticalAlignment="Center" />
+            </DockPanel>
+            <Grid>
+              <ItemsControl ItemsSource="{Binding RecentJobs}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Style="{StaticResource Divider}" Padding="0,10">
+                      <Grid>
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="Auto" />
+                          <ColumnDefinition Width="150" />
+                          <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,16,0">
+                          <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" ToolTip="{Binding Title}" />
+                          <TextBlock Style="{StaticResource Hint}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"
+                                     Text="{Binding Summary}" ToolTip="{Binding Summary}" />
+                        </StackPanel>
+                        <Border x:Name="Pill" Grid.Column="1" CornerRadius="10" Padding="10,2" VerticalAlignment="Center" Margin="0,0,16,0"
+                                Background="{DynamicResource ControlFillColorSecondaryBrush}">
+                          <TextBlock x:Name="PillText" Text="{Binding StatusLabel}" FontSize="12" FontWeight="SemiBold"
+                                     Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </Border>
+                        <DockPanel Grid.Column="2" VerticalAlignment="Center">
+                          <TextBlock DockPanel.Dock="Right" Text="{Binding ProgressPercent, StringFormat={}{0:0}%}" Style="{StaticResource ValueText}" MinWidth="40" />
+                          <ProgressBar Value="{Binding ProgressPercent, Mode=OneWay}" Maximum="100" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <TextBlock Grid.Column="3" Text="{Binding Created}" Style="{StaticResource ValueText}" MinWidth="100" />
+                      </Grid>
+                    </Border>
+                    <DataTemplate.Triggers>
+                      <DataTrigger Binding="{Binding Status}" Value="{x:Static jobs:JobStatus.Running}">
+                        <Setter TargetName="Pill" Property="Background" Value="#1F1E6FD9" />
+                        <Setter TargetName="PillText" Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Status}" Value="{x:Static jobs:JobStatus.Succeeded}">
+                        <Setter TargetName="Pill" Property="Background" Value="#1F0F9D58" />
+                        <Setter TargetName="PillText" Property="Foreground" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Status}" Value="{x:Static jobs:JobStatus.Failed}">
+                        <Setter TargetName="Pill" Property="Background" Value="#1FD13438" />
+                        <Setter TargetName="PillText" Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                      </DataTrigger>
+                      <DataTrigger Binding="{Binding Status}" Value="{x:Static jobs:JobStatus.WaitingManualRetry}">
+                        <Setter TargetName="Pill" Property="Background" Value="#1FF7A000" />
+                        <Setter TargetName="PillText" Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                      </DataTrigger>
+                    </DataTemplate.Triggers>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <c:EmptyState Icon="TaskListLtr24" Margin="0,24,0,24"
+                            Text="Chưa có tác vụ nào. Chọn một màn ở thanh bên trái (vd. Lồng tiếng video) để bắt đầu."
+                            Visibility="{Binding RecentJobs.Count, Converter={StaticResource EmptyToVis}}" />
+            </Grid>
+          </DockPanel>
+        </ui:Card>
+
+        <ui:Card Grid.Column="2" Style="{StaticResource FillSection}" Margin="0">
+          <StackPanel>
+            <TextBlock Text="Sức khoẻ máy" Style="{StaticResource CardTitle}" Margin="0,0,0,2" />
+            <TextBlock Text="{Binding Machine}" Style="{StaticResource Hint}" Margin="0,0,0,14" />
+
+            <ItemsControl ItemsSource="{Binding Usage}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Margin="0,0,0,12">
+                    <DockPanel>
+                      <TextBlock DockPanel.Dock="Right" Text="{Binding Detail}" Style="{StaticResource Hint}" VerticalAlignment="Center" />
+                      <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" Margin="0,0,8,0" />
+                    </DockPanel>
+                    <ProgressBar x:Name="Bar" Value="{Binding Percent, Mode=OneWay}" Maximum="100" Margin="0,6,0,0" />
+                  </StackPanel>
+                  <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding Warn}" Value="True">
+                      <Setter TargetName="Bar" Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                    </DataTrigger>
+                  </DataTemplate.Triggers>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <Border Style="{StaticResource Divider}" Margin="0,2,0,12" />
+
+            <DockPanel Margin="0,0,0,8">
+              <ui:SymbolIcon Filled="True" FontSize="18" Margin="0,0,8,0"
+                             VerticalAlignment="Center">
+                <ui:SymbolIcon.Style>
+                  <Style TargetType="ui:SymbolIcon">
+                    <Setter Property="Symbol" Value="CheckmarkCircle24" />
+                    <Setter Property="Foreground" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding HealthOk}" Value="False">
+                        <Setter Property="Symbol" Value="Warning24" />
+                        <Setter Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </ui:SymbolIcon.Style>
+              </ui:SymbolIcon>
+              <TextBlock Text="{Binding HealthSummary}" FontWeight="SemiBold" VerticalAlignment="Center" />
+            </DockPanel>
+
+            <ItemsControl ItemsSource="{Binding Components}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid Margin="0,4">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="26" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:SymbolIcon x:Name="Icon" Symbol="Checkmark16" FontSize="14" VerticalAlignment="Top" Margin="0,2,0,0" HorizontalAlignment="Left"
+                                   Foreground="{DynamicResource SystemFillColorSuccessBrush}" />
+                    <StackPanel Grid.Column="1">
+                      <TextBlock Text="{Binding Name}" />
+                      <TextBlock Text="{Binding Detail}" Style="{StaticResource Hint}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                                 ToolTip="{Binding Detail}" />
+                    </StackPanel>
+                  </Grid>
+                  <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding Ok}" Value="False">
+                      <Setter TargetName="Icon" Property="Symbol" Value="Warning16" />
+                      <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                    </DataTrigger>
+                  </DataTemplate.Triggers>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ui:Button Content="Kiểm tra chi tiết" Icon="{ui:SymbolIcon Stethoscope24}" Margin="0,12,0,0"
+                       ToolTip="Mở Cài đặt &amp; hệ thống (mục Kiểm tra hệ thống)"
+                       Command="NavigationCommands.GoToPage" CommandParameter="S16" />
+          </StackPanel>
+        </ui:Card>
+      </Grid>
+    </DockPanel>
+  </ScrollViewer>
+</UserControl>

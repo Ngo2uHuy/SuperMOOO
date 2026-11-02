@@ -1,0 +1,32 @@
+﻿<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Core -->
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.13" />
+    <!-- Data -->
+    <PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.13" />
+    <PackageVersion Include="Dapper" Version="2.1.89" />
+    <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="10.0.13" />
+    <!-- Infrastructure -->
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.13" />
+    <PackageVersion Include="Quartz" Version="4.6.0" />
+    <PackageVersion Include="Quartz.Extensions.Hosting" Version="4.6.0" />
+    <PackageVersion Include="Serilog" Version="4.4.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageVersion Include="Serilog.Extensions.Hosting" Version="10.0.0" />
+    <!-- Media / AI / Social -->
+    <PackageVersion Include="Grpc.Net.Client" Version="2.84.0" />
+    <PackageVersion Include="Grpc.Tools" Version="2.84.0" />
+    <PackageVersion Include="Google.Protobuf" Version="3.36.2" />
+    <!-- App -->
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageVersion Include="LibVLCSharp.WPF" Version="3.10.2" />
+    <PackageVersion Include="VideoLAN.LibVLC.Windows" Version="3.0.24" />
+    <PackageVersion Include="Velopack" Version="1.2.161" />
+    <PackageVersion Include="WPF-UI" Version="4.3.0" />
+    <PackageVersion Include="WPF-UI.Tray" Version="4.3.0" />
+  </ItemGroup>
+</Project>

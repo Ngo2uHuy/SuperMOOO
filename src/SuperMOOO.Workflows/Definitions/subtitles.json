@@ -1,0 +1,52 @@
+{
+  "id": "subtitles",
+  "title": "Chỉ phụ đề",
+  "steps": [
+    {
+      "id": "download",
+      "kind": "download",
+      "when": "download"
+    },
+    {
+      "id": "probe",
+      "kind": "probe",
+      "options": {
+        "requireVideo": false
+      }
+    },
+    {
+      "id": "audio",
+      "kind": "extract_audio",
+      "options": {
+        "sampleRate": 16000,
+        "mono": true
+      }
+    },
+    {
+      "id": "asr",
+      "kind": "asr",
+      "options": {
+        "wordTimestamps": true
+      }
+    },
+    {
+      "id": "translate",
+      "kind": "translate",
+      "when": "translate"
+    },
+    {
+      "id": "subs",
+      "kind": "export_subtitles"
+    },
+    {
+      "id": "mask",
+      "kind": "mask_region",
+      "when": "mask"
+    },
+    {
+      "id": "burn",
+      "kind": "burn_subtitles",
+      "when": "burn"
+    }
+  ]
+}

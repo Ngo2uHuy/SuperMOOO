@@ -1,0 +1,133 @@
+<UserControl x:Class="SuperMOOO.App.Features.S11.MonitorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls"
+             xmlns:s11="clr-namespace:SuperMOOO.App.Features.S11">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Theo dõi &amp; Social Listening"
+                    Description="Theo dõi kênh/từ khoá theo lịch, xem biểu đồ chỉ số, hạn mức API và gọi các tác vụ social listening." />
+    <TextBlock DockPanel.Dock="Bottom" Style="{StaticResource Hint}" Text="{Binding Status}" Margin="0,8,0,0"
+               Visibility="{Binding Status, Converter={StaticResource NotEmptyToVis}}" />
+
+    <c:ScreenJobsPanel x:Name="ScreenJobs" DockPanel.Dock="Bottom" Margin="0,12,0,0" />
+    <TabControl x:Name="Tabs">
+      <TabItem Header="Theo dõi">
+        <DockPanel Margin="0,12,0,0">
+          <ui:Card DockPanel.Dock="Top" Style="{StaticResource Section}">
+            <StackPanel>
+              <TextBlock Style="{StaticResource CardTitle}" Text="Thêm mục theo dõi" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="2*" />
+                  <ColumnDefinition Width="140" />
+                  <ColumnDefinition Width="120" />
+                  <ColumnDefinition Width="110" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <c:Field Header="Tên gợi nhớ" Margin="0,0,8,0">
+                  <ui:TextBox Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Kênh A" />
+                </c:Field>
+                <c:Field Grid.Column="1" Header="Liên kết kênh hoặc từ khoá" Margin="0,0,8,0">
+                  <ui:TextBox Text="{Binding NewUrl, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="https://www.youtube.com/@kenh" />
+                </c:Field>
+                <c:Field Grid.Column="2" Header="Nền tảng" Margin="0,0,8,0">
+                  <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding Platforms}" SelectedItem="{Binding NewPlatform}" />
+                </c:Field>
+                <c:Field Grid.Column="3" Header="Loại" Margin="0,0,8,0">
+                  <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding TargetTypes}" SelectedItem="{Binding NewType}" />
+                </c:Field>
+                <c:Field Grid.Column="4" Header="Mỗi (giờ)" Margin="0,0,8,0">
+                  <ui:TextBox Text="{Binding NewFrequency, UpdateSourceTrigger=PropertyChanged}" />
+                </c:Field>
+                <ui:Button Grid.Column="5" Appearance="Primary" Content="Thêm" Icon="{ui:SymbolIcon Add24}" VerticalAlignment="Bottom"
+                           Command="{Binding AddWatchCommand}" />
+              </Grid>
+            </StackPanel>
+          </ui:Card>
+          <ui:Card Style="{StaticResource FillSection}" Margin="0">
+            <DockPanel>
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <TextBlock Style="{StaticResource CardTitle}" Text="Danh sách theo dõi" Margin="0" VerticalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                  <ui:Button Content="Kiểm tra ngay" Icon="{ui:SymbolIcon ArrowSync24}" Command="{Binding CheckNowCommand}" ToolTip="Xếp job kiểm tra mục đang chọn" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Làm mới" Command="{Binding RefreshWatchCommand}" />
+                  <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Xoá mục đang chọn" Command="{Binding DeleteWatchCommand}" />
+                </StackPanel>
+              </DockPanel>
+              <Grid>
+                <DataGrid ItemsSource="{Binding Watch}" SelectedItem="{Binding SelectedWatch}" AutoGenerateColumns="False" IsReadOnly="True"
+                          SelectionMode="Single" CanUserAddRows="False" HeadersVisibility="Column">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Tên" Binding="{Binding Name, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Nền tảng" Binding="{Binding Platform, Mode=OneWay}" Width="110" />
+                    <DataGridTextColumn Header="Loại" Binding="{Binding Type, Mode=OneWay}" Width="90" />
+                    <DataGridTextColumn Header="Liên kết / từ khoá" Binding="{Binding Url, Mode=OneWay}" Width="2*" />
+                    <DataGridTextColumn Header="Tần suất" Binding="{Binding Frequency, Mode=OneWay}" Width="90" />
+                    <DataGridTextColumn Header="Kiểm tra lần cuối" Binding="{Binding LastChecked, Mode=OneWay}" Width="140" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <c:EmptyState Icon="Eye24" Text="Chưa theo dõi mục nào. Nhập liên kết kênh hoặc từ khoá ở trên rồi bấm Thêm."
+                              Visibility="{Binding Watch.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+        </DockPanel>
+      </TabItem>
+
+      <TabItem Header="Chỉ số">
+        <ui:Card Style="{StaticResource FillSection}" Margin="0,12,0,0">
+          <DockPanel>
+            <WrapPanel DockPanel.Dock="Top">
+              <c:Field Header="Kênh / video" Margin="0,0,8,0" MinWidth="360">
+                <ComboBox ItemsSource="{Binding Entities}" SelectedItem="{Binding SelectedEntity}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock TextTrimming="CharacterEllipsis"><Run Text="{Binding Platform, Mode=OneWay}" /> · <Run Text="{Binding EntityTitle, Mode=OneWay}" /> (<Run Text="{Binding EntityKey, Mode=OneWay}" />)</TextBlock>
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </c:Field>
+              <c:Field Header="Chỉ số" Margin="0,0,8,0" MinWidth="140">
+                <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding MetricNames}" SelectedItem="{Binding SelectedMetric}" />
+              </c:Field>
+              <ui:Button Appearance="Primary" Content="Xem biểu đồ" Icon="{ui:SymbolIcon DataTrending24}" Command="{Binding LoadChartCommand}"
+                         VerticalAlignment="Bottom" Margin="0,0,8,0" />
+              <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowClockwise24}" ToolTip="Làm mới danh sách kênh/video"
+                         Command="{Binding RefreshEntitiesCommand}" VerticalAlignment="Bottom" Margin="0" />
+            </WrapPanel>
+            <s11:MetricChart x:Name="Chart" Margin="0,12,0,0" />
+          </DockPanel>
+        </ui:Card>
+      </TabItem>
+
+      <TabItem Header="Nhật ký API">
+        <DockPanel Margin="0,12,0,0">
+          <ui:Card Style="{StaticResource FillSection}" Margin="0">
+            <DockPanel>
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <ui:Button DockPanel.Dock="Right" Content="Làm mới" Command="{Binding RefreshInfoCommand}" />
+                <TextBlock Style="{StaticResource CardTitle}" Text="Nhật ký gọi API" />
+              </DockPanel>
+              <Grid>
+                <DataGrid ItemsSource="{Binding Audit}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" HeadersVisibility="Column">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Lúc" Binding="{Binding At, Mode=OneWay}" Width="130" />
+                    <DataGridTextColumn Header="Nguồn" Binding="{Binding Source, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Thao tác" Binding="{Binding Action, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Đích" Binding="{Binding Target, Mode=OneWay}" Width="2*" />
+                    <DataGridTextColumn Header="Trạng thái" Binding="{Binding Status, Mode=OneWay}" Width="*" />
+                    <DataGridTextColumn Header="Số bản ghi" Binding="{Binding Records, Mode=OneWay}" Width="100" />
+                  </DataGrid.Columns>
+                </DataGrid>
+                <c:EmptyState Icon="History24" Text="Chưa có lượt gọi API nào được ghi lại."
+                              Visibility="{Binding Audit.Count, Converter={StaticResource EmptyToVis}}" />
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+        </DockPanel>
+      </TabItem>
+    </TabControl>
+  </DockPanel>
+</UserControl>

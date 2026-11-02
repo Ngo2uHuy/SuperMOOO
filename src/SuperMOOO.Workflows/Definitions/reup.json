@@ -1,0 +1,44 @@
+{
+  "id": "reup",
+  "title": "Reup Studio",
+  "steps": [
+    {
+      "id": "download",
+      "kind": "download",
+      "when": "download"
+    },
+    {
+      "id": "probe",
+      "kind": "probe"
+    },
+    {
+      "id": "tts",
+      "kind": "tts",
+      "when": "voiceover"
+    },
+    {
+      "id": "dub",
+      "kind": "assemble_dub",
+      "when": "voiceover"
+    },
+    {
+      "id": "separate",
+      "kind": "separate_vocals",
+      "when": "separate"
+    },
+    {
+      "id": "render",
+      "kind": "reup_render"
+    },
+    {
+      "id": "introOutro",
+      "kind": "intro_outro",
+      "when": "introOutro"
+    },
+    {
+      "id": "deliver",
+      "kind": "deliver",
+      "when": "deliver"
+    }
+  ]
+}

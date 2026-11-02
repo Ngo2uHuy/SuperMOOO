@@ -1,0 +1,509 @@
+﻿<UserControl x:Class="SuperMOOO.App.Features.S18.WhiteboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:c="clr-namespace:SuperMOOO.App.Controls"
+             xmlns:local="clr-namespace:SuperMOOO.App.Features.S18">
+  <DockPanel Margin="{StaticResource PagePadding}">
+    <c:ScreenHeader DockPanel.Dock="Top" Title="Video vẽ tay AI"
+                    Description="Nhập chủ đề, AI viết kịch bản, vẽ ảnh từng cảnh, đọc lời và dựng video whiteboard, stickman hoặc hoạt hình.">
+      <ui:Button Appearance="Primary" Content="Bắt đầu" Icon="{ui:SymbolIcon Play24}" Command="{Binding StartCommand}" />
+    </c:ScreenHeader>
+
+    <c:SplitView PrimaryRatio="1.15">
+      <c:SplitView.Primary>
+        <TabControl SelectedIndex="{Binding TabIndex}">
+          <TabItem Header="Sản xuất">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+              <StackPanel Margin="0,12,16,0">
+                <ui:Card Style="{StaticResource Section}">
+                  <StackPanel>
+                    <c:LlmPicker DataContext="{Binding ScriptAi}" />
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Chủ đề" />
+                    <TextBlock Style="{StaticResource Hint}" Margin="0,-6,0,8" Text="Mỗi dòng là một video." />
+                    <ui:TextBox Text="{Binding Topics, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="120"
+                                VerticalContentAlignment="Top" VerticalScrollBarVisibility="Auto" PlaceholderText="Ví dụ: Cách ngủ ngon hơn mỗi ngày" />
+                    <ui:TextBox Text="{Binding Niche, UpdateSourceTrigger=PropertyChanged}" Margin="0,8,0,0" PlaceholderText="Ngách để gợi ý (vd: tâm lý, tài chính); để trống dùng ngách mặc định" />
+                    <WrapPanel Margin="0,8,0,0">
+                      <ui:Button Content="Gợi ý chủ đề viral" Icon="{ui:SymbolIcon Sparkle24}" Command="{Binding SuggestTopicsCommand}" Margin="0,0,8,0" />
+                      <ui:Button Content="Nhập từ file Excel/TXT/CSV" Icon="{ui:SymbolIcon DocumentArrowLeft24}" Command="{Binding ImportTopicsCommand}" Margin="0,0,8,0" />
+                      <ui:Button Content="Xoá trắng" Icon="{ui:SymbolIcon Delete24}" Command="{Binding ClearTopicsCommand}" />
+                    </WrapPanel>
+                    <DockPanel Margin="0,8,0,0">
+                      <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding SuggestCount}" MinWidth="24" />
+                      <TextBlock DockPanel.Dock="Left" Style="{StaticResource Hint}" Text="Số chủ đề gợi ý" VerticalAlignment="Center" Margin="0,0,8,0" />
+                      <Slider Minimum="1" Maximum="20" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding SuggestCount}" />
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Hint}" Margin="0,8,0,0" Text="{Binding TopicSummary}" />
+                  </StackPanel>
+                </ui:Card>
+
+                <ui:Card Style="{StaticResource Section}">
+                  <StackPanel>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Phong cách &amp; kịch bản" />
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Phong cách hình">
+                        <ComboBox ItemsSource="{x:Static local:WhiteboardViewModel.Styles}" SelectedItem="{Binding SelectedStyle}" DisplayMemberPath="Label" />
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Giọng kể / tone">
+                        <ComboBox ItemsSource="{x:Static local:WhiteboardViewModel.Tones}" SelectedItem="{Binding SelectedTone}" DisplayMemberPath="Label" />
+                      </c:Field>
+                    </Grid>
+                    <c:Field Header="Giọng kể tự do" Hint="Để trống = dùng giọng kể đã chọn ở trên. Ví dụ: kể như một người bạn thân đang tâm sự.">
+                      <ui:TextBox Text="{Binding CustomTone, UpdateSourceTrigger=PropertyChanged}" />
+                    </c:Field>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Số cảnh" Margin="0">
+                        <DockPanel>
+                          <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding NumScenes}" MinWidth="24" />
+                          <Slider Minimum="1" Maximum="30" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding NumScenes}" />
+                        </DockPanel>
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Tỉ lệ khung" Margin="0">
+                        <ComboBox ItemsSource="{x:Static local:WhiteboardViewModel.Aspects}" SelectedItem="{Binding Aspect}" />
+                      </c:Field>
+                    </Grid>
+                  </StackPanel>
+                </ui:Card>
+
+                <ui:Card Style="{StaticResource Section}">
+                  <StackPanel>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Giọng đọc &amp; nguồn ảnh" />
+                    <c:Field Header="Ngôn ngữ video" Hint="Quyết định ngôn ngữ kịch bản, phụ đề và danh sách giọng đọc.">
+                      <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}" DisplayMemberPath="Display" />
+                    </c:Field>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Giọng đọc" Margin="0">
+                        <DockPanel>
+                          <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Speaker224}" ToolTip="Nghe thử giọng với câu mẫu" Command="{Binding PreviewVoiceCommand}" Margin="8,0,0,0" />
+                          <ComboBox ItemsSource="{Binding Voices}" SelectedItem="{Binding Voice}" DisplayMemberPath="DisplayName" />
+                        </DockPanel>
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Nguồn ảnh" Hint="Đổi mặc định ở Cài đặt → Ảnh AI." Margin="0">
+                        <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{Binding ImageSources}" SelectedItem="{Binding ImageSource}" />
+                      </c:Field>
+                    </Grid>
+                    <c:Field Header="Tốc độ đọc" Margin="0,12,0,0">
+                      <DockPanel>
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding Speed, StringFormat={}{0:0.0}x}" MinWidth="36" />
+                        <Slider Minimum="0.5" Maximum="2" TickFrequency="0.1" IsSnapToTickEnabled="True" Value="{Binding Speed}" />
+                      </DockPanel>
+                    </c:Field>
+                  </StackPanel>
+                </ui:Card>
+
+                <ui:CardExpander Style="{StaticResource Advanced}" Header="Dựng video (chất lượng, tốc độ vẽ, bàn tay)" Icon="{ui:SymbolIcon Settings24}">
+                  <StackPanel>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="FPS">
+                        <ComboBox ItemsSource="{x:Static local:WhiteboardViewModel.FpsChoices}" SelectedItem="{Binding Fps}" />
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Chất lượng">
+                        <ComboBox ItemsSource="{x:Static local:WhiteboardViewModel.Qualities}" SelectedItem="{Binding SelectedQuality}" DisplayMemberPath="Label" />
+                      </c:Field>
+                      <c:Field Grid.Column="4" Header="Encoder">
+                        <ComboBox ItemsSource="{x:Static local:WhiteboardViewModel.Encoders}" SelectedItem="{Binding SelectedEncoder}" DisplayMemberPath="Label" />
+                      </c:Field>
+                    </Grid>
+                    <c:Field Header="Tốc độ vẽ">
+                      <DockPanel>
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding DrawSpeed, StringFormat={}{0:0.0}x}" MinWidth="36" />
+                        <Slider Minimum="0.5" Maximum="3" TickFrequency="0.1" IsSnapToTickEnabled="True" Value="{Binding DrawSpeed}" />
+                      </DockPanel>
+                    </c:Field>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Fade sang ảnh màu (giây)">
+                        <DockPanel>
+                          <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding ColorFadeSec, StringFormat={}{0:0.0}s}" MinWidth="36" />
+                          <Slider Minimum="0" Maximum="3" TickFrequency="0.1" IsSnapToTickEnabled="True" Value="{Binding ColorFadeSec}" />
+                        </DockPanel>
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Giữ cuối cảnh (giây)">
+                        <DockPanel>
+                          <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding TailHoldSec, StringFormat={}{0:0.0}s}" MinWidth="36" />
+                          <Slider Minimum="0" Maximum="2" TickFrequency="0.1" IsSnapToTickEnabled="True" Value="{Binding TailHoldSec}" />
+                        </DockPanel>
+                      </c:Field>
+                    </Grid>
+                    <c:Field Header="Kiểu tay vẽ">
+                      <ComboBox ItemsSource="{x:Static local:WhiteboardViewModel.Hands}" SelectedItem="{Binding SelectedHand}" DisplayMemberPath="Label" />
+                    </c:Field>
+                    <c:Field Header="Ảnh bàn tay tuỳ chỉnh" Hint="PNG nền trong suốt; file .json cùng tên (tipX, tipY) chỉ vị trí đầu bút."
+                             Visibility="{Binding IsCustomHand, Converter={StaticResource BoolToVis}}">
+                      <DockPanel>
+                        <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn ảnh bàn tay…" Command="{Binding PickHandCommand}" />
+                        <ui:TextBox Text="{Binding CustomHandPath}" c:FileDrop.IsEnabled="True" />
+                      </DockPanel>
+                    </c:Field>
+                    <c:Field Header="Thư mục xuất video" Hint="{Binding OutputFolderHint}" Margin="0">
+                      <DockPanel>
+                        <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn thư mục xuất…" Command="{Binding PickOutputFolderCommand}" />
+                        <ui:TextBox Text="{Binding OutputFolder}" c:FileDrop.IsEnabled="True" />
+                      </DockPanel>
+                    </c:Field>
+                  </StackPanel>
+                </ui:CardExpander>
+
+                <ui:CardExpander Style="{StaticResource Advanced}" Header="Intro / Outro" Icon="{ui:SymbolIcon VideoClip24}">
+                  <StackPanel>
+                    <c:Field Header="Intro" Hint="Tuỳ chọn: video ghép vào đầu mỗi video.">
+                      <DockPanel>
+                        <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn video intro…" Command="{Binding PickIntroOutroCommand}" CommandParameter="intro" />
+                        <ui:TextBox Text="{Binding IntroPath}" c:FileDrop.IsEnabled="True" />
+                      </DockPanel>
+                    </c:Field>
+                    <c:Field Header="Outro" Hint="Tuỳ chọn: video ghép vào cuối mỗi video." Margin="0">
+                      <DockPanel>
+                        <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn video outro…" Command="{Binding PickIntroOutroCommand}" CommandParameter="outro" />
+                        <ui:TextBox Text="{Binding OutroPath}" c:FileDrop.IsEnabled="True" />
+                      </DockPanel>
+                    </c:Field>
+                  </StackPanel>
+                </ui:CardExpander>
+
+                <ui:CardExpander Style="{StaticResource Advanced}" Header="Đăng bài sau khi xong" Icon="{ui:SymbolIcon Send24}">
+                  <StackPanel>
+                    <ui:ToggleSwitch Content="Xếp video vào lịch đăng" IsChecked="{Binding DeliverEnabled}" Margin="0,0,0,12" />
+                    <c:Field Header="Kênh đích" Hint="Kết nối tài khoản và đồng bộ kênh ở S23. Kênh ghi &quot;chưa đăng được&quot; cần xử lý trước (di chuột để xem lý do).">
+                      <c:DestinationPicker DataContext="{Binding Destinations}" />
+                    </c:Field>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Chế độ" Hint="review: bạn duyệt từng bài; automatic: tự đăng đúng giờ">
+                        <ComboBox ItemsSource="{x:Static local:WhiteboardViewModel.DeliveryModesList}" SelectedItem="{Binding DeliveryMode}" />
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Quyền riêng tư">
+                        <ComboBox ItemTemplate="{StaticResource LabelItem}" ItemsSource="{x:Static local:WhiteboardViewModel.Privacies}" SelectedItem="{Binding Privacy}" />
+                      </c:Field>
+                    </Grid>
+                    <c:Field Header="Tiêu đề (trống = tiêu đề SEO do AI viết)">
+                      <ui:TextBox Text="{Binding DeliveryTitle, UpdateSourceTrigger=PropertyChanged}" />
+                    </c:Field>
+                    <c:Field Header="Mô tả (trống = mô tả + hashtag SEO do AI viết)">
+                      <ui:TextBox Text="{Binding DeliveryCaption, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60" VerticalContentAlignment="Top" />
+                    </c:Field>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Chờ trước khi đăng (phút)" Margin="0">
+                        <ui:TextBox Text="{Binding DelayMinutes}" />
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Cách nhau (phút)" Margin="0">
+                        <ui:TextBox Text="{Binding SpacingMinutes}" />
+                      </c:Field>
+                      <c:Field Grid.Column="4" Header="Tối đa mỗi ngày" Margin="0">
+                        <ui:TextBox Text="{Binding DailyLimit}" />
+                      </c:Field>
+                    </Grid>
+                  </StackPanel>
+                </ui:CardExpander>
+              </StackPanel>
+            </ScrollViewer>
+          </TabItem>
+
+          <TabItem Header="Thương hiệu">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+              <StackPanel Margin="0,12,16,0" DataContext="{Binding Branding}">
+                <ui:Card Style="{StaticResource Section}">
+                  <StackPanel>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Mẫu thương hiệu" />
+                    <DockPanel Margin="0,0,0,8">
+                      <ui:Button DockPanel.Dock="Right" Content="Xoá" Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeletePresetCommand}" Margin="8,0,0,0" />
+                      <ComboBox ItemsSource="{Binding PresetNames}" SelectedItem="{Binding SelectedPreset}" />
+                    </DockPanel>
+                    <DockPanel>
+                      <ui:Button DockPanel.Dock="Right" Content="Lưu mẫu" Icon="{ui:SymbolIcon Save24}" Command="{Binding SavePresetCommand}" Margin="8,0,0,0" />
+                      <ui:TextBox Text="{Binding PresetName, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Tên mẫu (trùng tên thì ghi đè)" />
+                    </DockPanel>
+                    <TextBlock Style="{StaticResource Hint}" Margin="0,8,0,0" Text="Video mới dùng các giá trị đang hiển thị ở đây, kể cả khi chưa lưu." />
+                  </StackPanel>
+                </ui:Card>
+
+                <ui:Card Style="{StaticResource Section}">
+                  <StackPanel>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Phụ đề" />
+                    <c:Field Header="Chế độ phụ đề">
+                      <ComboBox ItemsSource="{x:Static local:BrandingEditorModel.SubtitleModeChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding SubtitleMode}" />
+                    </c:Field>
+                    <TextBlock Style="{StaticResource Hint}" Text="Mẫu màu nhanh" Margin="0,0,0,4" />
+                    <ItemsControl ItemsSource="{x:Static local:BrandingEditorModel.ColorPresets}" Margin="0,0,0,8">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <ui:Button Content="{Binding Name}" Margin="0,0,6,6"
+                                     Command="{Binding DataContext.ApplyColorPresetCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}" />
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <DockPanel Margin="0,0,0,12">
+                      <ui:Button DockPanel.Dock="Right" Content="Áp kiểu" Icon="{ui:SymbolIcon Checkmark24}" Command="{Binding ApplyStylePresetCommand}" Margin="8,0,0,0" />
+                      <ComboBox ItemsSource="{Binding StylePresets}" SelectedItem="{Binding SelectedStylePreset}" DisplayMemberPath="Name" />
+                    </DockPanel>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.6*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="0.8*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="0.8*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Font">
+                        <ComboBox ItemsSource="{Binding Fonts}" SelectedItem="{Binding FontName}" />
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Cỡ chữ">
+                        <ui:TextBox Text="{Binding FontSize, UpdateSourceTrigger=PropertyChanged}" />
+                      </c:Field>
+                      <c:Field Grid.Column="4" Header="Viền (px)">
+                        <ui:TextBox Text="{Binding Outline, UpdateSourceTrigger=PropertyChanged}" />
+                      </c:Field>
+                    </Grid>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Màu chữ">
+                        <ui:TextBox Text="{Binding TextColor, UpdateSourceTrigger=PropertyChanged}" />
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Màu viền">
+                        <ui:TextBox Text="{Binding OutlineColor, UpdateSourceTrigger=PropertyChanged}" />
+                      </c:Field>
+                      <c:Field Grid.Column="4" Header="Màu nền">
+                        <ui:TextBox Text="{Binding BackColor, UpdateSourceTrigger=PropertyChanged}" />
+                      </c:Field>
+                    </Grid>
+                    <WrapPanel Margin="0,0,0,12">
+                      <CheckBox Content="Chữ đậm" IsChecked="{Binding Bold}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                      <CheckBox Content="Nền hộp" IsChecked="{Binding BoxBackground}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                      <CheckBox Content="Viết hoa" IsChecked="{Binding UpperCase}" VerticalAlignment="Center" />
+                    </WrapPanel>
+                    <c:Field Header="Số ký tự mỗi dòng">
+                      <DockPanel>
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding MaxChars, StringFormat={}{0:0}}" />
+                        <Slider Minimum="16" Maximum="60" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding MaxChars}" />
+                      </DockPanel>
+                    </c:Field>
+                    <c:Field Header="Độ đậm nền">
+                      <DockPanel>
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding BackOpacity, StringFormat={}{0:P0}}" />
+                        <Slider Minimum="0" Maximum="1" Value="{Binding BackOpacity}" />
+                      </DockPanel>
+                    </c:Field>
+                    <c:Field Header="Vị trí dọc (kéo phụ đề trên khung xem trước bên phải)">
+                      <DockPanel>
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding SubtitleY, StringFormat={}{0:0}%}" />
+                        <Slider Minimum="50" Maximum="96" Value="{Binding SubtitleY}" />
+                      </DockPanel>
+                    </c:Field>
+                    <c:Field Header="Chữ mẫu xem trước" Margin="0">
+                      <DockPanel>
+                        <ui:Button DockPanel.Dock="Right" Content="Dải chữ mặc định" Command="{Binding CenterSubtitleCommand}" Margin="8,0,0,0" />
+                        <ui:TextBox Text="{Binding SampleText, UpdateSourceTrigger=PropertyChanged}" />
+                      </DockPanel>
+                    </c:Field>
+                  </StackPanel>
+                </ui:Card>
+
+                <ui:Card Style="{StaticResource Section}">
+                  <StackPanel>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Watermark chữ" />
+                    <CheckBox Content="Bật watermark (chữ + logo)" IsChecked="{Binding WatermarkEnabled}" Margin="0,0,0,12" />
+                    <c:Field Header="Tên kênh / chữ" Hint="Để trống = không đóng dấu chữ.">
+                      <ui:TextBox Text="{Binding WatermarkText, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="@TenKenh" />
+                    </c:Field>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.6*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="0.8*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Font">
+                        <ComboBox ItemsSource="{Binding Fonts}" SelectedItem="{Binding WatermarkFont}" />
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Cỡ chữ">
+                        <ui:TextBox Text="{Binding WatermarkSize, UpdateSourceTrigger=PropertyChanged}" />
+                      </c:Field>
+                      <c:Field Grid.Column="4" Header="Vị trí">
+                        <ComboBox ItemsSource="{x:Static local:BrandingEditorModel.Positions}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding WatermarkPosition}" />
+                      </c:Field>
+                    </Grid>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Màu chữ">
+                        <ui:TextBox Text="{Binding WatermarkColor, UpdateSourceTrigger=PropertyChanged}" />
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Màu viền">
+                        <ui:TextBox Text="{Binding WatermarkOutline, UpdateSourceTrigger=PropertyChanged}" />
+                      </c:Field>
+                    </Grid>
+                    <c:Field Header="Độ mờ">
+                      <DockPanel>
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding WatermarkOpacity, StringFormat={}{0:P0}}" />
+                        <Slider Minimum="0.1" Maximum="1" Value="{Binding WatermarkOpacity}" />
+                      </DockPanel>
+                    </c:Field>
+                    <DockPanel>
+                      <ui:Button DockPanel.Dock="Right" Content="Đặt lại vị trí" Command="{Binding ResetOverlayPositionsCommand}" Margin="8,0,0,0" />
+                      <TextBlock Style="{StaticResource Hint}" VerticalAlignment="Center" Text="Kéo watermark/logo trên khung xem trước bên phải; chọn lại góc để bỏ vị trí đã kéo." TextWrapping="Wrap" />
+                    </DockPanel>
+                  </StackPanel>
+                </ui:Card>
+
+                <ui:Card Style="{StaticResource Section}">
+                  <StackPanel>
+                    <TextBlock Style="{StaticResource CardTitle}" Text="Logo" />
+                    <c:Field Header="Ảnh logo" Hint="PNG nền trong suốt cho đẹp. Để trống = không gắn logo.">
+                      <DockPanel>
+                        <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="Bỏ logo" Command="{Binding ClearLogoCommand}" />
+                        <ui:Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Chọn ảnh logo…" Command="{Binding PickLogoCommand}" />
+                        <ui:TextBox Text="{Binding LogoPath}" c:FileDrop.IsEnabled="True" />
+                      </DockPanel>
+                    </c:Field>
+                    <c:Field Header="Vị trí">
+                      <ComboBox ItemsSource="{x:Static local:BrandingEditorModel.Positions}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding LogoPosition}" />
+                    </c:Field>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <c:Field Header="Cỡ logo (% chiều rộng)" Margin="0">
+                        <DockPanel>
+                          <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding LogoSizePercent, StringFormat={}{0:0}%}" MinWidth="36" />
+                          <Slider Minimum="5" Maximum="50" Value="{Binding LogoSizePercent}" />
+                        </DockPanel>
+                      </c:Field>
+                      <c:Field Grid.Column="2" Header="Độ mờ" Margin="0">
+                        <DockPanel>
+                          <TextBlock DockPanel.Dock="Right" Style="{StaticResource ValueText}" Text="{Binding LogoOpacity, StringFormat={}{0:P0}}" MinWidth="36" />
+                          <Slider Minimum="0.1" Maximum="1" Value="{Binding LogoOpacity}" />
+                        </DockPanel>
+                      </c:Field>
+                    </Grid>
+                  </StackPanel>
+                </ui:Card>
+              </StackPanel>
+            </ScrollViewer>
+          </TabItem>
+          <TabItem Header="Thư viện">
+            <DockPanel Margin="0,12,16,0">
+              <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                <ui:Button DockPanel.Dock="Right" Content="Mở thư mục gốc" Icon="{ui:SymbolIcon FolderOpen24}" Command="{Binding OpenRootFolderCommand}" Margin="8,0,0,0" />
+                <ui:Button DockPanel.Dock="Right" Content="Làm mới" Icon="{ui:SymbolIcon ArrowSync24}" Command="{Binding RefreshLibraryCommand}" />
+                <TextBlock Style="{StaticResource Hint}" VerticalAlignment="Center" Text="{Binding Library.Count, StringFormat=Video đã xuất: {0}}" />
+              </DockPanel>
+              <DataGrid ItemsSource="{Binding Library}" SelectedItem="{Binding SelectedVideo}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                        SelectionMode="Single" HeadersVisibility="Column">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Tiêu đề" Binding="{Binding Title, Mode=OneWay}" Width="2*" />
+                  <DataGridTextColumn Header="Khung" Binding="{Binding Aspect, Mode=OneWay}" Width="60" />
+                  <DataGridTextColumn Header="Dài (giây)" Binding="{Binding DurationSec, Mode=OneWay, StringFormat={}{0:0}}" Width="80" />
+                  <DataGridTextColumn Header="MB" Binding="{Binding SizeMb, Mode=OneWay, StringFormat={}{0:0.0}}" Width="60" />
+                  <DataGridTextColumn Header="Ngày" Binding="{Binding CreatedAt, Mode=OneWay, StringFormat={}{0:dd/MM HH:mm}}" Width="100" />
+                  <DataGridTemplateColumn Header="Thao tác" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                          <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Play24}" ToolTip="Xem video"
+                                     Command="{Binding DataContext.OpenVideoCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" />
+                          <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Image24}" ToolTip="Mở thumbnail"
+                                     Command="{Binding DataContext.OpenThumbnailCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" />
+                          <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon DocumentText24}" ToolTip="Mở SEO.txt"
+                                     Command="{Binding DataContext.OpenSeoCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" />
+                          <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon FolderOpen24}" ToolTip="Mở thư mục"
+                                     Command="{Binding DataContext.OpenItemFolderCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" />
+                          <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon Delete24}" ToolTip="Xoá (chuyển vào Thùng rác)"
+                                     Command="{Binding DataContext.DeleteVideoCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" />
+                        </StackPanel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                </DataGrid.Columns>
+              </DataGrid>
+            </DockPanel>
+          </TabItem>
+        </TabControl>
+      </c:SplitView.Primary>
+
+      <c:SplitView.Secondary>
+        <DockPanel>
+          <c:ScreenJobsPanel x:Name="ScreenJobs" DockPanel.Dock="Bottom" Margin="0,12,0,0" />
+          <ContentControl x:Name="ClipHost" DockPanel.Dock="Bottom" Height="240" Margin="0,12,0,0" Focusable="False" />
+          <ui:Card Style="{StaticResource FillSection}" Margin="0">
+            <DockPanel>
+              <TextBlock DockPanel.Dock="Top" Style="{StaticResource CardTitle}" Text="Cảnh mới nhất" />
+              <Grid>
+                <Image x:Name="Frame" Source="{Binding PreviewImage}" Stretch="Uniform" />
+                <!-- Kéo dải phụ đề để đổi vị trí/cỡ chữ; chỉ hiện ở tab Thương hiệu khi phụ đề được đốt vào hình. -->
+                <c:RegionOverlay Source="{Binding Source, ElementName=Frame}">
+                  <c:SubtitleRegion Label="Phụ đề" Stroke="#FFD600" Y="{Binding Branding.SubtitleY}" Left="{Binding Branding.SubtitleLeft}" Width="{Binding Branding.SubtitleWidth}"
+                                    TextSize="{Binding Branding.FontSize}" FontName="{Binding Branding.FontName}" Text="{Binding Branding.SampleText}"
+                                    IsActive="{Binding ShowBrandingGuides}"
+                                    Visibility="{Binding Branding.ShowsSubtitleGuide, Converter={StaticResource BoolToVis}}" />
+                  <!-- Watermark chữ và logo vẽ đúng vị trí/cỡ/độ mờ như video; kéo để đổi vị trí (lưu toạ độ tự do vào mẫu). -->
+                  <c:LogoRegion Label="Logo" Stroke="#00C853" ImagePath="{Binding Branding.LogoPath}" SizePercent="{Binding Branding.LogoSizePercent}"
+                                ContentOpacity="{Binding Branding.LogoOpacity}" Position="{Binding Branding.LogoPosition}"
+                                X="{Binding Branding.LogoX}" Y="{Binding Branding.LogoY}"
+                                IsActive="{Binding ShowBrandingGuides}" Visibility="{Binding Branding.HasLogo, Converter={StaticResource BoolToVis}}" />
+                  <c:WatermarkRegion Label="Watermark" Stroke="#40C4FF" Text="{Binding Branding.WatermarkText}" FontName="{Binding Branding.WatermarkFont}"
+                                     TextSize="{Binding Branding.WatermarkSize}" TextColor="{Binding Branding.WatermarkColor}" OutlineColor="{Binding Branding.WatermarkOutline}"
+                                     ContentOpacity="{Binding Branding.WatermarkOpacity}" Position="{Binding Branding.WatermarkPosition}"
+                                     X="{Binding Branding.WatermarkX}" Y="{Binding Branding.WatermarkY}"
+                                     IsActive="{Binding ShowBrandingGuides}" Visibility="{Binding Branding.HasWatermark, Converter={StaticResource BoolToVis}}" />
+                </c:RegionOverlay>
+              </Grid>
+            </DockPanel>
+          </ui:Card>
+        </DockPanel>
+      </c:SplitView.Secondary>
+    </c:SplitView>
+  </DockPanel>
+</UserControl>

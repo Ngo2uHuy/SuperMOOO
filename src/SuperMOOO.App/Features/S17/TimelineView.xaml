@@ -1,0 +1,115 @@
+<UserControl x:Class="SuperMOOO.App.Features.S17.TimelineView"
+ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+ xmlns:c="clr-namespace:SuperMOOO.App.Controls"
+ xmlns:local="clr-namespace:SuperMOOO.App.Features.S17" AllowDrop="True">
+ <UserControl.InputBindings>
+  <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveCommand}"/>
+ </UserControl.InputBindings>
+ <DockPanel Margin="{StaticResource PagePadding}">
+  <c:ScreenHeader DockPanel.Dock="Top" Title="Dựng video / Timeline" Description="Dựng clip, tiếng gốc, voiceover, nhạc và phụ đề. Kéo mép clip để trim; video tự nối liên tiếp.">
+   <ui:Button Content="Xuất video" Appearance="Primary" Command="{Binding ExportCommand}" IsEnabled="{Binding CanEdit}"/>
+  </c:ScreenHeader>
+  <c:JobStatusBar DockPanel.Dock="Bottom" Margin="0,8,0,0"/>
+  <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8" IsEnabled="{Binding CanEdit}">
+   <ui:Button Content="Mới" Icon="{ui:SymbolIcon DocumentAdd24}" Command="{Binding NewCommand}"/>
+   <ui:Button Content="Mở dự án" Icon="{ui:SymbolIcon FolderOpen24}" Command="{Binding OpenCommand}" Margin="{StaticResource ButtonGap}"/>
+   <ui:Button Content="Lưu" Icon="{ui:SymbolIcon Save24}" Command="{Binding SaveCommand}" ToolTip="Ctrl+S" Margin="{StaticResource ButtonGap}"/>
+   <ui:Button Content="Lưu thành…" Command="{Binding SaveAsCommand}" Margin="{StaticResource ButtonGap}"/>
+   <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowUndo24}" Command="{Binding UndoCommand}" ToolTip="Hoàn tác (Ctrl+Z)" Margin="16,0,0,0"/>
+   <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowRedo24}" Command="{Binding RedoCommand}" ToolTip="Làm lại (Ctrl+Y)" Margin="{StaticResource ButtonGap}"/>
+   <TextBlock Text="{Binding ProjectTitle}" FontWeight="SemiBold" VerticalAlignment="Center" Margin="16,0,0,0"/>
+  </WrapPanel>
+  <Grid>
+   <Grid.RowDefinitions><RowDefinition Height="*" MinHeight="160"/><RowDefinition Height="8"/><RowDefinition Height="340" MinHeight="180"/></Grid.RowDefinitions>
+   <Grid>
+    <Grid.ColumnDefinitions><ColumnDefinition Width="230"/><ColumnDefinition Width="*"/><ColumnDefinition Width="270"/></Grid.ColumnDefinitions>
+    <DockPanel Margin="0,0,12,0" IsEnabled="{Binding CanEdit}">
+     <TextBlock DockPanel.Dock="Top" Text="Thêm vào timeline" Style="{StaticResource CardTitle}"/>
+     <UniformGrid DockPanel.Dock="Top" Columns="2" Margin="0,0,0,8">
+      <ui:Button Content="Video" Icon="{ui:SymbolIcon Video24}" Command="{Binding AddMediaCommand}" CommandParameter="Video" HorizontalAlignment="Stretch" Margin="0,0,4,4"/>
+      <ui:Button Content="Voiceover" Icon="{ui:SymbolIcon Mic24}" Command="{Binding AddMediaCommand}" CommandParameter="Voiceover" HorizontalAlignment="Stretch" Margin="4,0,0,4"/>
+      <ui:Button Content="Nhạc nền" Icon="{ui:SymbolIcon MusicNote224}" Command="{Binding AddMediaCommand}" CommandParameter="Music" HorizontalAlignment="Stretch" Margin="0,0,4,4"/>
+      <ui:Button Content="Phụ đề" Icon="{ui:SymbolIcon ClosedCaption24}" Command="{Binding AddSubtitleCommand}" HorizontalAlignment="Stretch" Margin="4,0,0,4"/>
+      <ui:Button Content="Nhập SRT" Icon="{ui:SymbolIcon DocumentArrowLeft24}" Command="{Binding ImportSubtitlesCommand}" HorizontalAlignment="Stretch" Margin="0,0,4,0"/>
+     </UniformGrid>
+     <TextBlock DockPanel.Dock="Top" Text="Có thể kéo thả file vào màn này." FontSize="12" Opacity="0.7" Margin="0,0,0,8"/>
+     <ListBox ItemsSource="{Binding Clips}" SelectedItem="{Binding SelectedClip}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+      <ListBox.ItemTemplate><DataTemplate><StackPanel ToolTip="{Binding Path}">
+       <TextBlock FontWeight="SemiBold">
+        <Run Text="{Binding Track, Converter={StaticResource Label}, Mode=OneWay}"/><Run Text="{Binding Duration, StringFormat={} · {0:0.##} giây, Mode=OneWay}"/>
+       </TextBlock>
+       <TextBlock Text="{Binding Path, Converter={StaticResource FileName}}" TextTrimming="CharacterEllipsis"
+                  Visibility="{Binding Path, Converter={StaticResource NotEmptyToVis}}"/>
+       <TextBlock Text="{Binding Text}" TextTrimming="CharacterEllipsis" Opacity="0.8"
+                  Visibility="{Binding Text, Converter={StaticResource NotEmptyToVis}}"/>
+      </StackPanel></DataTemplate></ListBox.ItemTemplate>
+     </ListBox>
+    </DockPanel>
+    <DockPanel Grid.Column="1" Margin="0,0,12,0">
+     <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+      <TextBlock Text="{Binding PreviewStatus}" TextWrapping="Wrap" FontSize="12"/>
+      <ui:Button Content="Tạo preview" Command="{Binding PreviewCommand}" IsEnabled="{Binding CanEdit}" HorizontalAlignment="Left" Margin="0,6,0,0"/>
+     </StackPanel>
+     <ContentControl x:Name="PreviewHost"/>
+    </DockPanel>
+    <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" IsEnabled="{Binding CanEdit}">
+     <StackPanel Margin="0,0,6,0">
+      <Expander Header="Thuộc tính clip" IsExpanded="True">
+       <StackPanel>
+        <TextBlock Text="Chọn một clip trên timeline hoặc trong danh sách bên trái để chỉnh." TextWrapping="Wrap" Opacity="0.7" Margin="0,0,0,8"
+                   Visibility="{Binding NoSelection, Converter={StaticResource BoolToVis}}"/>
+        <StackPanel Visibility="{Binding HasSelection, Converter={StaticResource BoolToVis}}">
+         <c:Field Header="Vị trí trên timeline (giây)" ToolTip="Clip video tự nối liên tiếp nên không đặt vị trí tay được.">
+          <TextBox Text="{Binding ClipPosition}" IsEnabled="{Binding CanPosition}"/>
+         </c:Field>
+         <c:Field Header="Điểm vào nguồn (giây)"><TextBox Text="{Binding ClipIn}"/></c:Field>
+         <c:Field Header="Điểm ra nguồn (giây)"><TextBox Text="{Binding ClipOut}"/></c:Field>
+         <c:Field Header="Nội dung phụ đề" Visibility="{Binding IsSubtitle, Converter={StaticResource BoolToVis}}">
+          <TextBox Text="{Binding ClipText}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60"/>
+         </c:Field>
+         <c:Field Header="{Binding VolumeLabel}" Visibility="{Binding IsMedia, Converter={StaticResource BoolToVis}}">
+          <Slider Value="{Binding ClipVolume}" Minimum="0" Maximum="2" TickFrequency="0.1" IsSnapToTickEnabled="True"/>
+         </c:Field>
+         <CheckBox Content="{Binding MuteLabel}" IsChecked="{Binding ClipMuted}" Margin="0,0,0,8"/>
+         <WrapPanel>
+          <ui:Button Content="Áp dụng" Appearance="Primary" Icon="{ui:SymbolIcon Checkmark24}" Command="{Binding ApplyClipCommand}"/>
+          <ui:Button Content="Đổi nguồn" Icon="{ui:SymbolIcon Link24}" Command="{Binding RelinkCommand}" Margin="{StaticResource ButtonGap}"
+                     Visibility="{Binding IsMedia, Converter={StaticResource BoolToVis}}"/>
+         </WrapPanel>
+        </StackPanel>
+       </StackPanel>
+      </Expander>
+      <Expander Header="Thiết lập dự án" Margin="0,12,0,0">
+       <StackPanel>
+        <c:Field Header="Tên dự án"><TextBox Text="{Binding ProjectName}"/></c:Field>
+        <c:Field Header="Tỉ lệ"><ComboBox ItemsSource="{Binding Aspects}" SelectedItem="{Binding Aspect}"/></c:Field>
+        <c:Field Header="Độ phân giải"><ComboBox ItemsSource="{Binding Heights}" SelectedItem="{Binding Height}"/></c:Field>
+        <ui:Button Content="Áp dụng dự án" Command="{Binding ApplyProjectCommand}"/>
+       </StackPanel>
+      </Expander>
+     </StackPanel>
+    </ScrollViewer>
+   </Grid>
+   <GridSplitter Grid.Row="1" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+   <DockPanel Grid.Row="2">
+    <WrapPanel DockPanel.Dock="Top" Margin="0,0,0,8" IsEnabled="{Binding CanEdit}">
+     <ui:Button Content="Cắt đôi" Icon="{ui:SymbolIcon Cut24}" Command="{Binding SplitCommand}" ToolTip="Cắt clip đang chọn tại vạch đỏ (phím S)"/>
+     <ui:Button Content="Xoá" Icon="{ui:SymbolIcon Delete24}" Command="{Binding DeleteCommand}" ToolTip="Xoá clip đang chọn (Delete)" Margin="{StaticResource ButtonGap}"/>
+     <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowLeft24}" Command="{Binding MoveEarlierCommand}" ToolTip="Đưa clip lên trước" Margin="{StaticResource ButtonGap}"/>
+     <ui:Button Style="{StaticResource IconButton}" Icon="{ui:SymbolIcon ArrowRight24}" Command="{Binding MoveLaterCommand}" ToolTip="Đưa clip ra sau" Margin="{StaticResource ButtonGap}"/>
+     <CheckBox Content="Bắt dính" IsChecked="{Binding Snapping}" ToolTip="Khi kéo, clip tự dính vào mép clip khác và vạch đỏ" VerticalAlignment="Center" Margin="16,0,8,0"/>
+     <ui:SymbolIcon Symbol="ZoomOut24" VerticalAlignment="Center"/>
+     <Slider Value="{Binding Zoom}" Minimum="0.1" Maximum="150" Width="120" VerticalAlignment="Center" Margin="6,0" ToolTip="Thu phóng (Ctrl + con lăn)"/>
+     <ui:SymbolIcon Symbol="ZoomIn24" VerticalAlignment="Center"/>
+     <ui:Button Content="Vừa khung" Click="FitClick" ToolTip="Thu phóng để thấy toàn bộ timeline" Margin="{StaticResource ButtonGap}"/>
+     <TextBlock Text="{Binding Timing}" FontFamily="Consolas" VerticalAlignment="Center" Margin="16,0,0,0"/>
+    </WrapPanel>
+    <ScrollViewer x:Name="TimelineScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollChanged="TimelineScrolled">
+     <local:TimelineControl x:Name="TimelineCanvas"/>
+    </ScrollViewer>
+   </DockPanel>
+  </Grid>
+ </DockPanel>
+</UserControl>
